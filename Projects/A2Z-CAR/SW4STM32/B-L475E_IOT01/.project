@@ -36,6 +36,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/startup_stm32l475xx.s</locationURI>
 		</link>
 		<link>
+			<name>Applications/SW4STM32/syscalls.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/syscalls.c</locationURI>
+		</link>
+		<link>
 			<name>Applications/User/low_power_tick_management_LPTIM.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/low_power_tick_management_LPTIM.c</locationURI>
