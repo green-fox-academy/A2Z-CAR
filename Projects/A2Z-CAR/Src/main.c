@@ -152,11 +152,11 @@ static void servo_control_thread(void const * argument)
 	while(1) {
 		for (int8_t i = -45; i < 46; i++) {
 			set_servo_angle(i);
-			osDelay(100);
+			osDelay(10);
 		}
 		for (int8_t i = 45; i > -46; i--) {
 			set_servo_angle(i);
-			osDelay(100);
+			osDelay(10);
 		}
 	}
 
@@ -241,9 +241,7 @@ void set_servo_angle(int8_t angle)
 	// leftmost is -45 degrees now, rightmost is 45,
 	// so 1 degree equals to (5 / 90) % in duty cycle.
 	// 7.5 % is 0 degrees
-	printf("%d\n", angle);
-	float duty = 7.5 + ((5 / 90) * angle);
-	printf("%.2f\n", duty);
+	float duty = 7.5 + ((5.0 / 90.0) * (float)angle);
 	pwm_set_duty(duty);
 }
 
