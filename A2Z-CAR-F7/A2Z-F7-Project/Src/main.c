@@ -54,6 +54,8 @@
 #include "lwip/netif.h"
 #include "lwip/tcpip.h"
 #include "app_ethernet.h"
+#include "socket_server.h"
+#include "socket_client.h"
 #include "lcd_log.h"
 #include "led_matrix.h"
 #include "stm32f7xx_hal_conf.h"
@@ -156,26 +158,40 @@ static void StartThread(void const * argument)
   osThreadDef(DHCP, DHCP_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(DHCP), &gnetif);
 
+#ifdef SERVER
+  // TODO:
+  // Define and start the server thread
+  osThreadDef(SOCKET_SERVER, socket_server_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadCreate (osThread(SOCKET_SERVER), NULL);
+#endif
+
+#ifdef CLIENT
+  // TODO:
+  // Define and start the client thread
+  osThreadDef(SOCKET_CLIENT, socket_client_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadCreate (osThread(SOCKET_CLIENT), NULL);
+#endif
+
 
   // Start led matrix updater thread
-  osThreadDef(LED_MATRIX_UPDATE, led_matrix_update_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
-  osThreadCreate (osThread(LED_MATRIX_UPDATE), NULL);
+  //osThreadDef(LED_MATRIX_UPDATE, led_matrix_update_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
+  //osThreadCreate (osThread(LED_MATRIX_UPDATE), NULL);
 
 
   // Start led_matrix_ts_thread
-  osThreadDef(LED_MATRIX_TS, led_matrix_ts_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
-  osThreadCreate (osThread(LED_MATRIX_TS), NULL);
+  //osThreadDef(LED_MATRIX_TS, led_matrix_ts_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
+  //osThreadCreate (osThread(LED_MATRIX_TS), NULL);
 
   // Start waterfall thread
-  osThreadDef(LED_MATRIX_WATERFALL, led_matrix_waterfall_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
-  osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
+  //osThreadDef(LED_MATRIX_WATERFALL, led_matrix_waterfall_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
+  //osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
 
   // Start waterfall thread
   //osThreadDef(LED_MATRIX_TURN, turn_on_a_led_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
- // osThreadCreate (osThread(LED_MATRIX_TURN), NULL);
+  //osThreadCreate (osThread(LED_MATRIX_TURN), NULL);
 
-  osThreadDef(ADC_MEASURE, adc_mesure_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE * 2);
-  osThreadCreate (osThread(ADC_MEASURE), NULL);
+  //osThreadDef(ADC_MEASURE, adc_mesure_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE * 2);
+  //osThreadCreate (osThread(ADC_MEASURE), NULL);
 
 
   while (1) {

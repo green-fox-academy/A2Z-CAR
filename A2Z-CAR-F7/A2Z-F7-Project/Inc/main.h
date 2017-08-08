@@ -82,6 +82,10 @@
 #define GW_ADDR2   0
 #define GW_ADDR3   1 
 
+#define SERVER
+#define CLIENT
+
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */  
 
