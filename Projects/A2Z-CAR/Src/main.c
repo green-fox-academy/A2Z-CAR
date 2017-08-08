@@ -70,6 +70,7 @@ static void SystemClock_Config(void);
 static void StartThread(void const * argument);
 static void servo_control_thread(void const * argument);
 
+void system_init();
 void uart_init();
 void pwm_init();
 void pwm_set_duty(float duty);
@@ -98,17 +99,7 @@ int main(void)
 	/* Configure the system clock to 80 MHz */
 	SystemClock_Config();
 
-	uart_init();
-
-	/* Output without printf, using HAL function*/
-	char msg[] = "UART HAL Example\r\n";
-	HAL_UART_Transmit(&uart_handle, msg, strlen(msg), 100);
-
-	/* Output a message using printf function */
-	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
-	printf("** Test finished successfully. ** \r\n");
-
-	pwm_init();
+	system_init();
 
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
@@ -130,10 +121,6 @@ int main(void)
 static void StartThread(void const * argument)
 {
 	/* Initialize LED */
-	BSP_LED_Init(LED2);
-
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
@@ -164,6 +151,26 @@ static void servo_control_thread(void const * argument)
 		/* Delete the Init Thread */
 		osThreadTerminate(NULL);
 	}
+}
+
+
+void system_init()
+{
+	BSP_LED_Init(LED2);
+
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
+	uart_init();
+
+	/* Output without printf, using HAL function*/
+	char msg[] = "UART HAL Example\r\n";
+	HAL_UART_Transmit(&uart_handle, msg, strlen(msg), 100);
+
+	/* Output a message using printf function */
+	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
+	printf("** Test finished successfully. ** \r\n");
+
+	pwm_init();
 }
 
 
