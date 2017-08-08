@@ -71,11 +71,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32l4xx_timebase_lptim.c</locationURI>
 		</link>
 		<link>
-			<name>Applications/User/test.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/test.c</locationURI>
-		</link>
-		<link>
 			<name>Applications/User/test2.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/test2.c</locationURI>
