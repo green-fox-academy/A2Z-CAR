@@ -65,10 +65,10 @@
 #define USE_DHCP       /* enable DHCP, if disabled static address is used*/
  
 /*Static IP ADDRESS*/
-#define IP_ADDR0   192
-#define IP_ADDR1   168
+#define IP_ADDR0   127
+#define IP_ADDR1   0
 #define IP_ADDR2   0
-#define IP_ADDR3   10
+#define IP_ADDR3   1
    
 /*NETMASK*/
 #define NETMASK_ADDR0   255
@@ -83,7 +83,7 @@
 #define GW_ADDR3   1 
 
 #define SERVER
-#define CLIENT
+//#define CLIENT
 
 
 /* Exported macro ------------------------------------------------------------*/

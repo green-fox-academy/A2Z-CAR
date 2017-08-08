@@ -18,6 +18,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -85,25 +86,37 @@ void socket_server_thread(void const *argument)
 				LCD_ErrLog("Socket server - invalid client socket\n");
 			} else {
 				// Define buffer for incoming message
-				char buff[SERVER_BUFF_LEN];
+				//char buff[SERVER_BUFF_LEN];
+				uint8_t buff[9];
 				int received_bytes;
+
 				// Receive data
 				do {
-					received_bytes = recv(client_socket, buff, SERVER_BUFF_LEN, 0);
+					received_bytes = recv(client_socket, buff, sizeof(buff), 0);
 					// Check for error
 					if (received_bytes < 0) {
 						LCD_ErrLog("Socket server - can't receive\n");
 					} else {
 						// Close the string
-						buff[received_bytes] = '\0';
-
+						//buff[received_bytes] = '\0';
+						int x = 40;
+						uint8_t r;
+						BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
 						// Print message
-						LCD_UsrLog("Socket server - message:");
-						LCD_UsrLog(buff);
-						LCD_UsrLog("\n");
+						for (int i = 0; i < 9; i++) {
+							LCD_UsrLog("Sensor %d value: %d\n", i, buff[i]);
+							r = (uint16_t)buff[i] / 10;
+							LCD_UsrLog("radius, %d\n", r);
 
+
+							x += 50;
+						}
+						BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+						draw_background();
+						x = 0;
+						r = 0;
 						// Send back the message
-						send(client_socket, buff, received_bytes, 0);
+						//send(client_socket, buff, received_bytes, 0);
 					}
 				} while (received_bytes > 0);
 

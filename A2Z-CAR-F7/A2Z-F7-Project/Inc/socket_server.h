@@ -7,7 +7,7 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define SERVER_PORT			8002
+#define SERVER_PORT			1234
 #define SERVER_QUEUE_SIZE	2
 #define SERVER_BUFF_LEN		255
 #define CLIENT_BUFF_LEN		SERVER_BUFF_LEN
