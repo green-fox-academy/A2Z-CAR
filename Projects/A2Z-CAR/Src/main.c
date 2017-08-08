@@ -175,20 +175,90 @@ void a5_adc_init()
 	adc_handle.Instance = ADC3;
 	adc_ch_conf.Channel = ADC_CHANNEL_1;
 }
+void d7_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_4;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOA, &GPIO_Init);
+	//pa4 ADC12_IN9
+	adc_handle.Instance = ADC1;
+	adc_ch_conf.Channel = ADC_CHANNEL_9;
+}
+void d1_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_0;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOA, &GPIO_Init);
+	//pa4 ADC12_IN9
+	adc_handle.Instance = ADC1;
+	adc_ch_conf.Channel = ADC_CHANNEL_5;
+}
+void d0_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_1;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOA, &GPIO_Init);
+	//pa4 ADC12_IN9
+	adc_handle.Instance = ADC1;
+	adc_ch_conf.Channel = ADC_CHANNEL_6;
+}
+void d10_adc_init()
+{ //pa2 ADC12_IN7
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_2;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOA, &GPIO_Init);
 
+	adc_handle.Instance = ADC1;
+	adc_ch_conf.Channel = ADC_CHANNEL_7;
+}
+void d13_adc_init()
+{  //pa5 ADC12_IN10
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_5;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOA, &GPIO_Init);
+
+	adc_handle.Instance = ADC1;
+	adc_ch_conf.Channel = ADC_CHANNEL_10;
+}
 /*
- pa0 ADC12_IN5
- pa1 ADC12_IN6
- pa2 ADC12_IN7
- pa3 ADC12_IN8
- pa4 ADC12_IN9
- pa5 ADC12_IN10
- pa6 ADC12_IN11
- pa7 ADC12_IN12
+ d1  pa0 ADC12_IN5
+ d0  pa1 ADC12_IN6
+ d10 pa2 ADC12_IN7
+     pa3 ADC12_IN8
+ d7  pa4 ADC12_IN9
+ d13 pa5 ADC12_IN10
+     pa6 ADC12_IN11
+     pa7 ADC12_IN12
 
- pb0 ADC12_IN15
- pb1 ADC12_IN16
+     pb0 ADC12_IN15
+     pb1 ADC12_IN16
  * */
+
 /**
   * @brief  Main program
   * @param  None
@@ -272,18 +342,42 @@ void get_adc_values(uint8_t *adc_values)
 	HAL_ADC_Init(&adc_handle);
 	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
 	*values = adc_measure_avg(10);
+	values++;
+
+	d7_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+
+	values++;
+	d1_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+
+	values++;
+	d10_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+
+	values++;
+	d1_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
 	//printf("adc: %d ",*values);
 	printf("\n ");
 
 }
 int8_t get_error()
 {
-	uint8_t adc_values[5];
+	uint8_t adc_values[9];
 	get_adc_values(&adc_values);
-	for(int i = 0; i < 5; i++) {
+	for(int i = 0; i < 9; i++) {
 		printf("%d ",adc_values[i]);
 	}
-	uint8_t limit = 100;
+	uint8_t limit = 40;
 	if (adc_values[2] > limit) {
 		return 0;
 	} else if (adc_values[1] > limit) {
