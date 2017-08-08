@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TEST_H
-#define __TEST_H
+#ifndef __TEST2_H
+#define __TEST2_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
@@ -11,4 +11,4 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-#endif /* __TEST_H */
+#endif /* __TEST2_H */
