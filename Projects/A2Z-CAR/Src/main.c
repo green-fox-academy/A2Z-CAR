@@ -74,6 +74,8 @@ uint8_t TxData[] = "Hello big brother board!";
 uint16_t RxLen;
 uint8_t  MAC_Addr[6];
 uint8_t  IP_Addr[4];
+uint16_t Datalen;
+int32_t Socket = -1;
 
 TIM_HandleTypeDef pwm_handle;
 TIM_OC_InitTypeDef pwm_oc_init;
@@ -85,6 +87,7 @@ static void SystemClock_Config(void);
 
 static void StartThread(void const * argument);
 static void servo_control_thread(void const * argument);
+static void wifi_send_thread(void const * argument);
 
 void system_init();
 void wifi_init();
@@ -101,8 +104,6 @@ void set_servo_angle(int8_t angle);
   */
 int main(void)
 {
-	uint16_t Datalen;
-
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
@@ -134,6 +135,9 @@ static void StartThread(void const * argument)
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
+	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(wifi), NULL);
+
 	osThreadDef(Thread, ToggleLedThread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(Thread), NULL);
 
@@ -154,6 +158,28 @@ static void servo_control_thread(void const * argument)
 		for (int8_t i = 45; i > -46; i--) {
 			set_servo_angle(i);
 			osDelay(10);
+		}
+	}
+
+	while (1) {
+		/* Delete the Init Thread */
+		osThreadTerminate(NULL);
+	}
+}
+
+
+static void wifi_send_thread(void const * argument)
+{
+	while (1) {
+		if (BSP_PB_GetState(BUTTON_USER) == 0) {
+			printf("button pushed\n");
+			if(Socket != -1) {
+				if(WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+					printf("> ERROR : Failed to send Data.\n");
+			    } else {
+					printf("Message \"%s\" sent\n", TxData);
+			    }
+			}
 		}
 	}
 
@@ -189,7 +215,6 @@ void system_init()
 void wifi_init()
 {
 	uint16_t Trials = CONNECTION_TRIAL_MAX;
-	int32_t Socket = -1;
 
 	/*Initialize  WIFI module */
 	if(WIFI_Init() ==  WIFI_STATUS_OK) {
