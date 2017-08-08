@@ -48,12 +48,13 @@
 #include "main.h"
 #include "stm32l4xx_hal_tim.h"
 #include "cmsis_os.h"
-
 /* Private typedef -----------------------------------------------------------*/
 TIM_HandleTypeDef pwm_handle;
 TIM_OC_InitTypeDef pwm_oc_init;
 GPIO_InitTypeDef GPIO_InitDef;
 UART_HandleTypeDef uart_handle;
+ADC_HandleTypeDef adc_handle;
+ADC_ChannelConfTypeDef adc_ch_conf;
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -90,15 +91,216 @@ void set_servo_angle(int8_t angle);
   * @param  None
   * @retval None
   */
-int main(void)
+void a0_adc_init()
 {
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_5;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOC, &GPIO_Init);
+	//ADC12_IN14
+	adc_handle.Instance = ADC1;
+	adc_ch_conf.Channel = ADC_CHANNEL_14;
+}
+void a1_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_4;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOC, &GPIO_Init);
+	//ADC12_IN13
+	adc_handle.Instance = ADC1;
+	adc_ch_conf.Channel = ADC_CHANNEL_13;
+}
+void a2_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_3;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOC, &GPIO_Init);
+	//ADC123_IN4
+	adc_handle.Instance = ADC2;
+	adc_ch_conf.Channel = ADC_CHANNEL_4;
+}
+void a3_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_2;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOC, &GPIO_Init);
+	//ADC123_IN3
+	adc_handle.Instance = ADC2;
+	adc_ch_conf.Channel = ADC_CHANNEL_3;
+}
+void a4_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_1;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOC, &GPIO_Init);
+	//ADC123_IN2
+	adc_handle.Instance = ADC3;
+	adc_ch_conf.Channel = ADC_CHANNEL_2;
+}
+void a5_adc_init()
+{
+	__HAL_RCC_ADC_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_0;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
+	HAL_GPIO_Init(GPIOC, &GPIO_Init);
+	//ADC123_IN1
+	adc_handle.Instance = ADC3;
+	adc_ch_conf.Channel = ADC_CHANNEL_1;
+}
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+/*
+ pa0 ADC12_IN5
+ pa1 ADC12_IN6
+ pa2 ADC12_IN7
+ pa3 ADC12_IN8
+ pa4 ADC12_IN9
+ pa5 ADC12_IN10
+ pa6 ADC12_IN11
+ pa7 ADC12_IN12
 
-	/* Configure the system clock to 80 MHz */
-	SystemClock_Config();
+ pb0 ADC12_IN15
+ pb1 ADC12_IN16
+ * */
+/**
+  * @brief  Main program
+  * @param  None
+  * @retval None
+  */
+uint16_t adc_measure()
+{
+	HAL_ADC_Start(&adc_handle);
+	HAL_ADC_PollForConversion(&adc_handle, HAL_MAX_DELAY);
+	return HAL_ADC_GetValue(&adc_handle);
+}
+uint16_t adc_measure_avg(uint8_t num)
+{
+	uint32_t avg = 0, avg2 = 0;
+	uint16_t values[num];
+	for (int i = 0; i< num; i++) {
+		values[i] = adc_measure();
+		avg += values[i];
+	}
+	avg /= num;
+	int j = 0;
+	for (int i = 0; i< 10; i++) {
+		if (values[i] > avg * 0.7 && values[i] < avg * 1.3) {
+			avg2 += values[i];
+			j++;
+		}
+	}
+	avg2 /= j;
+	return avg2;
+}
+void adc_init()
+{
+	adc_handle.State = HAL_ADC_STATE_RESET;
 
+	adc_handle.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2; //
+	adc_handle.Init.Resolution = ADC_RESOLUTION_8B;
+	adc_handle.Init.EOCSelection = ADC_EOC_SEQ_CONV;
+	adc_handle.Init.DMAContinuousRequests = DISABLE;
+	adc_handle.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+	adc_handle.Init.ContinuousConvMode = DISABLE;
+	adc_handle.Init.DiscontinuousConvMode = DISABLE;
+	adc_handle.Init.ScanConvMode = DISABLE;
+	adc_handle.Init.NbrOfConversion = 1;
+	HAL_StatusTypeDef status = HAL_ADC_Init(&adc_handle);
+	printf("adcinit: %d\n",status);
+	adc_ch_conf.Offset = 0;
+	adc_ch_conf.Rank = 1;
+	adc_ch_conf.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	return;
+}
+void get_adc_values(uint8_t *adc_values)
+{
+	uint8_t *values;
+	values = adc_values;
+	a0_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+	//printf("adc: %d ",*values);
+	values++;
+	a1_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+	//printf("adc: %d ",*values);
+	values++;
+	a2_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+	//printf("adc: %d ",*values);
+	values++;
+	a3_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+	//printf("adc: %d ",*values);
+	values++;
+	a4_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+	//printf("adc: %d ",*values);
+	printf("\n ");
+
+}
+int8_t get_error()
+{
+	uint8_t adc_values[5];
+	get_adc_values(&adc_values);
+	for(int i = 0; i < 5; i++) {
+		printf("%d ",adc_values[i]);
+	}
+	uint8_t limit = 100;
+	if (adc_values[2] > limit) {
+		return 0;
+	} else if (adc_values[1] > limit) {
+		return 1;
+	} else if (adc_values[3] > limit) {
+		return -1;
+	} else if (adc_values[4] > limit) {
+		return -2;
+	} else if (adc_values[0] > limit) {
+		return 2;
+	} else {
+		return 3;
+	}
+
+}
+void uart_init()
+{
 	uart_handle.Instance = DISCOVERY_COM1;
 	uart_handle.Init.BaudRate = 115200;
 	uart_handle.Init.WordLength = UART_WORDLENGTH_8B;
@@ -119,7 +321,31 @@ int main(void)
 	/* Output a message using printf function */
 	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
 	printf("** Test finished successfully. ** \r\n");
-
+}
+void stop() {
+	BSP_LED_On(LED2);
+}
+void set_servo()
+{
+	int8_t error = get_error();
+	printf("error:%d\n",error);
+	if (error != 3) {
+		set_servo_angle(error * 10);
+		printf("servo: %d\n", error * 10);
+		//BSP_LED_Off(LED2);
+	} else {
+		//set_servo_to(0);
+		printf("stop\n");
+		stop();
+	}
+}
+int main(void)
+{
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
+	/* Configure the system clock to 80 MHz */
+	SystemClock_Config();
+	uart_init();
 
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
@@ -148,8 +374,9 @@ static void StartThread(void const * argument)
 //	uart_init();
 
 	pwm_init();
-
-	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	a0_adc_init();
+	adc_init();
+	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE*2);
 	osThreadCreate(osThread(servo), NULL);
 
 	osThreadDef(Thread, ToggleLedThread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
@@ -165,6 +392,7 @@ static void StartThread(void const * argument)
 static void servo_control_thread(void const * argument)
 {
 	while(1) {
+		/*
 		for (int8_t i = -45; i < 46; i++) {
 			printf("%d\n", i);
 			set_servo_angle(i);
@@ -175,6 +403,8 @@ static void servo_control_thread(void const * argument)
 			set_servo_angle(i);
 			osDelay(100);
 		}
+		*/
+		set_servo();
 	}
 
 	while (1) {
@@ -245,7 +475,7 @@ void pwm_init()
   */
 void pwm_set_duty(float duty)
 {
-	uint32_t pulse = pwm_handle.Init.Period * (duty / 100.0);
+	uint32_t pulse = pwm_handle.Init.Period * (duty / 100);
 	pwm_oc_init.Pulse = pulse;
 	HAL_TIM_PWM_ConfigChannel(&pwm_handle, &pwm_oc_init, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&pwm_handle, TIM_CHANNEL_1);
@@ -258,7 +488,8 @@ void set_servo_angle(int8_t angle)
 	// leftmost is -45 degrees now, rightmost is 45,
 	// so 1 degree equals to (5 / 90) % in duty cycle.
 	// 7.5 % is 0 degrees
-	float duty = 7.5 + (5 / 90) * angle;
+	printf("angle %d \n", angle);
+	float duty = 7.5 + (5.0 / 90.0) * (float)angle;
 	pwm_set_duty(duty);
 }
 
