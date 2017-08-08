@@ -47,6 +47,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "test2.h"
+#include "adc_driver.h"
 #include "stm32l4xx_hal_tim.h"
 #include "cmsis_os.h"
 
@@ -81,7 +82,7 @@ TIM_HandleTypeDef pwm_handle;
 TIM_OC_InitTypeDef pwm_oc_init;
 
 /* Private function prototypes -----------------------------------------------*/
-static void ToggleLedThread(const void *argument);
+//static void ToggleLedThread(const void *argument);
 static void GPIO_ConfigAN(void);
 static void SystemClock_Config(void);
 
@@ -94,6 +95,8 @@ void wifi_init();
 void pwm_init();
 void pwm_set_duty(float duty);
 void set_servo_angle(int8_t angle);
+void stop();
+void set_servo();
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -138,11 +141,11 @@ static void StartThread(void const * argument)
 	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(wifi), NULL);
 
-	osThreadDef(Thread, ToggleLedThread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(Thread), NULL);
+//	osThreadDef(Thread, ToggleLedThread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(Thread), NULL);
 
 	while (1) {
-	/* Delete the Init Thread */
+	/* Delete the init thread */
 	osThreadTerminate(NULL);
 	}
 }
@@ -150,19 +153,21 @@ static void StartThread(void const * argument)
 
 static void servo_control_thread(void const * argument)
 {
-	while(1) {
-		for (int8_t i = -45; i < 46; i++) {
-			set_servo_angle(i);
-			osDelay(10);
-		}
-		for (int8_t i = 45; i > -46; i--) {
-			set_servo_angle(i);
-			osDelay(10);
-		}
-	}
+//	while(1) {
+//		for (int8_t i = -45; i < 46; i++) {
+//			set_servo_angle(i);
+//			osDelay(10);
+//		}
+//		for (int8_t i = 45; i > -46; i--) {
+//			set_servo_angle(i);
+//			osDelay(10);
+//		}
+//	}
+
+	set_servo();
 
 	while (1) {
-		/* Delete the Init Thread */
+		/* Delete the thread */
 		osThreadTerminate(NULL);
 	}
 }
@@ -170,21 +175,37 @@ static void servo_control_thread(void const * argument)
 
 static void wifi_send_thread(void const * argument)
 {
-	while (1) {
-		if (BSP_PB_GetState(BUTTON_USER) == 0) {
-			printf("button pushed\n");
-			if(Socket != -1) {
-				if(WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
-					printf("> ERROR : Failed to send Data.\n");
-			    } else {
-					printf("Message \"%s\" sent\n", TxData);
-			    }
+	uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
+
+//	while (1) {
+//		if (BSP_PB_GetState(BUTTON_USER) == 0) {
+//			printf("button pushed\n");
+//			if(Socket != -1) {
+//				if(WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+//					printf("> ERROR : Failed to send Data.\n");
+//			    } else {
+//					printf("Message \"%s\" sent\n", TxData);
+//			    }
+//			}
+//		}
+//	}
+
+	while(1) {
+		if(Socket != -1) {
+			if(WIFI_SendData(Socket, adc_values, sizeof(&adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+				printf("> ERROR : Failed to send Data.\n");
+			} else {
+				printf("Data sent\n");
+			}
+			for (int i=0; i < 9; i++) {
+				adc_values[i] = 255 - adc_values[i];
 			}
 		}
+		osDelay(1000);
 	}
 
 	while (1) {
-		/* Delete the Init Thread */
+		/* Delete the thread */
 		osThreadTerminate(NULL);
 	}
 }
@@ -209,6 +230,9 @@ void system_init()
 	wifi_init();
 
 	pwm_init();
+
+	a0_adc_init();
+	adc_init();
 }
 
 
@@ -333,25 +357,48 @@ void set_servo_angle(int8_t angle)
 }
 
 
-/**
-  * @brief Toggle Thread function
-  * @param  argument: Not used
-  * @retval None
-  */
-static void ToggleLedThread(const void *argument)
+void stop()
 {
-	for (;;) {
-		BSP_LED_On(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-		BSP_LED_Off(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-	}
+	BSP_LED_On(LED2);
+}
 
-	while (1) {
-		/* Delete the Init Thread */
-		osThreadTerminate(NULL);
+
+void set_servo()
+{
+	int8_t error = get_error();
+	printf("error:%d\n",error);
+	if (error != 3) {
+		set_servo_angle(error * 10);
+		printf("servo: %d\n", error * 10);
+		//BSP_LED_Off(LED2);
+	} else {
+		//set_servo_to(0);
+		printf("stop\n");
+		stop();
 	}
 }
+
+
+
+///**
+//  * @brief Toggle Thread function
+//  * @param  argument: Not used
+//  * @retval None
+//  */
+//static void ToggleLedThread(const void *argument)
+//{
+//	for (;;) {
+//		BSP_LED_On(LED2);
+//		osDelay(LED_TOGGLE_DELAY);
+//		BSP_LED_Off(LED2);
+//		osDelay(LED_TOGGLE_DELAY);
+//	}
+//
+//	while (1) {
+//		/* Delete the Init Thread */
+//		osThreadTerminate(NULL);
+//	}
+//}
 
 
 void vMainPreStopProcessing(void)
