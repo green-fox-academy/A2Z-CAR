@@ -71,6 +71,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32l4xx_timebase_lptim.c</locationURI>
 		</link>
 		<link>
+			<name>Applications/User/test.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/test.c</locationURI>
+		</link>
+		<link>
 			<name>Applications/WIFI/es_wifi.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/WiFi/Src/es_wifi.c</locationURI>
