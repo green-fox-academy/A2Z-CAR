@@ -70,7 +70,7 @@ static void SystemClock_Config(void);
 static void StartThread(void const * argument);
 static void servo_control_thread(void const * argument);
 
-//void uart_init();
+void uart_init();
 void pwm_init();
 void pwm_set_duty(float duty);
 void set_servo_angle(int8_t angle);
@@ -98,18 +98,7 @@ int main(void)
 	/* Configure the system clock to 80 MHz */
 	SystemClock_Config();
 
-	uart_handle.Instance = DISCOVERY_COM1;
-	uart_handle.Init.BaudRate = 115200;
-	uart_handle.Init.WordLength = UART_WORDLENGTH_8B;
-	uart_handle.Init.StopBits = UART_STOPBITS_1;
-	uart_handle.Init.Parity = UART_PARITY_NONE;
-	uart_handle.Init.Mode = UART_MODE_TX_RX;
-	uart_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	uart_handle.Init.OverSampling = UART_OVERSAMPLING_16;
-	uart_handle.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-	uart_handle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-	BSP_COM_Init(COM1, &uart_handle);
+	uart_init();
 
 	/* Output without printf, using HAL function*/
 	char msg[] = "UART HAL Example\r\n";
@@ -119,6 +108,7 @@ int main(void)
 	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
 	printf("** Test finished successfully. ** \r\n");
 
+	pwm_init();
 
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
@@ -144,10 +134,6 @@ static void StartThread(void const * argument)
 
 	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 
-//	uart_init();
-
-	pwm_init();
-
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
@@ -165,12 +151,10 @@ static void servo_control_thread(void const * argument)
 {
 	while(1) {
 		for (int8_t i = -45; i < 46; i++) {
-			printf("%d\n", i);
 			set_servo_angle(i);
 			osDelay(100);
 		}
 		for (int8_t i = 45; i > -46; i--) {
-			printf("%d\n", i);
 			set_servo_angle(i);
 			osDelay(100);
 		}
@@ -183,21 +167,21 @@ static void servo_control_thread(void const * argument)
 }
 
 
-//void uart_init()
-//{
-//	uart_handle.Instance = DISCOVERY_COM1;
-//	uart_handle.Init.BaudRate = 115200;
-//	uart_handle.Init.WordLength = UART_WORDLENGTH_8B;
-//	uart_handle.Init.StopBits = UART_STOPBITS_1;
-//	uart_handle.Init.Parity = UART_PARITY_NONE;
-//	uart_handle.Init.Mode = UART_MODE_TX_RX;
-//	uart_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-//	uart_handle.Init.OverSampling = UART_OVERSAMPLING_16;
-//	uart_handle.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-//	uart_handle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-//
-//	BSP_COM_Init(COM1, &uart_handle);
-//}
+void uart_init()
+{
+	uart_handle.Instance = DISCOVERY_COM1;
+	uart_handle.Init.BaudRate = 115200;
+	uart_handle.Init.WordLength = UART_WORDLENGTH_8B;
+	uart_handle.Init.StopBits = UART_STOPBITS_1;
+	uart_handle.Init.Parity = UART_PARITY_NONE;
+	uart_handle.Init.Mode = UART_MODE_TX_RX;
+	uart_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	uart_handle.Init.OverSampling = UART_OVERSAMPLING_16;
+	uart_handle.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+	uart_handle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+
+	BSP_COM_Init(COM1, &uart_handle);
+}
 
 
 /**
@@ -257,7 +241,9 @@ void set_servo_angle(int8_t angle)
 	// leftmost is -45 degrees now, rightmost is 45,
 	// so 1 degree equals to (5 / 90) % in duty cycle.
 	// 7.5 % is 0 degrees
-	float duty = 7.5 + (5 / 90) * angle;
+	printf("%d\n", angle);
+	float duty = 7.5 + ((5 / 90) * angle);
+	printf("%.2f\n", duty);
 	pwm_set_duty(duty);
 }
 
