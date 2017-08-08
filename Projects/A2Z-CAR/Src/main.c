@@ -46,6 +46,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "test2.h"
 #include "stm32l4xx_hal_tim.h"
 #include "cmsis_os.h"
 
@@ -53,7 +54,6 @@
 TIM_HandleTypeDef pwm_handle;
 TIM_OC_InitTypeDef pwm_oc_init;
 GPIO_InitTypeDef GPIO_InitDef;
-UART_HandleTypeDef uart_handle;
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -71,7 +71,6 @@ static void StartThread(void const * argument);
 static void servo_control_thread(void const * argument);
 
 void system_init();
-void uart_init();
 void pwm_init();
 void pwm_set_duty(float duty);
 void set_servo_angle(int8_t angle);
@@ -171,23 +170,6 @@ void system_init()
 	printf("** Test finished successfully. ** \r\n");
 
 	pwm_init();
-}
-
-
-void uart_init()
-{
-	uart_handle.Instance = DISCOVERY_COM1;
-	uart_handle.Init.BaudRate = 115200;
-	uart_handle.Init.WordLength = UART_WORDLENGTH_8B;
-	uart_handle.Init.StopBits = UART_STOPBITS_1;
-	uart_handle.Init.Parity = UART_PARITY_NONE;
-	uart_handle.Init.Mode = UART_MODE_TX_RX;
-	uart_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	uart_handle.Init.OverSampling = UART_OVERSAMPLING_16;
-	uart_handle.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-	uart_handle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-	BSP_COM_Init(COM1, &uart_handle);
 }
 
 
