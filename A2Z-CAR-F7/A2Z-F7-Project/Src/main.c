@@ -63,10 +63,6 @@
 
 
 /* Private typedef -----------------------------------------------------------*/
-ADC_HandleTypeDef adc_handle;
-ADC_ChannelConfTypeDef adc_ch_conf;
-
-
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
