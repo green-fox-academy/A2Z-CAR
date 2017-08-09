@@ -61,6 +61,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/pwm_driver.c</locationURI>
 		</link>
 		<link>
+			<name>Applications/User/servo_control.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/servo_control.c</locationURI>
+		</link>
+		<link>
 			<name>Applications/User/stm32l4xx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32l4xx_hal_msp.c</locationURI>
