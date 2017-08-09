@@ -1,11 +1,12 @@
 #include "servo_control.h"
+#include "adc_driver.h"
 #include "pwm_driver.h"
 #include "cmsis_os.h"
 
 void set_servo_angle(int8_t angle)
 {
 	// 5% duty cycle is the leftmost position of the steering, 10% is the rightmost,
-	// leftmost is -45 degrees now, rightmost is 45,
+	// for now leftmost is -45 degrees, rightmost is 45,
 	// so 1 degree equals to (5 / 90) % in duty cycle.
 	// 7.5 % is 0 degrees
 	float duty = 7.5 + ((5.0 / 90.0) * (float)angle);
