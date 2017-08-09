@@ -291,7 +291,7 @@ void get_adc_values(uint8_t *adc_values)
 int8_t get_error()
 {
 	uint8_t adc_values[9];
-	get_adc_values(&adc_values);
+	get_adc_values(adc_values);
 	for(int i = 0; i < 9; i++) {
 		printf("%d ",adc_values[i]);
 	}

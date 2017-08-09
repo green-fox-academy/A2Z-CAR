@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __ADC_DRIVER_H
-#define __ADC_DRIVER_H
+#ifndef __PWM_DRIVER_H
+#define __PWM_DRIVER_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
@@ -8,14 +8,14 @@
 #include "stdio.h"
 
 /* Exported types ------------------------------------------------------------*/
-ADC_HandleTypeDef adc_handle;
-ADC_ChannelConfTypeDef adc_ch_conf;
+TIM_HandleTypeDef servo_pwm_handle;
+TIM_OC_InitTypeDef servo_pwm_oc_init;
+GPIO_InitTypeDef GPIO_InitDef;
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void a0_adc_init();
-void adc_init();
-int8_t get_error();
+void servo_pwm_init();
+void servo_pwm_set_duty(float duty);
 
-#endif /* __ADC_DRIVER_H */
+#endif /* __PWM_DRIVER_H */

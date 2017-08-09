@@ -56,6 +56,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/main.c</locationURI>
 		</link>
 		<link>
+			<name>Applications/User/pwm_driver.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/pwm_driver.c</locationURI>
+		</link>
+		<link>
 			<name>Applications/User/stm32l4xx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32l4xx_hal_msp.c</locationURI>
@@ -76,9 +81,14 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32l4xx_timebase_lptim.c</locationURI>
 		</link>
 		<link>
-			<name>Applications/User/test2.c</name>
+			<name>Applications/User/uart.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/test2.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/uart.c</locationURI>
+		</link>
+		<link>
+			<name>Applications/User/wifi_functions.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/wifi_functions.c</locationURI>
 		</link>
 		<link>
 			<name>Applications/WIFI/es_wifi.c</name>

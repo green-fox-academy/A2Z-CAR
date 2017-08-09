@@ -1,11 +1,5 @@
-/*
- * test2.c
- *
- *  Created on: 2017. aug. 8.
- *      Author: Z
- */
 
-#include "test2.h"
+#include "uart.h"
 
 #ifdef __GNUC__
 /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
@@ -31,18 +25,9 @@ void uart_init()
 	BSP_COM_Init(COM1, &uart_handle);
 }
 
-
-/**
-  * @brief  Retargets the C library printf function to the USART.
-  * @param  None
-  * @retval None
-  */
-PUTCHAR_PROTOTYPE
+PUTCHAR_PROTOTYPE	// Retargets the C library printf function to the USART.
 {
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
   HAL_UART_Transmit(&uart_handle, (uint8_t *)&ch, 1, 0xFFFF);
-
   return ch;
 }
 

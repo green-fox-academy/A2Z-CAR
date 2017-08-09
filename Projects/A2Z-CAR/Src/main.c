@@ -46,40 +46,18 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "test2.h"
+#include "uart.h"
 #include "adc_driver.h"
+#include "pwm_driver.h"
+#include "wifi_functions.h"
 #include "stm32l4xx_hal_tim.h"
 #include "cmsis_os.h"
 
 /* Private typedef -----------------------------------------------------------*/
-TIM_HandleTypeDef pwm_handle;
-TIM_OC_InitTypeDef pwm_oc_init;
-GPIO_InitTypeDef GPIO_InitDef;
-
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables --------------------------------------------------------*/
 #define LED_TOGGLE_DELAY         (1000)
-
-#define SSID     "A66 Guest"
-#define PASSWORD "Hello123"
-
-#define WIFI_WRITE_TIMEOUT 10000
-#define WIFI_READ_TIMEOUT  10000
-#define CONNECTION_TRIAL_MAX          10
-
-uint8_t RemoteIP[] = {10, 27, 99, 110};
-uint8_t RxData [500];
-char* modulename;
-uint8_t TxData[] = "Hello big brother board!";
-uint16_t RxLen;
-uint8_t  MAC_Addr[6];
-uint8_t  IP_Addr[4];
-uint16_t Datalen;
-int32_t Socket = -1;
-
-TIM_HandleTypeDef pwm_handle;
-TIM_OC_InitTypeDef pwm_oc_init;
 
 /* Private function prototypes -----------------------------------------------*/
 //static void ToggleLedThread(const void *argument);
@@ -88,12 +66,8 @@ static void SystemClock_Config(void);
 
 static void StartThread(void const * argument);
 static void servo_control_thread(void const * argument);
-static void wifi_send_thread(void const * argument);
 
 void system_init();
-void wifi_init();
-void pwm_init();
-void pwm_set_duty(float duty);
 void set_servo_angle(int8_t angle);
 void stop();
 void set_servo();
@@ -124,6 +98,31 @@ int main(void)
 
 	/* We should never get here as control is now taken by the scheduler */
 	for (;;);
+}
+
+
+void system_init()
+{
+	BSP_LED_Init(LED2);
+
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
+	uart_init();
+
+	/* Output without printf, using HAL function*/
+	char msg[] = "UART HAL Example\r\n";
+	HAL_UART_Transmit(&uart_handle, msg, strlen(msg), 100);
+
+	/* Output a message using printf function */
+	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
+	printf("** Test finished successfully. ** \r\n");
+
+	wifi_init();
+
+	servo_pwm_init();
+
+	a0_adc_init();
+	adc_init();
 }
 
 
@@ -173,179 +172,6 @@ static void servo_control_thread(void const * argument)
 }
 
 
-static void wifi_send_thread(void const * argument)
-{
-	uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
-
-//	while (1) {
-//		if (BSP_PB_GetState(BUTTON_USER) == 0) {
-//			printf("button pushed\n");
-//			if(Socket != -1) {
-//				if(WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
-//					printf("> ERROR : Failed to send Data.\n");
-//			    } else {
-//					printf("Message \"%s\" sent\n", TxData);
-//			    }
-//			}
-//		}
-//	}
-
-	while(1) {
-		if(Socket != -1) {
-			if(WIFI_SendData(Socket, adc_values, sizeof(&adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
-				printf("> ERROR : Failed to send Data.\n");
-			} else {
-				printf("Data sent\n");
-			}
-			for (int i=0; i < 9; i++) {
-				adc_values[i] = 255 - adc_values[i];
-			}
-		}
-		osDelay(1000);
-	}
-
-	while (1) {
-		/* Delete the thread */
-		osThreadTerminate(NULL);
-	}
-}
-
-
-void system_init()
-{
-	BSP_LED_Init(LED2);
-
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-
-	uart_init();
-
-	/* Output without printf, using HAL function*/
-	char msg[] = "UART HAL Example\r\n";
-	HAL_UART_Transmit(&uart_handle, msg, strlen(msg), 100);
-
-	/* Output a message using printf function */
-	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
-	printf("** Test finished successfully. ** \r\n");
-
-	wifi_init();
-
-	pwm_init();
-
-	a0_adc_init();
-	adc_init();
-}
-
-
-void wifi_init()
-{
-	uint16_t Trials = CONNECTION_TRIAL_MAX;
-
-	/*Initialize  WIFI module */
-	if(WIFI_Init() ==  WIFI_STATUS_OK) {
-	    printf("> WIFI Module Initialized.\n");
-	    if(WIFI_GetMAC_Address(MAC_Addr) == WIFI_STATUS_OK) {
-	        printf("> es-wifi module MAC Address : %X:%X:%X:%X:%X:%X\n",
-	               MAC_Addr[0],
-	               MAC_Addr[1],
-	               MAC_Addr[2],
-	               MAC_Addr[3],
-	               MAC_Addr[4],
-	               MAC_Addr[5]);
-	    } else {
-	    	printf("> ERROR : CANNOT get MAC address\n");
-	        BSP_LED_On(LED2);
-	    }
-
-	    if( WIFI_Connect(SSID, PASSWORD, WIFI_ECN_WPA2_PSK) == WIFI_STATUS_OK) {
-	    	printf("> es-wifi module connected \n");
-	    	if(WIFI_GetIP_Address(IP_Addr) == WIFI_STATUS_OK) {
-	    		printf("> es-wifi module got IP Address : %d.%d.%d.%d\n",
-	    		               IP_Addr[0],
-	    		               IP_Addr[1],
-	    		               IP_Addr[2],
-	    		               IP_Addr[3]);
-
-				printf("> Trying to connect to Server: %d.%d.%d.%d:8002 ...\n",
-					   RemoteIP[0],
-					   RemoteIP[1],
-					   RemoteIP[2],
-					   RemoteIP[3]);
-		        while (Trials--) {
-		        	if( WIFI_OpenClientConnection(0, WIFI_TCP_PROTOCOL, "TCP_CLIENT", RemoteIP, 8002, 0) == WIFI_STATUS_OK) {
-						printf("> TCP Connection opened successfully.\n");
-						Socket = 0;
-		        	}
-		        }
-		        if(!Trials) {
-		            printf("> ERROR : Cannot open Connection\n");
-		            BSP_LED_On(LED2);
-		        }
-			} else {
-		        printf("> ERROR : es-wifi module CANNOT get IP address\n");
-		        BSP_LED_On(LED2);
-		    }
-		} else {
-	        printf("> ERROR : es-wifi module NOT connected\n");
-	        BSP_LED_On(LED2);
-	    }
-	} else {
-	    printf("> ERROR : WIFI Module cannot be initialized.\n");
-	    BSP_LED_On(LED2);
-	}
-}
-
-
-/**
-  * @brief  Initializes TIM3 as PWM source
-  * @param  None
-  * @retval None
-  */
-void pwm_init()
-{
-	// Initialize pin D5 (PB4) as PWM (TIM3) output
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-	GPIO_InitDef.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitDef.Pull = GPIO_NOPULL;
-	GPIO_InitDef.Speed = GPIO_SPEED_MEDIUM;
-	GPIO_InitDef.Pin = GPIO_PIN_4;
-	GPIO_InitDef.Alternate = GPIO_AF2_TIM3;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitDef);
-
-	// TIM3 init as PWM
-	__HAL_RCC_TIM3_CLK_ENABLE();
-	pwm_handle.Instance = TIM3;
-//	pwm_handle.State = HAL_TIM_STATE_RESET;
-//	pwm_handle.Channel = TIM_CHANNEL_1;
-	pwm_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-	pwm_handle.Init.Period = 31380;
-	pwm_handle.Init.Prescaler = 50;
-	pwm_handle.Init.RepetitionCounter = 0;
-	HAL_TIM_PWM_Init(&pwm_handle);
-
-	pwm_oc_init.OCFastMode = TIM_OCFAST_DISABLE;
-	pwm_oc_init.OCIdleState = TIM_OCIDLESTATE_RESET;
-	pwm_oc_init.OCMode = TIM_OCMODE_PWM1;
-	pwm_oc_init.OCPolarity = TIM_OCPOLARITY_HIGH;
-	pwm_oc_init.Pulse = 2354;
-	HAL_TIM_PWM_ConfigChannel(&pwm_handle, &pwm_oc_init, TIM_CHANNEL_1);
-}
-
-
-/**
-  * @brief  Sets the duty cycle of TIM3 CH1
-  * @param  duty - duty cycle to set (0.0-100.0)
-  * @retval None
-  */
-void pwm_set_duty(float duty)
-{
-	uint32_t pulse = pwm_handle.Init.Period * (duty / 100.0);
-	pwm_oc_init.Pulse = pulse;
-	HAL_TIM_PWM_ConfigChannel(&pwm_handle, &pwm_oc_init, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&pwm_handle, TIM_CHANNEL_1);
-}
-
-
 void set_servo_angle(int8_t angle)
 {
 	// 5% duty cycle is the leftmost position of the steering, 10% is the rightmost,
@@ -353,7 +179,7 @@ void set_servo_angle(int8_t angle)
 	// so 1 degree equals to (5 / 90) % in duty cycle.
 	// 7.5 % is 0 degrees
 	float duty = 7.5 + ((5.0 / 90.0) * (float)angle);
-	pwm_set_duty(duty);
+	servo_pwm_set_duty(duty);
 }
 
 
@@ -377,7 +203,6 @@ void set_servo()
 		stop();
 	}
 }
-
 
 
 ///**
