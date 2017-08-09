@@ -137,13 +137,13 @@ static void StartThread(void const * argument)
   User_notification(&gnetif);
   
   /* Start DHCPClient */
-  osThreadDef(DHCP, DHCP_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadDef(DHCP, DHCP_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 3);
   osThreadCreate (osThread(DHCP), &gnetif);
 
 #ifdef SERVER
 
   // Start the server thread
-  osThreadDef(SOCKET_SERVER, socket_server_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
+  osThreadDef(SOCKET_SERVER, socket_server_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 4);
   osThreadCreate (osThread(SOCKET_SERVER), NULL);
 #endif
 

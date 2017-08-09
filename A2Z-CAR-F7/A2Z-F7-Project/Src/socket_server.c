@@ -62,6 +62,7 @@ void socket_server_thread(void const *argument)
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
 	int client_socket;
+	uint8_t buff[9] = {255, 255, 255, 255, 255, 255, 255, 255, 255};
 
 	while (1) {
 		// Accept incoming connections
@@ -72,27 +73,30 @@ void socket_server_thread(void const *argument)
 			LCD_ErrLog("Socket server - invalid client socket\n");
 		} else {
 			// Define buffer for incoming message
-			uint8_t buff[9];
-			int received_bytes;
+
+			int received_bytes = 0;
 
 			// Receive data
 			do {
+
 				received_bytes = recv(client_socket, buff, sizeof(buff), 0);
 				// Check for error
 				if (received_bytes < 0) {
 					LCD_ErrLog("Socket server - can't receive\n");
 				} else {
+
 					//set LCD user feedback
-					draw_background();
-					for (int i = 0; i < 9; i++) {
-						LCD_UsrLog("S#%d: %d; ", i, buff[i]);
-						uint16_t r;
-						r = (uint16_t)buff[i] / 10;
-						draw_sensor_data(i, r);
+
+					for (uint8_t i = 0; i < 9; i++) {
+						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
+						draw_sensor_data(i, buff[i]);
+						osDelay(30);
 					}
-					LCD_UsrLog("\n");
 				}
-			} while (received_bytes > 0);
+				osDelay(1000);
+				LCD_UsrLog("\n");
+				draw_background();
+			} while (received_bytes != 9);
 
 			// Close the socket
 			closesocket(client_socket);
