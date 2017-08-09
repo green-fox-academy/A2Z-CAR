@@ -46,43 +46,57 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "test2.h"
+#include "adc_driver.h"
 #include "stm32l4xx_hal_tim.h"
 #include "cmsis_os.h"
+
 /* Private typedef -----------------------------------------------------------*/
 TIM_HandleTypeDef pwm_handle;
 TIM_OC_InitTypeDef pwm_oc_init;
 GPIO_InitTypeDef GPIO_InitDef;
-UART_HandleTypeDef uart_handle;
-ADC_HandleTypeDef adc_handle;
-ADC_ChannelConfTypeDef adc_ch_conf;
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables --------------------------------------------------------*/
 #define LED_TOGGLE_DELAY         (1000)
+
+#define SSID     "A66 Guest"
+#define PASSWORD "Hello123"
+
+#define WIFI_WRITE_TIMEOUT 10000
+#define WIFI_READ_TIMEOUT  10000
+#define CONNECTION_TRIAL_MAX          10
+
+uint8_t RemoteIP[] = {10, 27, 99, 110};
+uint8_t RxData [500];
+char* modulename;
+uint8_t TxData[] = "Hello big brother board!";
+uint16_t RxLen;
+uint8_t  MAC_Addr[6];
+uint8_t  IP_Addr[4];
+uint16_t Datalen;
+int32_t Socket = -1;
+
 TIM_HandleTypeDef pwm_handle;
 TIM_OC_InitTypeDef pwm_oc_init;
 
 /* Private function prototypes -----------------------------------------------*/
-static void ToggleLedThread(const void *argument);
+//static void ToggleLedThread(const void *argument);
 static void GPIO_ConfigAN(void);
 static void SystemClock_Config(void);
 
 static void StartThread(void const * argument);
 static void servo_control_thread(void const * argument);
+static void wifi_send_thread(void const * argument);
 
-//void uart_init();
+void system_init();
+void wifi_init();
 void pwm_init();
 void pwm_set_duty(float duty);
 void set_servo_angle(int8_t angle);
-
-#ifdef __GNUC__
-/* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
-   set to 'Yes') calls __io_putchar() */
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
+void stop();
+void set_servo();
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -91,355 +105,15 @@ void set_servo_angle(int8_t angle);
   * @param  None
   * @retval None
   */
-void a0_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_5;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOC, &GPIO_Init);
-	//ADC12_IN14
-	adc_handle.Instance = ADC1;
-	adc_ch_conf.Channel = ADC_CHANNEL_14;
-}
-void a1_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_4;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOC, &GPIO_Init);
-	//ADC12_IN13
-	adc_handle.Instance = ADC1;
-	adc_ch_conf.Channel = ADC_CHANNEL_13;
-}
-void a2_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_3;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOC, &GPIO_Init);
-	//ADC123_IN4
-	adc_handle.Instance = ADC2;
-	adc_ch_conf.Channel = ADC_CHANNEL_4;
-}
-void a3_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_2;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOC, &GPIO_Init);
-	//ADC123_IN3
-	adc_handle.Instance = ADC2;
-	adc_ch_conf.Channel = ADC_CHANNEL_3;
-}
-void a4_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_1;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOC, &GPIO_Init);
-	//ADC123_IN2
-	adc_handle.Instance = ADC3;
-	adc_ch_conf.Channel = ADC_CHANNEL_2;
-}
-void a5_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_0;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOC, &GPIO_Init);
-	//ADC123_IN1
-	adc_handle.Instance = ADC3;
-	adc_ch_conf.Channel = ADC_CHANNEL_1;
-}
-void d7_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_4;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOA, &GPIO_Init);
-	//pa4 ADC12_IN9
-	adc_handle.Instance = ADC1;
-	adc_ch_conf.Channel = ADC_CHANNEL_9;
-}
-void d1_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_0;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOA, &GPIO_Init);
-	//pa4 ADC12_IN9
-	adc_handle.Instance = ADC1;
-	adc_ch_conf.Channel = ADC_CHANNEL_5;
-}
-void d0_adc_init()
-{
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_1;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOA, &GPIO_Init);
-	//pa4 ADC12_IN9
-	adc_handle.Instance = ADC1;
-	adc_ch_conf.Channel = ADC_CHANNEL_6;
-}
-void d10_adc_init()
-{ //pa2 ADC12_IN7
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_2;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOA, &GPIO_Init);
-
-	adc_handle.Instance = ADC1;
-	adc_ch_conf.Channel = ADC_CHANNEL_7;
-}
-void d13_adc_init()
-{  //pa5 ADC12_IN10
-	__HAL_RCC_ADC_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_5;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_ANALOG_ADC_CONTROL;
-	HAL_GPIO_Init(GPIOA, &GPIO_Init);
-
-	adc_handle.Instance = ADC1;
-	adc_ch_conf.Channel = ADC_CHANNEL_10;
-}
-/*
- d1  pa0 ADC12_IN5
- d0  pa1 ADC12_IN6
- d10 pa2 ADC12_IN7
-     pa3 ADC12_IN8
- d7  pa4 ADC12_IN9
- d13 pa5 ADC12_IN10
-     pa6 ADC12_IN11
-     pa7 ADC12_IN12
-
-     pb0 ADC12_IN15
-     pb1 ADC12_IN16
- * */
-
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
-uint16_t adc_measure()
-{
-	HAL_ADC_Start(&adc_handle);
-	HAL_ADC_PollForConversion(&adc_handle, HAL_MAX_DELAY);
-	return HAL_ADC_GetValue(&adc_handle);
-}
-uint16_t adc_measure_avg(uint8_t num)
-{
-	uint32_t avg = 0, avg2 = 0;
-	uint16_t values[num];
-	for (int i = 0; i< num; i++) {
-		values[i] = adc_measure();
-		avg += values[i];
-	}
-	avg /= num;
-	int j = 0;
-	for (int i = 0; i< 10; i++) {
-		if (values[i] > avg * 0.7 && values[i] < avg * 1.3) {
-			avg2 += values[i];
-			j++;
-		}
-	}
-	avg2 /= j;
-	return avg2;
-}
-void adc_init()
-{
-	adc_handle.State = HAL_ADC_STATE_RESET;
-
-	adc_handle.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2; //
-	adc_handle.Init.Resolution = ADC_RESOLUTION_8B;
-	adc_handle.Init.EOCSelection = ADC_EOC_SEQ_CONV;
-	adc_handle.Init.DMAContinuousRequests = DISABLE;
-	adc_handle.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-	adc_handle.Init.ContinuousConvMode = DISABLE;
-	adc_handle.Init.DiscontinuousConvMode = DISABLE;
-	adc_handle.Init.ScanConvMode = DISABLE;
-	adc_handle.Init.NbrOfConversion = 1;
-	HAL_StatusTypeDef status = HAL_ADC_Init(&adc_handle);
-	printf("adcinit: %d\n",status);
-	adc_ch_conf.Offset = 0;
-	adc_ch_conf.Rank = 1;
-	adc_ch_conf.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	return;
-}
-void get_adc_values(uint8_t *adc_values)
-{
-	uint8_t *values;
-	values = adc_values;
-	a0_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-	//printf("adc: %d ",*values);
-	values++;
-	a1_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-	//printf("adc: %d ",*values);
-	values++;
-	a2_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-	//printf("adc: %d ",*values);
-	values++;
-	a3_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-	//printf("adc: %d ",*values);
-	values++;
-	a4_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-	values++;
-
-	d7_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-
-	values++;
-	d1_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-
-	values++;
-	d10_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-
-	values++;
-	d1_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-	//printf("adc: %d ",*values);
-	printf("\n ");
-
-}
-int8_t get_error()
-{
-	uint8_t adc_values[9];
-	get_adc_values(&adc_values);
-	for(int i = 0; i < 9; i++) {
-		printf("%d ",adc_values[i]);
-	}
-	uint8_t limit = 40;
-	if (adc_values[2] > limit) {
-		return 0;
-	} else if (adc_values[1] > limit) {
-		return 1;
-	} else if (adc_values[3] > limit) {
-		return -1;
-	} else if (adc_values[4] > limit) {
-		return -2;
-	} else if (adc_values[0] > limit) {
-		return 2;
-	} else {
-		return 3;
-	}
-
-}
-void uart_init()
-{
-	uart_handle.Instance = DISCOVERY_COM1;
-	uart_handle.Init.BaudRate = 115200;
-	uart_handle.Init.WordLength = UART_WORDLENGTH_8B;
-	uart_handle.Init.StopBits = UART_STOPBITS_1;
-	uart_handle.Init.Parity = UART_PARITY_NONE;
-	uart_handle.Init.Mode = UART_MODE_TX_RX;
-	uart_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	uart_handle.Init.OverSampling = UART_OVERSAMPLING_16;
-	uart_handle.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-	uart_handle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-	BSP_COM_Init(COM1, &uart_handle);
-
-	/* Output without printf, using HAL function*/
-	char msg[] = "UART HAL Example\r\n";
-	HAL_UART_Transmit(&uart_handle, msg, strlen(msg), 100);
-
-	/* Output a message using printf function */
-	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
-	printf("** Test finished successfully. ** \r\n");
-}
-void stop() {
-	BSP_LED_On(LED2);
-}
-void set_servo()
-{
-	int8_t error = get_error();
-	printf("error:%d\n",error);
-	if (error != 3) {
-		set_servo_angle(error * 10);
-		printf("servo: %d\n", error * 10);
-		//BSP_LED_Off(LED2);
-	} else {
-		//set_servo_to(0);
-		printf("stop\n");
-		stop();
-	}
-}
 int main(void)
 {
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
+
 	/* Configure the system clock to 80 MHz */
 	SystemClock_Config();
-	uart_init();
+
+	system_init();
 
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
@@ -461,23 +135,14 @@ int main(void)
 static void StartThread(void const * argument)
 {
 	/* Initialize LED */
-	BSP_LED_Init(LED2);
-
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-
-//	uart_init();
-
-	pwm_init();
-	a0_adc_init();
-	adc_init();
-	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE*2);
+	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
-	osThreadDef(Thread, ToggleLedThread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(Thread), NULL);
+	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(wifi), NULL);
 
 	while (1) {
-	/* Delete the Init Thread */
+	/* Delete the init thread */
 	osThreadTerminate(NULL);
 	}
 }
@@ -486,43 +151,113 @@ static void StartThread(void const * argument)
 static void servo_control_thread(void const * argument)
 {
 	while(1) {
-		/*
-		for (int8_t i = -45; i < 46; i++) {
-			printf("%d\n", i);
-			set_servo_angle(i);
-			osDelay(100);
-		}
-		for (int8_t i = 45; i > -46; i--) {
-			printf("%d\n", i);
-			set_servo_angle(i);
-			osDelay(100);
-		}
-		*/
 		set_servo();
+		osDelay(10);
 	}
-
 	while (1) {
-		/* Delete the Init Thread */
+		/* Delete the thread */
 		osThreadTerminate(NULL);
 	}
 }
 
 
-//void uart_init()
-//{
-//	uart_handle.Instance = DISCOVERY_COM1;
-//	uart_handle.Init.BaudRate = 115200;
-//	uart_handle.Init.WordLength = UART_WORDLENGTH_8B;
-//	uart_handle.Init.StopBits = UART_STOPBITS_1;
-//	uart_handle.Init.Parity = UART_PARITY_NONE;
-//	uart_handle.Init.Mode = UART_MODE_TX_RX;
-//	uart_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-//	uart_handle.Init.OverSampling = UART_OVERSAMPLING_16;
-//	uart_handle.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-//	uart_handle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-//
-//	BSP_COM_Init(COM1, &uart_handle);
-//}
+static void wifi_send_thread(void const * argument)
+{
+	//uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
+
+	while(1) {
+		if(Socket != -1) {
+			if(WIFI_SendData(Socket, adc_values, sizeof(&adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+				//printf("> ERROR : Failed to send Data.\n");
+			} else {
+				//printf("Data sent\n");
+			}
+
+		}
+		osDelay(1000);
+	}
+
+	while (1) {
+		/* Delete the thread */
+		osThreadTerminate(NULL);
+	}
+}
+
+
+void system_init()
+{
+	BSP_LED_Init(LED2);
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+	uart_init();
+	/* Output without printf, using HAL function*/
+	char msg[] = "UART HAL Example\r\n";
+	HAL_UART_Transmit(&uart_handle, msg, strlen(msg), 100);
+	/* Output a message using printf function */
+	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
+	printf("** Test finished successfully. ** \r\n");
+	wifi_init();
+	pwm_init();
+	adc_init();
+}
+
+
+void wifi_init()
+{
+	uint16_t Trials = CONNECTION_TRIAL_MAX;
+
+	/*Initialize  WIFI module */
+	if(WIFI_Init() ==  WIFI_STATUS_OK) {
+	    printf("> WIFI Module Initialized.\n");
+	    if(WIFI_GetMAC_Address(MAC_Addr) == WIFI_STATUS_OK) {
+	        printf("> es-wifi module MAC Address : %X:%X:%X:%X:%X:%X\n",
+	               MAC_Addr[0],
+	               MAC_Addr[1],
+	               MAC_Addr[2],
+	               MAC_Addr[3],
+	               MAC_Addr[4],
+	               MAC_Addr[5]);
+	    } else {
+	    	printf("> ERROR : CANNOT get MAC address\n");
+	        BSP_LED_On(LED2);
+	    }
+
+	    if( WIFI_Connect(SSID, PASSWORD, WIFI_ECN_WPA2_PSK) == WIFI_STATUS_OK) {
+	    	printf("> es-wifi module connected \n");
+	    	if(WIFI_GetIP_Address(IP_Addr) == WIFI_STATUS_OK) {
+	    		printf("> es-wifi module got IP Address : %d.%d.%d.%d\n",
+	    		               IP_Addr[0],
+	    		               IP_Addr[1],
+	    		               IP_Addr[2],
+	    		               IP_Addr[3]);
+
+				printf("> Trying to connect to Server: %d.%d.%d.%d:8002 ...\n",
+					   RemoteIP[0],
+					   RemoteIP[1],
+					   RemoteIP[2],
+					   RemoteIP[3]);
+		        while (Trials--) {
+		        	if( WIFI_OpenClientConnection(0, WIFI_TCP_PROTOCOL, "TCP_CLIENT", RemoteIP, 8002, 0) == WIFI_STATUS_OK) {
+						printf("> TCP Connection opened successfully.\n");
+						Socket = 0;
+		        	}
+		        }
+		        if(!Trials) {
+		            printf("> ERROR : Cannot open Connection\n");
+		            BSP_LED_On(LED2);
+		        }
+			} else {
+		        printf("> ERROR : es-wifi module CANNOT get IP address\n");
+		        BSP_LED_On(LED2);
+		    }
+		} else {
+	        printf("> ERROR : es-wifi module NOT connected\n");
+	        BSP_LED_On(LED2);
+	    }
+	} else {
+	    printf("> ERROR : WIFI Module cannot be initialized.\n");
+	    BSP_LED_On(LED2);
+	}
+}
 
 
 /**
@@ -569,7 +304,7 @@ void pwm_init()
   */
 void pwm_set_duty(float duty)
 {
-	uint32_t pulse = pwm_handle.Init.Period * (duty / 100);
+	uint32_t pulse = pwm_handle.Init.Period * (duty / 100.0);
 	pwm_oc_init.Pulse = pulse;
 	HAL_TIM_PWM_ConfigChannel(&pwm_handle, &pwm_oc_init, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&pwm_handle, TIM_CHANNEL_1);
@@ -582,46 +317,11 @@ void set_servo_angle(int8_t angle)
 	// leftmost is -45 degrees now, rightmost is 45,
 	// so 1 degree equals to (5 / 90) % in duty cycle.
 	// 7.5 % is 0 degrees
-	printf("angle %d \n", angle);
-	float duty = 7.5 + (5.0 / 90.0) * (float)angle;
+	float duty = 7.5 + ((5.0 / 90.0) * (float)angle);
 	pwm_set_duty(duty);
 }
 
 
-/**
-  * @brief Toggle Thread function
-  * @param  argument: Not used
-  * @retval None
-  */
-static void ToggleLedThread(const void *argument)
-{
-	for (;;) {
-		BSP_LED_On(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-		BSP_LED_Off(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-	}
-
-	while (1) {
-		/* Delete the Init Thread */
-		osThreadTerminate(NULL);
-	}
-}
-
-
-/**
-  * @brief  Retargets the C library printf function to the USART.
-  * @param  None
-  * @retval None
-  */
-PUTCHAR_PROTOTYPE
-{
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_UART_Transmit(&uart_handle, (uint8_t *)&ch, 1, 0xFFFF);
-
-  return ch;
-}
 
 
 void vMainPreStopProcessing(void)
