@@ -1,11 +1,5 @@
 /* Includes ------------------------------------------------------------------*/
-/*
-#include "lwip/opt.h"
-#include "main.h"
-#include "lwip/dhcp.h"
-#include "app_ethernet.h"
-#include "ethernetif.h"
-*/
+
 #include "socket_server.h"
 #include "lcd_log.h"
 #include "cmsis_os.h"
@@ -13,6 +7,7 @@
 #include "lwip/sockets.h"
 #include "stm32746g_discovery_ts.h"
 #include <string.h>
+#include "lcd_user_interface.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -28,15 +23,6 @@ void terminate_thread()
 		osThreadTerminate(NULL);
 }
 
-void LCD_Log_Num(int num)
-{
-	char buff[32];
-	LCD_UsrLog(itoa(num, buff, 32));
-	LCD_UsrLog("\n");
-}
-
-// TODO:
-// Implement this function!
 void socket_server_thread(void const *argument)
 {
 	LCD_UsrLog("Socket server - startup...\n");
@@ -78,52 +64,40 @@ void socket_server_thread(void const *argument)
 	int client_socket;
 
 	while (1) {
-			// Accept incoming connections
-			client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_addr_len);
-			LCD_UsrLog("Socket server - connection accepted\n");
-			// Check the client socket
-			if (client_socket < 0) {
-				LCD_ErrLog("Socket server - invalid client socket\n");
-			} else {
-				// Define buffer for incoming message
-				//char buff[SERVER_BUFF_LEN];
-				uint8_t buff[9];
-				int received_bytes;
+		// Accept incoming connections
+		client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_addr_len);
+		LCD_UsrLog("Socket server - connection accepted\n");
+		// Check the client socket
+		if (client_socket < 0) {
+			LCD_ErrLog("Socket server - invalid client socket\n");
+		} else {
+			// Define buffer for incoming message
+			uint8_t buff[9];
+			int received_bytes;
 
-				// Receive data
-				do {
-					received_bytes = recv(client_socket, buff, sizeof(buff), 0);
-					// Check for error
-					if (received_bytes < 0) {
-						LCD_ErrLog("Socket server - can't receive\n");
-					} else {
-						// Close the string
-						//buff[received_bytes] = '\0';
-						int x = 40;
-						uint8_t r;
-						BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
-						// Print message
-						for (int i = 0; i < 9; i++) {
-							LCD_UsrLog("Sensor %d value: %d\n", i, buff[i]);
-							r = (uint16_t)buff[i] / 10;
-							LCD_UsrLog("radius, %d\n", r);
-
-
-							x += 50;
-						}
-						BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-						draw_background();
-						x = 0;
-						r = 0;
-						// Send back the message
-						//send(client_socket, buff, received_bytes, 0);
+			// Receive data
+			do {
+				received_bytes = recv(client_socket, buff, sizeof(buff), 0);
+				// Check for error
+				if (received_bytes < 0) {
+					LCD_ErrLog("Socket server - can't receive\n");
+				} else {
+					//set LCD user feedback
+					draw_background();
+					for (int i = 0; i < 9; i++) {
+						LCD_UsrLog("S#%d: %d; ", i, buff[i]);
+						uint16_t r;
+						r = (uint16_t)buff[i] / 10;
+						draw_sensor_data(i, r);
 					}
-				} while (received_bytes > 0);
+					LCD_UsrLog("\n");
+				}
+			} while (received_bytes > 0);
 
-				// Close the socket
-				closesocket(client_socket);
+			// Close the socket
+			closesocket(client_socket);
 
-			LCD_UsrLog("Socket server - connection closed\n");
+		LCD_UsrLog("Socket server - connection closed\n");
 		}
 	}
 
@@ -134,5 +108,7 @@ void socket_server_thread(void const *argument)
 		LCD_UsrLog("Socket server - server socket closed\n");
 		osDelay(1000);
 	}
+
+	terminate_thread();
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

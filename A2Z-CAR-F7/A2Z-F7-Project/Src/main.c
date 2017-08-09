@@ -57,10 +57,9 @@
 #include "socket_server.h"
 #include "socket_client.h"
 #include "lcd_log.h"
-#include "led_matrix.h"
 #include "stm32f7xx_hal_conf.h"
 #include "stm32f7xx_hal.h"
-#include "led_matrix.h"
+#include "lcd_user_interface.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -74,7 +73,6 @@ ADC_ChannelConfTypeDef adc_ch_conf;
 /* Private variables ---------------------------------------------------------*/
 struct netif gnetif; /* network interface structure */
 
-
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void StartThread(void const * argument);
@@ -83,10 +81,6 @@ static void Netif_Config(void);
 static void MPU_Config(void);
 static void Error_Handler(void);
 static void CPU_CACHE_Enable(void);
-
-
-void adc_init();
-void adc_mesure_thread();
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -114,9 +108,7 @@ int main(void)
   /* Configure the system clock to 200 MHz */
   SystemClock_Config(); 
 
-
-
-  /* Init thread */
+  /* Init start thread */
   osThreadDef(Start, StartThread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE * 5);
   osThreadCreate (osThread(Start), NULL);
   
@@ -145,54 +137,26 @@ static void StartThread(void const * argument)
   /* Initialize the LwIP stack */
   Netif_Config();
 
-  adc_init();
-
   /* Notify user about the network interface config */
   User_notification(&gnetif);
-
-
-  osMessageQDef(message_q, 3, uint32_t); // Declare a message queue
-  message_q_id = osMessageCreate(osMessageQ(message_q), NULL);
   
   /* Start DHCPClient */
   osThreadDef(DHCP, DHCP_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(DHCP), &gnetif);
 
 #ifdef SERVER
-  // TODO:
-  // Define and start the server thread
+
+  // Start the server thread
   osThreadDef(SOCKET_SERVER, socket_server_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(SOCKET_SERVER), NULL);
 #endif
 
 #ifdef CLIENT
-  // TODO:
-  // Define and start the client thread
+
+  // Start the client thread
   osThreadDef(SOCKET_CLIENT, socket_client_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(SOCKET_CLIENT), NULL);
 #endif
-
-
-  // Start led matrix updater thread
-  //osThreadDef(LED_MATRIX_UPDATE, led_matrix_update_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
-  //osThreadCreate (osThread(LED_MATRIX_UPDATE), NULL);
-
-
-  // Start led_matrix_ts_thread
-  //osThreadDef(LED_MATRIX_TS, led_matrix_ts_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
-  //osThreadCreate (osThread(LED_MATRIX_TS), NULL);
-
-  // Start waterfall thread
-  //osThreadDef(LED_MATRIX_WATERFALL, led_matrix_waterfall_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
-  //osThreadCreate (osThread(LED_MATRIX_WATERFALL), NULL);
-
-  // Start waterfall thread
-  //osThreadDef(LED_MATRIX_TURN, turn_on_a_led_thread, osPriorityLow, 0, configMINIMAL_STACK_SIZE * 2);
-  //osThreadCreate (osThread(LED_MATRIX_TURN), NULL);
-
-  //osThreadDef(ADC_MEASURE, adc_mesure_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE * 2);
-  //osThreadCreate (osThread(ADC_MEASURE), NULL);
-
 
   while (1) {
     /* Delete the Init Thread */ 
@@ -325,33 +289,6 @@ static void SystemClock_Config(void)
   }
 }
 
-
-
-
-void adc_init()
-{
-
-	adc_handle.State = HAL_ADC_STATE_RESET;
-	adc_handle.Instance = ADC3;
-	adc_handle.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
-	adc_handle.Init.Resolution = ADC_RESOLUTION_12B;
-	adc_handle.Init.EOCSelection = ADC_EOC_SEQ_CONV;
-	adc_handle.Init.DMAContinuousRequests = DISABLE;
-	adc_handle.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-	adc_handle.Init.ContinuousConvMode = DISABLE;
-	adc_handle.Init.DiscontinuousConvMode = DISABLE;
-	adc_handle.Init.ScanConvMode = DISABLE;
-	HAL_ADC_Init(&adc_handle);
-
-	adc_ch_conf.Channel = ADC_CHANNEL_0;
-	adc_ch_conf.Offset = 0;
-	adc_ch_conf.Rank = 1;
-	adc_ch_conf.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-
-	LCD_UsrLog("ADC Init OK\n");
-}
-
 /**
   * @brief  Measures the voltage with ADC3 on CH0
   * @param  None
@@ -371,29 +308,6 @@ void adc_init()
 
 	return HAL_ADC_GetValue(&adc_handle);
 }*/
-
-void adc_mesure_thread() {
-	while (!is_ip_ok());
-	osDelay(1000);
-
-	uint32_t adc_data = 0;
-	LCD_UsrLog("ADC read started\n");
-
-
-	while(1) {
-		HAL_ADC_Start(&adc_handle);
-		HAL_ADC_PollForConversion(&adc_handle, HAL_MAX_DELAY);
-		//LCD_UsrLog("ADC measure in progress\n");
-		adc_data = HAL_ADC_GetValue(&adc_handle);
-		HAL_ADC_Stop(&adc_handle);
-
-		LCD_UsrLog("ADC value: %lu\n", adc_data);
-		osMessagePut(message_q_id, adc_data, osWaitForever);
-		osDelay(5);
-
-	}
-
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.

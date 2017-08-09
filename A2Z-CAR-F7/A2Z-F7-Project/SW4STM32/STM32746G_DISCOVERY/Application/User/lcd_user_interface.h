@@ -15,5 +15,6 @@
 #include "lcd_log.h"
 
 void draw_background();
+void draw_sensor_data(int sensor_num, uint16_t radius);
 
 #endif /* APPLICATION_USER_LCD_USER_INTERFACE_H_ */

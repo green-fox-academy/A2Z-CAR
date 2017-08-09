@@ -1,11 +1,5 @@
 /* Includes ------------------------------------------------------------------*/
-/*
-#include "lwip/opt.h"
-#include "main.h"
-#include "lwip/dhcp.h"
-#include "app_ethernet.h"
-#include "ethernetif.h"
-*/
+
 #include "socket_client.h"
 #include "socket_server.h"
 #include "lcd_log.h"
@@ -54,30 +48,11 @@ int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip)
 }
 
 
-/*int send_coordinates(int *socket)
-{
-	TS_StateTypeDef ts_data;
-
-	// Get TS data
-	BSP_TS_GetState(&ts_data);
-
-	// Send the whole data structure
-	int sent_bytes = send(*socket, &ts_data, CLIENT_BUFF_LEN, 0);
-
-	if (sent_bytes < 0)
-		LCD_ErrLog("Socket client - can't send TS data\n");
-
-	return sent_bytes;
-}*/
-
-
 int send_data(int *socket)
 {
-	TS_StateTypeDef ts_data;
-
 	char buff[CLIENT_BUFF_LEN];
 
-	// Send the whole data structure
+	// Send the data
 	int sent_bytes = send(*socket, buff, CLIENT_BUFF_LEN, 0);
 
 	if (sent_bytes < 0)
@@ -94,10 +69,6 @@ int send_data(int *socket)
 	return sent_bytes;
 }
 
-
-
-// TODO:
-// Implement this function!
 void socket_client_thread(void const *argument)
 {
 	LCD_UsrLog("Socket client - startup...\n");
@@ -114,7 +85,6 @@ void socket_client_thread(void const *argument)
 		// Try to connect to the server
 		if (connect_to_server(&client_socket, SERVER_PORT, CLIENT_SERVER_IP) == 0)
 			connected = 1;
-
 
 		// If connected
 		while (connected) {
