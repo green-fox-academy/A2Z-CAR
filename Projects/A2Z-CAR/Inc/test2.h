@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __ADC_DRIVER_H
-#define __ADC_DRIVER_H
+#ifndef __TEST2_H
+#define __TEST2_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
@@ -8,14 +8,11 @@
 #include "stdio.h"
 
 /* Exported types ------------------------------------------------------------*/
-ADC_HandleTypeDef adc_handle;
-ADC_ChannelConfTypeDef adc_ch_conf;
+UART_HandleTypeDef uart_handle;
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void adc_init();
-void set_servo();
-uint8_t adc_values[9];
+void uart_init();
 
-#endif /* __ADC_DRIVER_H */
+#endif /* __TEST2_H */
