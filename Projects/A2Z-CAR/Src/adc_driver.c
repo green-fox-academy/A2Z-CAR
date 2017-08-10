@@ -239,6 +239,12 @@ void get_adc_values(uint8_t *adc_values)
 	*values = adc_measure_avg(10);
 	values++;
 
+	a5_adc_init();
+	HAL_ADC_Init(&adc_handle);
+	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
+	*values = adc_measure_avg(10);
+	values++;
+
 	d7_adc_init();
 	HAL_ADC_Init(&adc_handle);
 	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
@@ -251,17 +257,10 @@ void get_adc_values(uint8_t *adc_values)
 	*values = adc_measure_avg(10);
 
 	values++;
-	d10_adc_init();
+	d0_adc_init();
 	HAL_ADC_Init(&adc_handle);
 	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
 	*values = adc_measure_avg(10);
-
-	values++;
-	d1_adc_init();
-	HAL_ADC_Init(&adc_handle);
-	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
-	//printf("\n ");
 
 }
 
@@ -270,8 +269,9 @@ int8_t get_error()
 
 	get_adc_values(&adc_values);
 	for(int i = 0; i < 9; i++) {
-		printf("%c",adc_values[i]);
+		//printf("%d ",adc_values[i]);
 	}
+	//printf("\n ");
 	uint8_t limit = 90;
 	if (adc_values[4] > limit) {
 		return 0;
@@ -298,7 +298,7 @@ int8_t get_error()
 
 void stop()
 {
-	BSP_LED_On(LED2);
+	//BSP_LED_On(LED2);
 }
 
 void set_servo()
@@ -311,7 +311,7 @@ void set_servo()
 	if (error != 5) {
 		set_servo_angle(error * 5);
 		//printf("servo: %d\n", error * 5);
-		BSP_LED_Off(LED2);
+		//BSP_LED_Off(LED2);
 	} else {
 		//printf("stop\n");
 		stop();

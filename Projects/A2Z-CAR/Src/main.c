@@ -116,7 +116,7 @@ int main(void)
 	system_init();
 
 	/* Init thread */
-	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate (osThread(Start), NULL);
 
 	/* Start scheduler */
@@ -139,11 +139,13 @@ static void StartThread(void const * argument)
 	osThreadCreate(osThread(servo), NULL);
 
 	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(wifi), NULL);
-
+	volatile osThreadId ret = osThreadCreate(osThread(wifi), NULL);
+	if (ret == NULL) {
+		while(1);
+	}
 	while (1) {
 	/* Delete the init thread */
-	osThreadTerminate(NULL);
+		osThreadTerminate(NULL);
 	}
 }
 
@@ -152,7 +154,8 @@ static void servo_control_thread(void const * argument)
 {
 	while(1) {
 		set_servo();
-		osDelay(10);
+		osDelay(100);
+		BSP_LED_Toggle(LED2);
 	}
 	while (1) {
 		/* Delete the thread */
@@ -164,17 +167,17 @@ static void servo_control_thread(void const * argument)
 static void wifi_send_thread(void const * argument)
 {
 	//uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
-
+	printf("wifi thread starting... \n");
 	while(1) {
+		printf("trying to send data\n");
 		if(Socket != -1) {
-			if(WIFI_SendData(Socket, adc_values, sizeof(&adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
-				//printf("> ERROR : Failed to send Data.\n");
+			if(WIFI_SendData(Socket, adc_values, sizeof(adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+				printf("> ERROR : Failed to send Data.\n");
 			} else {
-				//printf("Data sent\n");
+				printf("Data sent\n");
 			}
-
 		}
-		osDelay(1000);
+		osDelay(500);
 	}
 
 	while (1) {
