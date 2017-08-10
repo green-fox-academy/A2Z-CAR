@@ -90,7 +90,6 @@ void socket_server_thread(void const *argument)
 					for (uint8_t i = 0; i < 9; i++) {
 						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
 						draw_sensor_data(i, buff[i]);
-						osDelay(10);
 					}
 				}
 				osDelay(10);

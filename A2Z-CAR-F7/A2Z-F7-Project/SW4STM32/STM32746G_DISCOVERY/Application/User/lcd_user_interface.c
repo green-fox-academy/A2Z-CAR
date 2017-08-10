@@ -23,21 +23,28 @@ void draw_background()
 
 }
 
-void draw_sensor_data(int sensor_num, uint16_t radius)
+void draw_sensor_data(int sensor_num, uint8_t radius)
 {
 	int x = 40 + (sensor_num * 50);
 	int y = 73;
 
+
 	//LCD_UsrLog("radius, %d\n", radius);
-	if (radius <= 50) {
+	if (radius <= 10) {
 		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
-		BSP_LCD_FillCircle(x, y, 3);
-	} else if ((radius > 50) && (radius <= 150)){
+		BSP_LCD_FillCircle(x, y, 5);
+	} else if ((radius > 10) && (radius <= 20)){
 		BSP_LCD_SetTextColor(LCD_COLOR_YELLOW);
+		BSP_LCD_FillCircle(x, y, 10);
+	} else if ((radius > 20) && (radius <= 30)){
+		BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
 		BSP_LCD_FillCircle(x, y, 15);
-	} else if (radius > 150) {
+	} else if ((radius > 30) && (radius <= 40)){
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKRED);
+		BSP_LCD_FillCircle(x, y, 20);
+	} else if (radius > 40) {
 		BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-		BSP_LCD_FillCircle(x, y, 23);
+		BSP_LCD_FillCircle(x, y, 25);
 	}
 
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
