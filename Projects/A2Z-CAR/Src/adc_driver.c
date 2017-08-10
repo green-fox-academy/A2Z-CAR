@@ -272,7 +272,7 @@ int8_t get_error()
 		//printf("%d ",adc_values[i]);
 	}
 	//printf("\n ");
-	uint8_t limit = 90;
+	uint8_t limit = 40;
 	if (adc_values[4] > limit) {
 		return 0;
 	} else if (adc_values[3] > limit) {
@@ -309,7 +309,7 @@ void set_servo()
 	//printf("error:%d\n",error);
 
 	if (error != 5) {
-		set_servo_angle(error * 5);
+		set_servo_angle(error * 8);
 		//printf("servo: %d\n", error * 5);
 		//BSP_LED_Off(LED2);
 	} else {
