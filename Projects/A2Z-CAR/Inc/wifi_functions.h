@@ -7,6 +7,7 @@
 #include "stm32l475e_iot01.h"
 #include "stdio.h"
 #include "wifi.h"
+#include "cmsis_os.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

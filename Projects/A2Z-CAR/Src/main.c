@@ -51,22 +51,17 @@
 #include "pwm_driver.h"
 #include "wifi_functions.h"
 #include "servo_control.h"
-#include "stm32l4xx_hal_tim.h"
 #include "cmsis_os.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables --------------------------------------------------------*/
-#define LED_TOGGLE_DELAY         (1000)
-
 /* Private function prototypes -----------------------------------------------*/
-//static void ToggleLedThread(const void *argument);
 static void GPIO_ConfigAN(void);
 static void SystemClock_Config(void);
 
 static void StartThread(void const * argument);
-static void ToggleLedThread(const void *argument);
 
 void system_init();
 
@@ -87,12 +82,9 @@ int main(void)
 
 	system_init();
 
-	servo_pwm_set_duty(25);
-	motor_pwm_set_duty(25);
-
 	/* Init thread */
-//	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-//	osThreadCreate (osThread(Start), NULL);
+	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	osThreadCreate (osThread(Start), NULL);
 
 	/* Start scheduler */
 	osKernelStart();
@@ -142,33 +134,9 @@ static void StartThread(void const * argument)
 	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(wifi), NULL);
 
-	osThreadDef(Thread, ToggleLedThread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(Thread), NULL);
-
 	while (1) {
 	/* Delete the init thread */
 	osThreadTerminate(NULL);
-	}
-}
-
-
-/**
-  * @brief Toggle Thread function
-  * @param  argument: Not used
-  * @retval None
-  */
-static void ToggleLedThread(const void *argument)
-{
-	for (;;) {
-		BSP_LED_On(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-		BSP_LED_Off(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-	}
-
-	while (1) {
-		/* Delete the Init Thread */
-		osThreadTerminate(NULL);
 	}
 }
 

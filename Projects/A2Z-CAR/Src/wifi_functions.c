@@ -73,19 +73,6 @@ void wifi_send_thread(void const * argument)
 {
 	uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
 
-//	while (1) {
-//		if (BSP_PB_GetState(BUTTON_USER) == 0) {
-//			printf("button pushed\n");
-//			if(Socket != -1) {
-//				if(WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
-//					printf("> ERROR : Failed to send Data.\n");
-//			    } else {
-//					printf("Message \"%s\" sent\n", TxData);
-//			    }
-//			}
-//		}
-//	}
-
 	while(1) {
 		if(Socket != -1) {
 			if(WIFI_SendData(Socket, adc_values, sizeof(&adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
