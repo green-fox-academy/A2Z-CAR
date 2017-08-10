@@ -267,7 +267,7 @@ void get_adc_values(uint8_t *adc_values)
 int8_t get_error()
 {
 
-	get_adc_values(&adc_values);
+	get_adc_values(adc_values);
 	for(int i = 0; i < 9; i++) {
 		//printf("%d ",adc_values[i]);
 	}
@@ -296,28 +296,7 @@ int8_t get_error()
 	}
 }
 
-void stop()
-{
-	//BSP_LED_On(LED2);
-}
 
-void set_servo()
-{
-	//printf("valami ");
-
-	int8_t error = get_error();
-	//printf("error:%d\n",error);
-
-	if (error != 5) {
-		set_servo_angle(error * 5);
-		//printf("servo: %d\n", error * 5);
-		//BSP_LED_Off(LED2);
-	} else {
-		//printf("stop\n");
-		stop();
-	}
-
-}
 /*
  d1  pa0 ADC12_IN5
  d0  pa1 ADC12_IN6

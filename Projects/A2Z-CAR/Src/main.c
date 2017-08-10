@@ -126,7 +126,6 @@ int8_t system_init()
 		return -1;
 	}
 
-	a0_adc_init();
 	adc_init();
 
 	return 0;

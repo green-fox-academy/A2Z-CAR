@@ -15,6 +15,7 @@ ADC_ChannelConfTypeDef adc_ch_conf;
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void adc_init();
+int8_t get_error();
 void set_servo();
 uint8_t adc_values[9];
 

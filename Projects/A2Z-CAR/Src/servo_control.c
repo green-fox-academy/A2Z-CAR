@@ -20,17 +20,20 @@ void stop()
 
 void set_servo()
 {
+	//printf("valami ");
+
 	int8_t error = get_error();
-	printf("error:%d\n",error);
-	if (error != 3) {
-		set_servo_angle(error * 10);
-		printf("servo: %d\n", error * 10);
+	//printf("error:%d\n",error);
+
+	if (error != 5) {
+		set_servo_angle(error * 5);
+		//printf("servo: %d\n", error * 5);
 		//BSP_LED_Off(LED2);
 	} else {
-		//set_servo_to(0);
-		printf("stop\n");
+		//printf("stop\n");
 		stop();
 	}
+
 }
 
 void servo_control_thread(void const * argument)
