@@ -273,13 +273,13 @@ int8_t get_error()
 		//printf("%d ",adc_values[i]);
 	}
 	//printf("\n ");
-	uint8_t limit = 90;
+	uint8_t limit = 40;
 	if (adc_values[4] > limit) {
 		return 0;
 	} else if (adc_values[3] > limit) {
-		return 1;
-	} else if (adc_values[5] > limit) {
 		return -1;
+	} else if (adc_values[5] > limit) {
+		return 1;
 	} else if (adc_values[2] > limit) {
 		return -2;
 	} else if (adc_values[6] > limit) {
@@ -296,7 +296,6 @@ int8_t get_error()
 		return 5;
 	}
 }
-
 
 /*
  d1  pa0 ADC12_IN5
