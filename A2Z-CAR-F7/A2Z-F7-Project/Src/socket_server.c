@@ -84,19 +84,19 @@ void socket_server_thread(void const *argument)
 				if (received_bytes < 0) {
 					LCD_ErrLog("Socket server - can't receive\n");
 				} else {
-
+					draw_background();
 					//set LCD user feedback
 
 					for (uint8_t i = 0; i < 9; i++) {
 						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
 						draw_sensor_data(i, buff[i]);
-						osDelay(30);
+						osDelay(10);
 					}
 				}
-				osDelay(1000);
+				osDelay(10);
 				LCD_UsrLog("\n");
-				draw_background();
-			} while (received_bytes != 9);
+
+			} while (received_bytes > 0);
 
 			// Close the socket
 			closesocket(client_socket);
