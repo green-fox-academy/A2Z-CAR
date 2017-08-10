@@ -9,6 +9,7 @@ uint8_t  MAC_Addr[6];
 uint8_t  IP_Addr[4];
 uint16_t Datalen;
 int32_t Socket = -1;
+uint8_t adc_values[9];
 
 int8_t wifi_init()
 {
@@ -74,20 +75,18 @@ int8_t wifi_init()
 
 void wifi_send_thread(void const * argument)
 {
-	uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
-
+	//uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
+	printf("wifi thread starting... \n");
 	while(1) {
+		printf("trying to send data\n");
 		if(Socket != -1) {
-			if(WIFI_SendData(Socket, adc_values, sizeof(&adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+			if(WIFI_SendData(Socket, adc_values, sizeof(adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 				printf("> ERROR : Failed to send Data.\n");
 			} else {
 				printf("Data sent\n");
 			}
-			for (int i=0; i < 9; i++) {
-				adc_values[i] = 255 - adc_values[i];
-			}
 		}
-		osDelay(1000);
+		osDelay(500);
 	}
 
 	while (1) {

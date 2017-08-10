@@ -35,19 +35,11 @@ void set_servo()
 
 void servo_control_thread(void const * argument)
 {
-//	while(1) {
-//		for (int8_t i = -45; i < 46; i++) {
-//			set_servo_angle(i);
-//			osDelay(10);
-//		}
-//		for (int8_t i = 45; i > -46; i--) {
-//			set_servo_angle(i);
-//			osDelay(10);
-//		}
-//	}
-
-	set_servo();
-
+	while(1) {
+		set_servo();
+		osDelay(100);
+		BSP_LED_Toggle(LED2);
+	}
 	while (1) {
 		/* Delete the thread */
 		osThreadTerminate(NULL);
