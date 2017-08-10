@@ -13,7 +13,6 @@ TIM_HandleTypeDef motor_pwm_handle;
 TIM_OC_InitTypeDef servo_pwm_oc_init;
 TIM_OC_InitTypeDef motor_pwm_oc_init;
 GPIO_InitTypeDef GPIO_InitDef;
-GPIO_InitTypeDef GPIO_InitDef_a;
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

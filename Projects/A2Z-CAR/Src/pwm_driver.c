@@ -42,12 +42,12 @@ void motor_pwm_init()
 {
 	// Initialize pin D9 (PA15) as PWM (TIM2) output
 	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitDef_a.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitDef_a.Pull = GPIO_NOPULL;
-	GPIO_InitDef_a.Speed = GPIO_SPEED_MEDIUM;
-	GPIO_InitDef_a.Pin = GPIO_PIN_15;
-	GPIO_InitDef_a.Alternate = GPIO_AF1_TIM2;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitDef_a);
+	GPIO_InitDef.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitDef.Pull = GPIO_NOPULL;
+	GPIO_InitDef.Speed = GPIO_SPEED_MEDIUM;
+	GPIO_InitDef.Pin = GPIO_PIN_15;
+	GPIO_InitDef.Alternate = GPIO_AF1_TIM2;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitDef);
 
 	// TIM2 init as PWM, 10 kHz
 	__HAL_RCC_TIM2_CLK_ENABLE();
