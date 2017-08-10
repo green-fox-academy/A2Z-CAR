@@ -23,7 +23,6 @@ void servo_pwm_init()
 	servo_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	servo_pwm_handle.Init.Period = 31380;
 	servo_pwm_handle.Init.Prescaler = 50;
-	servo_pwm_handle.Init.RepetitionCounter = 0;
 	HAL_TIM_PWM_Init(&servo_pwm_handle);
 
 	servo_pwm_oc_init.OCFastMode = TIM_OCFAST_DISABLE;
@@ -47,7 +46,7 @@ void motor_pwm_init()
 	GPIO_InitDef_a.Pull = GPIO_NOPULL;
 	GPIO_InitDef_a.Speed = GPIO_SPEED_MEDIUM;
 	GPIO_InitDef_a.Pin = GPIO_PIN_15;
-	GPIO_InitDef_a.Alternate = GPIO_AF2_TIM2;
+	GPIO_InitDef_a.Alternate = GPIO_AF1_TIM2;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitDef_a);
 
 	// TIM2 init as PWM, app. 50 Hz
@@ -57,7 +56,6 @@ void motor_pwm_init()
 	motor_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	motor_pwm_handle.Init.Period = 31380;
 	motor_pwm_handle.Init.Prescaler = 50;
-	motor_pwm_handle.Init.RepetitionCounter = 0;
 	HAL_TIM_PWM_Init(&motor_pwm_handle);
 
 	motor_pwm_oc_init.OCFastMode = TIM_OCFAST_DISABLE;
