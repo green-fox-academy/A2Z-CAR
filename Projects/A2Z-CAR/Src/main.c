@@ -46,32 +46,24 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32l4xx_hal_tim.h"
+#include "uart.h"
+#include "adc_driver.h"
+#include "pwm_driver.h"
+#include "wifi_functions.h"
+#include "servo_control.h"
 #include "cmsis_os.h"
 
 /* Private typedef -----------------------------------------------------------*/
-TIM_HandleTypeDef pwm_handle;
-TIM_OC_InitTypeDef pwm_oc_init;
-GPIO_InitTypeDef GPIO_InitDef;
-
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables --------------------------------------------------------*/
-#define LED_TOGGLE_DELAY         (1000)
-TIM_HandleTypeDef pwm_handle;
-TIM_OC_InitTypeDef pwm_oc_init;
-
 /* Private function prototypes -----------------------------------------------*/
-static void ToggleLedThread(const void *argument);
 static void GPIO_ConfigAN(void);
 static void SystemClock_Config(void);
 
 static void StartThread(void const * argument);
-static void servo_control_thread(void const * argument);
 
-void pwm_init();
-void pwm_set_duty(float duty);
-void set_servo_angle(int8_t angle);
+int8_t system_init();
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -88,15 +80,55 @@ int main(void)
 	/* Configure the system clock to 80 MHz */
 	SystemClock_Config();
 
-	/* Init thread */
-	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-	osThreadCreate (osThread(Start), NULL);
+	if (system_init() != OK) {
+		return -1;
+	}
 
-	/* Start scheduler */
-	osKernelStart();
+	servo_pwm_set_duty(50);
+
+//	/* Init thread */
+//	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+//	osThreadCreate (osThread(Start), NULL);
+//
+//	/* Start scheduler */
+//	osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
 	for (;;);
+}
+
+
+int8_t system_init()
+{
+	BSP_LED_Init(LED2);
+
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
+	uart_init();
+
+	/* Output without printf, using HAL function*/
+	char msg[] = "UART HAL Example\r\n";
+	HAL_UART_Transmit(&uart_handle, msg, strlen(msg), 100);
+
+	/* Output a message using printf function */
+	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
+	printf("** Test finished successfully. ** \r\n");
+
+	if (wifi_init() != OK) {
+		return -1;
+	}
+
+	if (servo_pwm_init() != OK) {
+		return -1;
+	}
+
+	if (motor_pwm_init() != OK) {
+		return -1;
+	}
+
+	adc_init();
+
+	return 0;
 }
 
 
@@ -108,124 +140,15 @@ int main(void)
 static void StartThread(void const * argument)
 {
 	/* Initialize LED */
-	BSP_LED_Init(LED2);
-
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-
-	pwm_init();
-
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
-	osThreadDef(Thread, ToggleLedThread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(Thread), NULL);
+	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(wifi), NULL);
 
 	while (1) {
-	/* Delete the Init Thread */
+	/* Delete the init thread */
 	osThreadTerminate(NULL);
-	}
-}
-
-
-static void servo_control_thread(void const * argument)
-{
-	while(1) {
-		for (int8_t i = -45; i < 46; i++) {
-			set_servo_angle(i);
-			osDelay(1);
-		}
-		for (int8_t i = 45; i > -46; i--) {
-			set_servo_angle(i);
-			osDelay(1);
-		}
-	}
-
-	while (1) {
-		/* Delete the Init Thread */
-		osThreadTerminate(NULL);
-	}
-}
-
-
-/**
-  * @brief  Initializes TIM3 as PWM source
-  * @param  None
-  * @retval None
-  */
-void pwm_init()
-{
-	// Initialize pin D5 (PB4) as PWM (TIM3) output
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-	GPIO_InitDef.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitDef.Pull = GPIO_NOPULL;
-	GPIO_InitDef.Speed = GPIO_SPEED_MEDIUM;
-	GPIO_InitDef.Pin = GPIO_PIN_4;
-	GPIO_InitDef.Alternate = GPIO_AF2_TIM3;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitDef);
-
-	// TIM3 init as PWM
-	__HAL_RCC_TIM3_CLK_ENABLE();
-	pwm_handle.Instance = TIM3;
-//	pwm_handle.State = HAL_TIM_STATE_RESET;
-//	pwm_handle.Channel = TIM_CHANNEL_1;
-	pwm_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-	pwm_handle.Init.Period = 31380;
-	pwm_handle.Init.Prescaler = 50;
-	pwm_handle.Init.RepetitionCounter = 0;
-	HAL_TIM_PWM_Init(&pwm_handle);
-
-	pwm_oc_init.OCFastMode = TIM_OCFAST_DISABLE;
-	pwm_oc_init.OCIdleState = TIM_OCIDLESTATE_RESET;
-	pwm_oc_init.OCMode = TIM_OCMODE_PWM1;
-	pwm_oc_init.OCPolarity = TIM_OCPOLARITY_HIGH;
-	pwm_oc_init.Pulse = 2354;
-	HAL_TIM_PWM_ConfigChannel(&pwm_handle, &pwm_oc_init, TIM_CHANNEL_1);
-}
-
-
-/**
-  * @brief  Sets the duty cycle of TIM3 CH1
-  * @param  duty - duty cycle to set (0.0-100.0)
-  * @retval None
-  */
-void pwm_set_duty(float duty)
-{
-	uint32_t pulse = pwm_handle.Init.Period * (duty / 100.0);
-	pwm_oc_init.Pulse = pulse;
-	HAL_TIM_PWM_ConfigChannel(&pwm_handle, &pwm_oc_init, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&pwm_handle, TIM_CHANNEL_1);
-}
-
-
-void set_servo_angle(int8_t angle)
-{
-	// 5% duty cycle is the leftmost position of the steering, 10% is the rightmost,
-	// leftmost is -45 degrees now, rightmost is 45,
-	// so 1 degree equals to (5 / 90) % in duty cycle.
-	// 7.5 % is 0 degrees
-	float duty = 7.5 + (5 / 90) * angle;
-	pwm_set_duty(duty);
-}
-
-
-/**
-  * @brief Toggle Thread function
-  * @param  argument: Not used
-  * @retval None
-  */
-static void ToggleLedThread(const void *argument)
-{
-	for (;;) {
-		BSP_LED_On(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-		BSP_LED_Off(LED2);
-		osDelay(LED_TOGGLE_DELAY);
-	}
-
-	while (1) {
-		/* Delete the Init Thread */
-		osThreadTerminate(NULL);
 	}
 }
 
