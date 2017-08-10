@@ -276,9 +276,9 @@ int8_t get_error()
 	if (adc_values[4] > limit) {
 		return 0;
 	} else if (adc_values[3] > limit) {
-		return 1;
-	} else if (adc_values[5] > limit) {
 		return -1;
+	} else if (adc_values[5] > limit) {
+		return 1;
 	} else if (adc_values[2] > limit) {
 		return -2;
 	} else if (adc_values[6] > limit) {
