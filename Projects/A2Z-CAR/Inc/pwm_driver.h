@@ -17,8 +17,8 @@ GPIO_InitTypeDef GPIO_InitDef;
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void servo_pwm_init();
-void motor_pwm_init();
+int8_t servo_pwm_init();
+int8_t motor_pwm_init();
 void servo_pwm_set_duty(float duty);
 void motor_pwm_set_duty(float duty);
 

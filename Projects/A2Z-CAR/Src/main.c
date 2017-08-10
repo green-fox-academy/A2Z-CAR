@@ -63,7 +63,7 @@ static void SystemClock_Config(void);
 
 static void StartThread(void const * argument);
 
-void system_init();
+int8_t system_init();
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -80,21 +80,25 @@ int main(void)
 	/* Configure the system clock to 80 MHz */
 	SystemClock_Config();
 
-	system_init();
+	if (system_init() != OK) {
+		return -1;
+	}
 
-	/* Init thread */
-	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-	osThreadCreate (osThread(Start), NULL);
+	servo_pwm_set_duty(50);
 
-	/* Start scheduler */
-	osKernelStart();
+//	/* Init thread */
+//	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+//	osThreadCreate (osThread(Start), NULL);
+//
+//	/* Start scheduler */
+//	osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
 	for (;;);
 }
 
 
-void system_init()
+int8_t system_init()
 {
 	BSP_LED_Init(LED2);
 
@@ -110,13 +114,22 @@ void system_init()
 	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
 	printf("** Test finished successfully. ** \r\n");
 
-	wifi_init();
+	if (wifi_init() != OK) {
+		return -1;
+	}
 
-	servo_pwm_init();
-	motor_pwm_init();
+	if (servo_pwm_init() != OK) {
+		return -1;
+	}
+
+	if (motor_pwm_init() != OK) {
+		return -1;
+	}
 
 	a0_adc_init();
 	adc_init();
+
+	return 0;
 }
 
 

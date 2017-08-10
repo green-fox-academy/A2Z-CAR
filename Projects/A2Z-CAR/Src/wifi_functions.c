@@ -10,7 +10,7 @@ uint8_t  IP_Addr[4];
 uint16_t Datalen;
 int32_t Socket = -1;
 
-void wifi_init()
+int8_t wifi_init()
 {
 	uint16_t Trials = CONNECTION_TRIAL_MAX;
 
@@ -65,7 +65,10 @@ void wifi_init()
 	} else {
 	    printf("> ERROR : WIFI Module cannot be initialized.\n");
 	    BSP_LED_On(LED2);
+	    return -1;
 	}
+
+	return 0;
 }
 
 

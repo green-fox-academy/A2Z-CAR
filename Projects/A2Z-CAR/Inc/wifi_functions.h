@@ -20,7 +20,7 @@
 #define CONNECTION_TRIAL_MAX          10
 
 /* Exported functions ------------------------------------------------------- */
-void wifi_init();
+int8_t wifi_init();
 void wifi_send_thread(void const * argument);
 
 #endif /* __WIFI_FUNCTIONS_H */

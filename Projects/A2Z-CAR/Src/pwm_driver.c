@@ -5,7 +5,7 @@
   * @param  None
   * @retval None
   */
-void servo_pwm_init()
+int8_t servo_pwm_init()
 {
 	// Initialize pin D5 (PB4) as PWM (TIM3) output
 	__HAL_RCC_GPIOB_CLK_ENABLE();
@@ -23,7 +23,9 @@ void servo_pwm_init()
 	servo_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	servo_pwm_handle.Init.Period = 31380;
 	servo_pwm_handle.Init.Prescaler = 50;
-	HAL_TIM_PWM_Init(&servo_pwm_handle);
+	if (HAL_TIM_PWM_Init(&servo_pwm_handle) != HAL_OK) {
+		return -1;
+	}
 
 	servo_pwm_oc_init.OCFastMode = TIM_OCFAST_DISABLE;
 	servo_pwm_oc_init.OCIdleState = TIM_OCIDLESTATE_RESET;
@@ -31,6 +33,8 @@ void servo_pwm_init()
 	servo_pwm_oc_init.OCPolarity = TIM_OCPOLARITY_HIGH;
 	servo_pwm_oc_init.Pulse = 2354;
 	HAL_TIM_PWM_ConfigChannel(&servo_pwm_handle, &servo_pwm_oc_init, TIM_CHANNEL_1);
+
+	return 0;
 }
 
 /**
@@ -38,7 +42,7 @@ void servo_pwm_init()
   * @param  None
   * @retval None
   */
-void motor_pwm_init()
+int8_t motor_pwm_init()
 {
 	// Initialize pin D9 (PA15) as PWM (TIM2) output
 	__HAL_RCC_GPIOA_CLK_ENABLE();
@@ -56,7 +60,9 @@ void motor_pwm_init()
 	motor_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	motor_pwm_handle.Init.Period = 8000;
 	motor_pwm_handle.Init.Prescaler = 0;
-	HAL_TIM_PWM_Init(&motor_pwm_handle);
+	if (HAL_TIM_PWM_Init(&motor_pwm_handle) != HAL_OK) {
+		return -1;
+	}
 
 	motor_pwm_oc_init.OCFastMode = TIM_OCFAST_DISABLE;
 	motor_pwm_oc_init.OCIdleState = TIM_OCIDLESTATE_RESET;
@@ -64,6 +70,8 @@ void motor_pwm_init()
 	motor_pwm_oc_init.OCPolarity = TIM_OCPOLARITY_HIGH;
 	motor_pwm_oc_init.Pulse = 4000;
 	HAL_TIM_PWM_ConfigChannel(&motor_pwm_handle, &motor_pwm_oc_init, TIM_CHANNEL_1);
+
+	return 0;
 }
 
 
