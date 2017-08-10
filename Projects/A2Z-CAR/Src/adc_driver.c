@@ -184,7 +184,8 @@ uint16_t adc_measure_avg(uint8_t num)
 }
 
 void adc_init()
-{	a0_adc_init();
+{
+	a0_adc_init();
 	adc_handle.State = HAL_ADC_STATE_RESET;
 
 	adc_handle.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2; //
