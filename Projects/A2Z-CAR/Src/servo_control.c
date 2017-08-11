@@ -37,7 +37,7 @@ void servo_control_thread(void const * argument)
 {
 	while(1) {
 		set_servo();
-		osDelay(500);
+		osDelay(10);
 		//BSP_LED_Toggle(LED2);
 	}
 	while (1) {
