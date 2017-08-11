@@ -84,8 +84,6 @@ int main(void)
 		return -1;
 	}
 
-	servo_pwm_set_duty(50);
-
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
 	osThreadCreate (osThread(Start), NULL);
@@ -126,6 +124,8 @@ int8_t system_init()
 	if (motor_pwm_init() != OK) {
 		return -1;
 	}
+
+	led_init();
 
 	adc_init();
 

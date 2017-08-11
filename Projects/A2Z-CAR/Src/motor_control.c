@@ -21,3 +21,19 @@
 		integral = integral - error;
 	}
 */
+
+float p_value;
+float i_value;
+float error;
+float integral;
+float required_current;
+float measured_current;
+
+void motor_control_thread(void const * argument)
+{
+
+	while (1) {
+		/* Delete the thread */
+		osThreadTerminate(NULL);
+	}
+}
