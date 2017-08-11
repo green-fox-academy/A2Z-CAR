@@ -20,28 +20,25 @@ void stop()
 
 void set_servo()
 {
-	//printf("valami ");
+	int8_t bias = get_bias();
+	printf("bias:%d\n",bias);
 
-	int8_t error = get_error();
-	//printf("error:%d\n",error);
-
-	if (error != 5) {
-		set_servo_angle(error * 5);
-		//printf("servo: %d\n", error * 5);
-		//BSP_LED_Off(LED2);
+	if (bias <= 12) {
+		set_servo_angle(bias * 3);
+		printf("servo: %d\n", bias * 3);
+		BSP_LED_Off(LED2);
 	} else {
-		//printf("stop\n");
+		printf("no line, stop\n");
 		stop();
 	}
-
 }
 
 void servo_control_thread(void const * argument)
 {
 	while(1) {
 		set_servo();
-		osDelay(100);
-		BSP_LED_Toggle(LED2);
+		osDelay(10);
+		//BSP_LED_Toggle(LED2);
 	}
 	while (1) {
 		/* Delete the thread */
