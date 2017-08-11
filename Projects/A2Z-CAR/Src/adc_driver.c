@@ -212,9 +212,9 @@ int8_t get_bias()
 {
 	get_adc_values(adc_values);
 	for(int i = 0; i < 9; i++) {
-		printf("%d ",adc_values[i]);
+		//printf("%d ",adc_values[i]);
 	}
-	printf("\n");
+	//printf("\n");
 	uint8_t limit = 40;
 	uint8_t first = 0, second = 0;
 	for (int i = 0; i < 9; i++) {

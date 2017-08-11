@@ -18,7 +18,7 @@ void set_servo_angle(int8_t ang)
 		angle = 36;
 	else if (ang < -36)
 		angle = -36;
-	printf("angle: %d\n",angle);
+	//printf("angle: %d\n",angle);
 	float duty = 7.5 + ((5.0 / 90.0) * (float)angle);
 	servo_pwm_set_duty(duty);
 }
@@ -33,19 +33,21 @@ void do_this_if_no_line()
 void set_servo()
 {
 	int8_t bias = get_bias();
-	if (bias <= 12)
+	if (bias <= 12) {
 		global_bias = bias;
-	printf("bias:%d\n",bias);
+		cnt = 0;
+	} else {
+		cnt++;
+	}
 	if (bias <= 12 || cnt < cnt_limit) {
 		set_servo_angle(global_bias * 4);
-		printf("servo: %d\n", global_bias * 4);
+		//printf("servo: %d\n", global_bias * 4);
 		BSP_LED_Off(LED2);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
 	} else {
-		printf("no line\n");
+		//printf("no line\n");
 		do_this_if_no_line();
-		cnt++;
 	}
 }
 
@@ -53,7 +55,7 @@ void servo_control_thread(void const * argument)
 {
 	while(1) {
 		set_servo();
-		osDelay(5);
+		osDelay(10);
 		//BSP_LED_Toggle(LED2);
 	}
 	while (1) {
