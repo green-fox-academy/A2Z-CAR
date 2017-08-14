@@ -58,7 +58,7 @@
 		<link>
 			<name>Applications/User/motor_control.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Src/motor_control.c</locationURI>
+			<location>C:/Green Fox/A2Z-CAR/Projects/A2Z-CAR/Src/motor_control.c</location>
 		</link>
 		<link>
 			<name>Applications/User/pwm_driver.c</name>
