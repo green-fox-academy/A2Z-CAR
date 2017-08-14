@@ -40,7 +40,7 @@ float pi_control()
 
 void motor_control_thread(void const * argument)
 {
-	// Initialize pin D6 and D8 (PB1 and PB2) as output
+	// Initialize pin D6 and D8 (PB1 and PB2) as output for directional control
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 	GPIO_InitDef.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitDef.Pull = GPIO_NOPULL;
