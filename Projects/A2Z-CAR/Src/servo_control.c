@@ -13,7 +13,7 @@ void set_servo_angle(int8_t ang)
 	// 7.5 % is 0 degrees
 	//printf("angle: %d\n",ang);
 	int8_t angle = ang;
-	// don't overdo the phisical
+	// don't overdo the physical limits
 	if (ang > 36)
 		angle = 36;
 	else if (ang < -36)
@@ -26,7 +26,7 @@ void set_servo_angle(int8_t ang)
 void do_this_if_no_line()
 {
 	BSP_LED_On(LED2);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
 }
 
@@ -41,12 +41,10 @@ void set_servo()
 	}
 	if (bias <= 12 || cnt < cnt_limit) {
 		set_servo_angle(global_bias * 4);
-		//printf("servo: %d\n", global_bias * 4);
 		BSP_LED_Off(LED2);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
 	} else {
-		//printf("no line\n");
 		do_this_if_no_line();
 	}
 }
@@ -56,7 +54,6 @@ void servo_control_thread(void const * argument)
 	while(1) {
 		set_servo();
 		osDelay(10);
-		//BSP_LED_Toggle(LED2);
 	}
 	while (1) {
 		/* Delete the thread */
