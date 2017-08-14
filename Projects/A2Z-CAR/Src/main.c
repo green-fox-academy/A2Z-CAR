@@ -99,9 +99,7 @@ int main(void)
 int8_t system_init()
 {
 	BSP_LED_Init(LED2);
-
 	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
-
 	uart_init();
 
 	/* Output without printf, using HAL function*/
@@ -294,10 +292,3 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
-
-/**
-  * @}
-  */
-
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
