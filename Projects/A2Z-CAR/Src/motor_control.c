@@ -1,4 +1,6 @@
 #include "motor_control.h"
+#include "cmsis_os.h"
+#include "pwm_driver.h"
 
 /*
 	P = ?
