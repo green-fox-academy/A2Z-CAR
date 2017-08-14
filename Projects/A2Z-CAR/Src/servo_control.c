@@ -51,6 +51,19 @@ void set_servo()
 	}
 }
 
+void led_init()
+{
+	// Initialize D14 and D15 (PB9 and PB8) as LED output
+	GPIO_InitDef.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitDef.Pull = GPIO_NOPULL;
+	GPIO_InitDef.Speed = GPIO_SPEED_FAST;
+	GPIO_InitDef.Pin = GPIO_PIN_8 | GPIO_PIN_9;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitDef);
+
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+}
+
 void servo_control_thread(void const * argument)
 {
 	while(1) {
@@ -64,16 +77,5 @@ void servo_control_thread(void const * argument)
 	}
 }
 
-void led_init()
-{
-	// Initialize D14 and D15 (PB9 and PB8) as LED output
-	GPIO_InitDef.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitDef.Pull = GPIO_NOPULL;
-	GPIO_InitDef.Speed = GPIO_SPEED_FAST;
-	GPIO_InitDef.Pin = GPIO_PIN_8 | GPIO_PIN_9;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitDef);
 
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
-}
 
