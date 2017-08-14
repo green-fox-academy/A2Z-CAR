@@ -52,6 +52,7 @@
 #include "wifi_functions.h"
 #include "servo_control.h"
 #include "cmsis_os.h"
+#include "motor_control.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -124,8 +125,6 @@ int8_t system_init()
 		return -1;
 	}
 
-	led_init();
-
 	adc_init();
 
 	return 0;
@@ -142,6 +141,8 @@ static void StartThread(void const * argument)
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
+	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(motor), NULL);
 
 	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(wifi), NULL);

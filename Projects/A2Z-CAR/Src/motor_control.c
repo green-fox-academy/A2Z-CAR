@@ -2,6 +2,9 @@
 #include "cmsis_os.h"
 #include "pwm_driver.h"
 
+float ctrler_out_min = 0;
+float ctrler_out_max = 100;
+
 float p_value = 0.1;
 float i_value = 0.1;
 float error = 0.0;
@@ -52,7 +55,7 @@ void motor_control_thread(void const * argument)
 	set_direction(1);
 
 	while(1) {
-		motor_pwm_set_duty(pi_control());
+		motor_pwm_set_duty(100);
 	}
 
 	while (1) {
