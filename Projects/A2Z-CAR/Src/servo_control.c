@@ -19,7 +19,6 @@ void set_servo_angle(int8_t ang)
 		angle = 36;
 	else if (ang < -36)
 		angle = -36;
-	//printf("angle: %d\n",angle);
 	float duty = 7.5 + ((5.0 / 90.0) * (float)angle);
 	servo_pwm_set_duty(duty);
 }
