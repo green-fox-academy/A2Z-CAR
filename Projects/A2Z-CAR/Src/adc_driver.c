@@ -156,7 +156,6 @@ void adc_init()
 	adc_ch_conf.Offset = 0;
 	adc_ch_conf.Rank = 1;
 	adc_ch_conf.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
-
 }
 
 void get_adc_values(uint8_t *adc_values)
@@ -198,16 +197,16 @@ void get_adc_values(uint8_t *adc_values)
 
 	d0_adc_init();
 	*values = adc_measure_avg(10);
-
 }
 
-
-uint8_t areneighbours(uint8_t a, uint8_t b) {
+uint8_t areneighbours(uint8_t a, uint8_t b)
+{
 	if ((a - 1 == b ) || (a + 1 == b )) {
 		return 1;
 	}
 	return 0;
 }
+
 int8_t get_bias()
 {
 	get_adc_values(adc_values);
@@ -238,5 +237,4 @@ int8_t get_bias()
 		return bias;
 	}
 	return 20;
-
 }

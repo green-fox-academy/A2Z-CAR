@@ -5,6 +5,7 @@
 
 uint16_t cnt = 0, cnt_limit = 100;
 int8_t global_bias = 0;
+
 void set_servo_angle(int8_t ang)
 {
 	// 5% duty cycle is the leftmost position of the steering, 10% is the rightmost,
