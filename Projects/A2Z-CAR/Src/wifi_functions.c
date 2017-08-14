@@ -75,7 +75,6 @@ int8_t wifi_init()
 
 void wifi_send_thread(void const * argument)
 {
-	//uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
 	printf("wifi thread starting... \n");
 	while(1) {
 		printf("trying to send data\n");

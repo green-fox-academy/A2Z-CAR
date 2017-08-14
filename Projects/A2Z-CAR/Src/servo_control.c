@@ -12,7 +12,6 @@ void set_servo_angle(int8_t ang)
 	// for now leftmost is -45 degrees, rightmost is 45,
 	// so 1 degree equals to (5 / 90) % in duty cycle.
 	// 7.5 % is 0 degrees
-	//printf("angle: %d\n",ang);
 	int8_t angle = ang;
 	// don't overdo the physical limits
 	if (ang > 36)
