@@ -1,6 +1,6 @@
 #include "wifi_functions.h"
 
-uint8_t RemoteIP[] = {10, 27, 99, 110};
+uint8_t RemoteIP[] = {10, 27, 99, 221};
 uint8_t RxData [500];
 char* modulename;
 uint8_t TxData[] = "Hello big brother board!";
@@ -86,7 +86,7 @@ void wifi_send_thread(void const * argument)
 				printf("Data sent\n");
 			}
 		}
-		osDelay(500);
+		osDelay(100);
 	}
 
 	while (1) {
