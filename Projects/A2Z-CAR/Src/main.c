@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright © 2017 STMicroelectronics International N.V. 
+  * <h2><center>&copy; Copyright ï¿½ 2017 STMicroelectronics International N.V.
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -84,14 +84,14 @@ int main(void)
 		return -1;
 	}
 
-	servo_pwm_set_duty(50);
+	proxi_pwm_set_duty(500);
 
-//	/* Init thread */
-//	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-//	osThreadCreate (osThread(Start), NULL);
-//
-//	/* Start scheduler */
-//	osKernelStart();
+	/* Init thread */
+	//osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	//osThreadCreate (osThread(Start), NULL);
+
+	/* Start scheduler */
+	osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
 	for (;;);
@@ -123,6 +123,10 @@ int8_t system_init()
 	}
 
 	if (motor_pwm_init() != OK) {
+		return -1;
+	}
+
+	if (proximity_triger_pwm_init()!= OK) {
 		return -1;
 	}
 
