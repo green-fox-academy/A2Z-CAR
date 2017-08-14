@@ -8,8 +8,12 @@
 #include "stdio.h"
 
 /* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+float pi_control();
+
+/* Exported constants --------------------------------------------------------*/
+float ctrler_out_min = 0;
+float ctrler_out_max = 100;
 
 #endif /* __MOTOR_CONTROL_H */

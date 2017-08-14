@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright © 2017 STMicroelectronics International N.V. 
+  * <h2><center>&copy; Copyright ï¿½ 2017 STMicroelectronics International N.V. 
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -84,14 +84,12 @@ int main(void)
 		return -1;
 	}
 
-	servo_pwm_set_duty(50);
+	/* Init thread */
+	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	osThreadCreate (osThread(Start), NULL);
 
-//	/* Init thread */
-//	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-//	osThreadCreate (osThread(Start), NULL);
-//
-//	/* Start scheduler */
-//	osKernelStart();
+	/* Start scheduler */
+	osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
 	for (;;);
@@ -126,6 +124,8 @@ int8_t system_init()
 		return -1;
 	}
 
+	led_init();
+
 	adc_init();
 
 	return 0;
@@ -139,9 +139,9 @@ int8_t system_init()
   */
 static void StartThread(void const * argument)
 {
-	/* Initialize LED */
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
+
 
 	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(wifi), NULL);
