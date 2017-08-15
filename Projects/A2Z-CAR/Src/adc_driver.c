@@ -113,11 +113,11 @@ uint16_t adc_measure()
 	return HAL_ADC_GetValue(&adc_handle);
 }
 
-uint16_t adc_12b_measure()
-{
-	HAL_ADC_Start(&adc_12b_handle);
-	HAL_ADC_PollForConversion(&adc_12b_handle, HAL_MAX_DELAY);
-	return HAL_ADC_GetValue(&adc_12b_handle);
+uint16_t adc_current_measure()										// 3.3 V = 4095
+{																	// 2.5 V (max) = 3100 = 25 A
+	HAL_ADC_Start(&adc_12b_handle);									// 1.25 V = 1550 = 0 A
+	HAL_ADC_PollForConversion(&adc_12b_handle, HAL_MAX_DELAY);		// 1.3 V = 1612 = 1 A
+	return HAL_ADC_GetValue(&adc_12b_handle);						// a change of 1 A means a step of 62
 }
 
 uint16_t adc_measure_avg(uint8_t num)

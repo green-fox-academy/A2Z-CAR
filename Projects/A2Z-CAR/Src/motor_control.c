@@ -6,8 +6,8 @@
 float ctrler_out_min = 0;
 float ctrler_out_max = 100;
 
-float p_value = 0.1;
-float i_value = 0.1;
+float p_value = 3.0;
+float i_value = 3.0;
 float error = 0.0;
 float integral = 0.0;
 float required_current = 0.0;
@@ -55,10 +55,12 @@ void motor_control_thread(void const * argument)
 	// set forward
 	set_direction(1);
 
+	required_current = 2.0;
+
 	while(1) {
-		motor_pwm_set_duty(100);
-		printf("adc value: %d\n", adc_12b_measure());
-		osDelay(100);
+		measured_current = ((float)adc_12b_measure() - 1550) / 62;
+		motor_pwm_set_duty(pi_control());
+		osDelay(5);
 	}
 
 	while (1) {
