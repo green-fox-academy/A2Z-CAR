@@ -18,5 +18,6 @@ int8_t proximity_ic1_init();
 int8_t proximity_ic1_init();
 int8_t proximity_sensor_trigger_init();
 void proximity_send_trigger();
+float get_freq();
 
 #endif /* APPLICATIONS_USER_PROXIMITY_DRIVER_H_ */
