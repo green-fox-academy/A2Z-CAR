@@ -19,6 +19,8 @@ void adc_init();
 void adc_12b_init();
 int8_t get_bias();
 void set_servo();
+uint16_t adc_12b_measure();
+
 uint8_t adc_values[9];
 
 #endif /* __ADC_DRIVER_H */

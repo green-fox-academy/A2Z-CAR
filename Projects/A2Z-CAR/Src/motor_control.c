@@ -1,6 +1,7 @@
 #include "motor_control.h"
 #include "cmsis_os.h"
 #include "pwm_driver.h"
+#include "adc_driver.h"
 
 float ctrler_out_min = 0;
 float ctrler_out_max = 100;
@@ -56,6 +57,8 @@ void motor_control_thread(void const * argument)
 
 	while(1) {
 		motor_pwm_set_duty(100);
+		printf("adc value: %d\n", adc_12b_measure());
+		osDelay(100);
 	}
 
 	while (1) {
