@@ -23,9 +23,8 @@ GPIO_InitTypeDef GPIO_InitDef;
 /* Exported functions ------------------------------------------------------- */
 int8_t servo_pwm_init();
 int8_t motor_pwm_init();
-int8_t proximity_triger_pwm_init();
 void servo_pwm_set_duty(float duty);
 void motor_pwm_set_duty(float duty);
-void proxi_pwm_set_duty(float duty);
+
 
 #endif /* __PWM_DRIVER_H */

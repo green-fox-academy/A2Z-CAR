@@ -14,5 +14,9 @@
 
 TIM_HandleTypeDef ic_handle;
 TIM_IC_InitTypeDef ic_ic_init;
+int8_t proximity_ic1_init();
+int8_t proximity_ic1_init();
+int8_t proximity_sensor_trigger_init();
+void proximity_send_trigger();
 
 #endif /* APPLICATIONS_USER_PROXIMITY_DRIVER_H_ */

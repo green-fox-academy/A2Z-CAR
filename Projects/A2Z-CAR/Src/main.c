@@ -52,6 +52,7 @@
 #include "wifi_functions.h"
 #include "servo_control.h"
 #include "cmsis_os.h"
+#include "proximity_driver.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -84,15 +85,17 @@ int main(void)
 		return -1;
 	}
 
+	proximity_send_trigger();
+
 	/* Init thread */
-	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-	osThreadCreate (osThread(Start), NULL);
+	//osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	//osThreadCreate (osThread(Start), NULL);
 
 	/* Start scheduler */
-	osKernelStart();
+	//osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
-	for (;;);
+	//for (;;);
 }
 
 
@@ -101,6 +104,8 @@ int8_t system_init()
 	BSP_LED_Init(LED2);
 
 	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
+
 
 	uart_init();
 
@@ -112,7 +117,7 @@ int8_t system_init()
 	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
 	printf("** Test finished successfully. ** \r\n");
 
-	if (wifi_init() != OK) {
+	/*if (wifi_init() != OK) {
 		return -1;
 	}
 
@@ -122,15 +127,17 @@ int8_t system_init()
 
 	if (motor_pwm_init() != OK) {
 		return -1;
-	}
+	}*/
 
-	if (proximity_triger_pwm_init()!= OK) {
+	if (proximity_sensor_trigger_init()!= OK) {
 		return -1;
 	}
 
-	adc_init();
 
-	proxi_pwm_set_duty(500);
+
+	//adc_init();
+
+
 
 	return 0;
 }
