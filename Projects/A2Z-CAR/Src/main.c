@@ -84,11 +84,11 @@ int main(void)
 		return -1;
 	}
 
-	proxi_pwm_set_duty(500);
+
 
 	/* Init thread */
-	//osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-	//osThreadCreate (osThread(Start), NULL);
+	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	osThreadCreate (osThread(Start), NULL);
 
 	/* Start scheduler */
 	osKernelStart();
@@ -132,6 +132,8 @@ int8_t system_init()
 
 	adc_init();
 
+	proxi_pwm_set_duty(5000000);
+
 	return 0;
 }
 
@@ -147,8 +149,8 @@ static void StartThread(void const * argument)
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
-	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(wifi), NULL);
+	//osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	//osThreadCreate(osThread(wifi), NULL);
 
 	while (1) {
 	/* Delete the init thread */

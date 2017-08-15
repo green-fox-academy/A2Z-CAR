@@ -139,6 +139,7 @@ void proxi_pwm_set_duty(float duty)
 {
 	uint32_t pulse = proxi_pwm_handle.Init.Period * (duty / 100.0);
 	motor_pwm_oc_init.Pulse = pulse;
+	printf("pulse = %2f", pulse);
 	HAL_TIM_PWM_ConfigChannel(&proxi_pwm_handle, &proxi_pwm_oc_init, TIM_CHANNEL_4);
 	HAL_TIM_PWM_Start(&proxi_pwm_handle, TIM_CHANNEL_4);
 }

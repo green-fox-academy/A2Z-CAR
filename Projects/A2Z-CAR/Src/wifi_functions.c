@@ -1,6 +1,6 @@
 #include "wifi_functions.h"
 
-uint8_t RemoteIP[] = {10, 27, 99, 110};
+uint8_t RemoteIP[] = {10, 27, 99, 71};
 uint8_t RxData [500];
 char* modulename;
 uint8_t TxData[] = "Hello big brother board!";
@@ -80,7 +80,9 @@ void wifi_send_thread(void const * argument)
 	while(1) {
 		printf("trying to send data\n");
 		if(Socket != -1) {
-			if(WIFI_SendData(Socket, adc_values, sizeof(adc_values), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+			char buff;
+			sprintf("S#1:%d, S#2:%d,S#3:%d,S#4:%d,S#5:%d,S#6:%d,S#7:%d,S#8:%d,S#9:%d\n", adc_values[0], adc_values[1],adc_values[2],adc_values[3],adc_values[4],adc_values[5],adc_values[6],adc_values[7],adc_values[9]);
+			if(WIFI_SendData(Socket, buff, sizeof(buff), &Datalen, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 				printf("> ERROR : Failed to send Data.\n");
 			} else {
 				printf("Data sent\n");
