@@ -11,7 +11,7 @@ float i_value = 3.0;
 float error = 0.0;
 float integral = 0.0;
 float required_current = 0.0;
-float measured_current = 0.0;
+int measured_current = 0.0;
 float ctrler_out = 0.0;
 
 void set_direction(int8_t dir)
@@ -58,9 +58,11 @@ void motor_control_thread(void const * argument)
 	required_current = 2.0;
 
 	while(1) {
-		measured_current = ((float)adc_12b_measure() - 1550) / 62;
-		motor_pwm_set_duty(pi_control());
-		osDelay(5);
+		measured_current = adc_current_measure() / 161;
+		printf("adc value: %d\n", adc_current_measure());
+		printf("current: %d\n", measured_current);
+//		motor_pwm_set_duty(pi_control());
+		osDelay(500);
 	}
 
 	while (1) {
