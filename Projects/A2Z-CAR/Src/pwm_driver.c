@@ -83,12 +83,12 @@ int8_t proximity_triger_pwm_init()
 	GPIO_InitDef.Pull = GPIO_NOPULL;
 	GPIO_InitDef.Speed = GPIO_SPEED_MEDIUM;
 	GPIO_InitDef.Pin = GPIO_PIN_3;
-	GPIO_InitDef.Alternate = GPIO_AF1_TIM5;
+	GPIO_InitDef.Alternate = GPIO_AF2_TIM5;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitDef);
 
 	// TIM5 init as PWM, 10 kHz
 	__HAL_RCC_TIM5_CLK_ENABLE();
-	proxi_pwm_handle.Instance = TIM2;
+	proxi_pwm_handle.Instance = TIM5;
 	proxi_pwm_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	proxi_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
 	proxi_pwm_handle.Init.Period = 8000;
@@ -102,7 +102,7 @@ int8_t proximity_triger_pwm_init()
 	proxi_pwm_oc_init.OCMode = TIM_OCMODE_PWM1;
 	proxi_pwm_oc_init.OCPolarity = TIM_OCPOLARITY_HIGH;
 	proxi_pwm_oc_init.Pulse = 4000;
-	HAL_TIM_PWM_ConfigChannel(&proxi_pwm_handle, &proxi_pwm_oc_init, TIM_CHANNEL_4);
+	HAL_TIM_PWM_ConfigChannel(&proxi_pwm_handle, &proxi_pwm_oc_init, TIM_CHANNEL_5);
 
 	return 0;
 
@@ -137,9 +137,9 @@ void motor_pwm_set_duty(float duty)
 
 void proxi_pwm_set_duty(float duty)
 {
-	uint32_t pulse = proxi_pwm_handle.Init.Period * (duty / 100.0);
+	uint32_t pulse = proxi_pwm_handle.Init.Period * (duty *10000.0);
 	motor_pwm_oc_init.Pulse = pulse;
-	printf("pulse = %2f", pulse);
+	printf("pulse = %2ul", pulse);
 	HAL_TIM_PWM_ConfigChannel(&proxi_pwm_handle, &proxi_pwm_oc_init, TIM_CHANNEL_4);
 	HAL_TIM_PWM_Start(&proxi_pwm_handle, TIM_CHANNEL_4);
 }

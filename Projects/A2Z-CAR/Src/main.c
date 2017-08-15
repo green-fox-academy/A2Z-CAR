@@ -84,8 +84,6 @@ int main(void)
 		return -1;
 	}
 
-
-
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
 	osThreadCreate (osThread(Start), NULL);
@@ -132,7 +130,7 @@ int8_t system_init()
 
 	adc_init();
 
-	proxi_pwm_set_duty(5000000);
+	proxi_pwm_set_duty(500);
 
 	return 0;
 }
