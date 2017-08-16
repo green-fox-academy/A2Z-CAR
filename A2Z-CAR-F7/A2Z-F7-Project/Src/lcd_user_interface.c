@@ -1,5 +1,9 @@
 #include "lcd_user_interface.h"
 
+TS_StateTypeDef ts_state;
+int8_t start_car = 0;
+int8_t stop_car = 0;
+
 
 void draw_background()
 {
@@ -20,6 +24,11 @@ void draw_background()
 		BSP_LCD_DrawCircle(x, y, 25);
 		x += 50;
 	}
+	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+	BSP_LCD_FillRect(400, 140, 80, 50);
+	BSP_LCD_SetTextColor(LCD_COLOR_RED);
+	BSP_LCD_FillRect(400, 200, 80, 50);
+
 
 }
 
@@ -50,3 +59,26 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 
 }
+
+void detect_start_stop_command()
+{
+	while(1){
+		BSP_TS_GetState(&ts_state);
+
+		if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
+			start_car = 1;
+			LCD_UsrLog ((char *)"Start command detected\n");
+
+		} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
+			stop_car = 1;
+			LCD_UsrLog ((char *)"Stop command detected\n");
+
+		} else {
+			osDelay(100);
+		}
+	}
+
+	while (1)
+		osThreadTerminate(NULL);
+}
+

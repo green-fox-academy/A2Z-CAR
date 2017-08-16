@@ -16,5 +16,8 @@
 
 void draw_background();
 void draw_sensor_data(int sensor_num, uint8_t radius);
+void detect_start_stop_command();
+
+
 
 #endif /* APPLICATION_USER_LCD_USER_INTERFACE_H_ */
