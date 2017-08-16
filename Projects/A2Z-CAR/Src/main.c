@@ -105,8 +105,6 @@ int8_t system_init()
 
 	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 
-
-
 	uart_init();
 
 	/* Output without printf, using HAL function*/
@@ -133,11 +131,11 @@ int8_t system_init()
 		return -1;
 	}
 
-
+	if (proximity_ic2_init()!= OK) {
+			return -1;
+		}
 
 	//adc_init();
-
-
 
 	return 0;
 }

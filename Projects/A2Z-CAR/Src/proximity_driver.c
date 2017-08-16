@@ -42,24 +42,17 @@ void proximity_send_trigger()
 		HAL_Delay(500);
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
 		printf("Proxim trigger sent.\n");
-		get_freq();
+		get_freq_psensor2();
 		HAL_Delay(250);
 
 	}
 }
 
-void proximity_ic2_init()
+int8_t proximity_ic2_init()
 {
-	//init D3 (PB0) input capture mode
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_0;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_AF1_TIM1;
-	HAL_GPIO_Init(GPIOB, &GPIO_Init);
+	//TIM1_CH2 D3 (PB0) input capture mode
 
-	__HAL_RCC_TIM1_CLK_ENABLE();
+	//__HAL_RCC_TIM1_CLK_ENABLE();
 	ic_handle.Instance = TIM1;
 	ic_handle.State = HAL_TIM_STATE_RESET;
 	ic_handle.Channel = HAL_TIM_ACTIVE_CHANNEL_2;
@@ -78,6 +71,10 @@ void proximity_ic2_init()
 
 	HAL_TIM_Base_Start_IT(&ic_handle);
 	HAL_TIM_IC_Start_IT(&ic_handle, TIM_CHANNEL_2);
+
+	printf("Proxim sensor2 init done.\n");
+
+	return 0;
 
 }
 
@@ -114,20 +111,33 @@ void proximity_ic2_init()
 
 }*/
 
+/**
+  * @brief  This function will be called if a timer input capture interrupt occures
+  * @param  Timer handle, which identifies which timer input capture triggered the interrupt
+  * @retval None
+  */
+
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
+	printf("HAL_TIM_IC_CaptureCallback.\n");
 	ic_cntr.prev = ic_cntr.last;
-	ic_cntr.last = TIM1->CCR1;
+	ic_cntr.last = TIM1->CCR2;
 	ic_cntr.ovf = ovf_cntr;
 	ovf_cntr = 0;
 }
+
+/**
+  * @brief  This function will be called if a timer overflow occures
+  * @param  Timer handle, which identifies which timer had overflow
+  * @retval None
+  */
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	ovf_cntr++;
 }
 
-float get_freq()
+float get_freq_psensor2()
 {
 	  //TIM1_BRK_TIM15_IRQn         = 24,     /*!< TIM1 Break interrupt and TIM15 global interrupt                   */
 	  //TIM1_UP_TIM16_IRQn          = 25,     /*!< TIM1 Update Interrupt and TIM16 global interrupt                  */
@@ -138,6 +148,7 @@ float get_freq()
 	input_capture_data_t snapshot = ic_cntr;
 	HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
 
+	printf("overflows are: %f\n", (float)snapshot.ovf);
 	float steps = (float)snapshot.ovf * ic_handle.Init.Period + snapshot.last - snapshot.prev;
 	float tim1_clk_freq = (float)SystemCoreClock / 2 / (ic_handle.Init.Prescaler + 1); // Because clock division is 1x, so only sysclock matters
 	float tim1_clk_period = 1/ tim1_clk_freq;
