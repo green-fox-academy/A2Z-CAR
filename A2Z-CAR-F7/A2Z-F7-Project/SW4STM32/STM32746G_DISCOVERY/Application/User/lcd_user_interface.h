@@ -14,6 +14,8 @@
 #include <math.h>
 #include "lcd_log.h"
 
+//#define     YWINDOW_MIN         9
+
 void draw_background();
 void draw_sensor_data(int sensor_num, uint8_t radius);
 

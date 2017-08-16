@@ -102,6 +102,7 @@
 #define LCD_LOG_PUTCHAR int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
 
+
 /** @defgroup LCD_LOG_CONF_Exported_TypesDefinitions
   * @{
   */ 

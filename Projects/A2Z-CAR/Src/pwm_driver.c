@@ -101,3 +101,5 @@ void motor_pwm_set_duty(float duty)
 	HAL_TIM_PWM_ConfigChannel(&motor_pwm_handle, &motor_pwm_oc_init, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&motor_pwm_handle, TIM_CHANNEL_1);
 }
+
+

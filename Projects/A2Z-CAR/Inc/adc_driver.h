@@ -24,3 +24,4 @@ uint16_t adc_current_measure();
 uint8_t adc_values[9];
 
 #endif /* __ADC_DRIVER_H */
+

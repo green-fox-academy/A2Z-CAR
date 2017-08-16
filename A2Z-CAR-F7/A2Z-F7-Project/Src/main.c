@@ -290,20 +290,7 @@ static void SystemClock_Config(void)
   * @param  None
   * @retval Measured value (0-4095)
   */
-/*uint16_t adc_measure()
-{
-	HAL_ADC_Start(&adc_handle);
 
-	HAL_ADC_PollForConversion(&adc_handle, HAL_MAX_DELAY);
-	LCD_UsrLog("ADC measure in progress\n");
-
-	HAL_ADC_Stop(&adc_handle);
-
-
-	LCD_UsrLog("ADC value: %lu\n", HAL_ADC_GetValue(&adc_handle));
-
-	return HAL_ADC_GetValue(&adc_handle);
-}*/
 
 /**
   * @brief  This function is executed in case of error occurrence.

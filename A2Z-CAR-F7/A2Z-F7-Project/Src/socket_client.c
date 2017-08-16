@@ -47,7 +47,6 @@ int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip)
 	}
 }
 
-
 int send_data(int *socket)
 {
 	char buff[CLIENT_BUFF_LEN];
@@ -98,6 +97,11 @@ void socket_client_thread(void const *argument)
 		closesocket(client_socket);
 		osDelay(CLIENT_RECONNECT_INTERVAL);
 	}
+
+	 while (1) {
+	    /* Delete the Thread */
+	    osThreadTerminate(NULL);
+	  }
 }
 
 

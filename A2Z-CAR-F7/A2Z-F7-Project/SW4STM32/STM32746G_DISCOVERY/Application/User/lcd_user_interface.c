@@ -3,6 +3,8 @@
 
 void draw_background()
 {
+
+	//draw basic background for sensor data visualization
 	int x = 15;
 	int y = 48;
 	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
@@ -25,11 +27,10 @@ void draw_background()
 
 void draw_sensor_data(int sensor_num, uint8_t radius)
 {
+	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);
 	int y = 73;
 
-
-	//LCD_UsrLog("radius, %d\n", radius);
 	if (radius <= 10) {
 		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
 		BSP_LCD_FillCircle(x, y, 5);
