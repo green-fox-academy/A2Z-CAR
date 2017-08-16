@@ -53,6 +53,7 @@
 #include "servo_control.h"
 #include "cmsis_os.h"
 #include "motor_control.h"
+#include "proximity_driver.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -84,6 +85,8 @@ int main(void)
 	if (system_init() != OK) {
 		return -1;
 	}
+
+//	proximity_send_trigger();
 
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
@@ -127,6 +130,14 @@ int8_t system_init()
 
 	adc_init();
 	adc_12b_init();
+
+	if (proximity_sensor_trigger_init() != OK) {
+		return -1;
+	}
+
+	if (proximity_ic2_init() != OK) {
+			return -1;
+	}
 
 	return 0;
 }
