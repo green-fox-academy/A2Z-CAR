@@ -6,13 +6,25 @@
 float ctrler_out_min = 0;
 float ctrler_out_max = 100;
 
-float p_value = 3.0;
-float i_value = 3.0;
+float p_value = 0.001;
+float i_value = 0.001;
 float error = 0.0;
 float integral = 0.0;
 float required_current = 0.0;
-int measured_current = 0.0;
+float measured_current = 0.0;
 float ctrler_out = 0.0;
+
+void print_float(float value, int decimal_digits)
+{
+	int i = 1;
+	int int_part, fract_part;
+	for ( ; decimal_digits != 0; i *= 10, decimal_digits--);
+	int_part = (int)value;
+	fract_part = (int)((value - (float)(int)value) * i);
+	if (fract_part < 0)
+		fract_part *= -1;
+	printf("%d.%d", int_part, fract_part);
+}
 
 void set_direction(int8_t dir)
 {
@@ -55,14 +67,21 @@ void motor_control_thread(void const * argument)
 	// set forward
 	set_direction(1);
 
-	required_current = 2.0;
+//	for (uint8_t i = 100; i > 15; i -= 5) {
+//		motor_pwm_set_duty(i);
+//		osDelay(125);
+//	}
+
+	required_current = 24.0;
 
 	while(1) {
-		measured_current = adc_current_measure() / 161;
-		printf("adc value: %d\n", adc_current_measure());
-		printf("current: %d\n", measured_current);
-//		motor_pwm_set_duty(pi_control());
-		osDelay(500);
+		measured_current = (float)adc_current_measure() / 161;
+//		printDouble(measured_current, 1);
+//		printf("   ");
+//		printDouble(pi_control(), 1);
+//		printf("\n");
+//		osDelay(125);
+		motor_pwm_set_duty(pi_control());
 	}
 
 	while (1) {

@@ -142,7 +142,7 @@ static void StartThread(void const * argument)
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
-	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(motor, motor_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(motor), NULL);
 
 //	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);

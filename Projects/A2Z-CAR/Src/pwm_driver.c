@@ -58,8 +58,8 @@ int8_t motor_pwm_init()
 	motor_pwm_handle.Instance = TIM2;
 	motor_pwm_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	motor_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-	motor_pwm_handle.Init.Period = 8000;
-	motor_pwm_handle.Init.Prescaler = 0;
+	motor_pwm_handle.Init.Period = 16000;
+	motor_pwm_handle.Init.Prescaler = 4;
 	if (HAL_TIM_PWM_Init(&motor_pwm_handle) != HAL_OK) {
 		return -1;
 	}
