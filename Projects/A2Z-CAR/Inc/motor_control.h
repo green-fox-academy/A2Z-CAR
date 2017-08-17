@@ -8,8 +8,11 @@
 #include "stdio.h"
 
 /* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+float pi_control();
+void motor_control_thread(void const * argument);
+
+/* Exported constants --------------------------------------------------------*/
 
 #endif /* __MOTOR_CONTROL_H */

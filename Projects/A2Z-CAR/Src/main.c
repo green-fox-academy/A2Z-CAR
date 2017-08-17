@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright � 2017 STMicroelectronics International N.V.
+  * <h2><center>&copy; Copyright � 2017 STMicroelectronics International N.V. 
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -52,6 +52,7 @@
 #include "wifi_functions.h"
 #include "servo_control.h"
 #include "cmsis_os.h"
+#include "motor_control.h"
 #include "proximity_driver.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -85,17 +86,17 @@ int main(void)
 		return -1;
 	}
 
-	proximity_send_trigger();
+//	proximity_send_trigger();
 
 	/* Init thread */
-	//osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-	//osThreadCreate (osThread(Start), NULL);
+	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	osThreadCreate (osThread(Start), NULL);
 
 	/* Start scheduler */
-	//osKernelStart();
+	osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
-	//for (;;);
+	for (;;);
 }
 
 
@@ -115,9 +116,9 @@ int8_t system_init()
 	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
 	printf("** Test finished successfully. ** \r\n");
 
-	/*if (wifi_init() != OK) {
-		return -1;
-	}
+//	if (wifi_init() != OK) {
+//		return -1;
+//	}
 
 	if (servo_pwm_init() != OK) {
 		return -1;
@@ -125,17 +126,18 @@ int8_t system_init()
 
 	if (motor_pwm_init() != OK) {
 		return -1;
-	}*/
+	}
 
-	if (proximity_sensor_trigger_init()!= OK) {
+	adc_init();
+	adc_12b_init();
+
+	if (proximity_sensor_trigger_init() != OK) {
 		return -1;
 	}
 
-	if (proximity_ic2_init()!= OK) {
+	if (proximity_ic2_init() != OK) {
 			return -1;
-		}
-
-	//adc_init();
+	}
 
 	return 0;
 }
@@ -148,12 +150,14 @@ int8_t system_init()
   */
 static void StartThread(void const * argument)
 {
-	/* Initialize LED */
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
-	//osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	//osThreadCreate(osThread(wifi), NULL);
+	osThreadDef(motor, motor_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(motor), NULL);
+
+//	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(wifi), NULL);
 
 	while (1) {
 	/* Delete the init thread */
