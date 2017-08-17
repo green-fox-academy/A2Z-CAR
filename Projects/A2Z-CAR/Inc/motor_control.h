@@ -11,6 +11,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 float pi_control();
+int8_t disable_drive();
 void motor_control_thread(void const * argument);
 
 /* Exported constants --------------------------------------------------------*/

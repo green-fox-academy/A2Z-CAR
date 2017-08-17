@@ -54,6 +54,14 @@ float pi_control()
 	return ctrler_out;
 }
 
+int8_t disable_drive()
+{
+	if (HAL_TIM_PWM_DeInit(&servo_pwm_handle) != HAL_OK) {
+		return -1;
+	}
+	return 0;
+}
+
 void motor_control_thread(void const * argument)
 {
 	// Initialize pin D6 and D8 (PB1 and PB2) as output for directional control

@@ -1,7 +1,9 @@
 #include "wifi_functions.h"
+#include "pwm_driver.h"
+#include "motor_control.h"
 
-uint8_t RemoteIP[] = {10, 27, 99, 71};
-uint8_t RxData [500];
+uint8_t RemoteIP[] = {10, 27, 99, 91};
+uint8_t RxData [1];
 char* modulename;
 uint8_t TxData[] = "Hello big brother board!";
 uint16_t RxLen;
@@ -75,7 +77,6 @@ int8_t wifi_init()
 
 void wifi_send_thread(void const * argument)
 {
-	//uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
 	printf("wifi thread starting... \n");
 	while(1) {
 		printf("trying to send data\n");
@@ -89,6 +90,38 @@ void wifi_send_thread(void const * argument)
 			}
 		}
 		osDelay(500);
+	}
+
+	while (1) {
+		/* Delete the thread */
+		osThreadTerminate(NULL);
+	}
+}
+
+
+void wifi_receive_thread(void const * argument)
+{
+	while (1) {
+		if(Socket != -1) {
+			if(WIFI_ReceiveData(Socket, RxData, sizeof(RxData), &Datalen, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
+				if (Datalen > 0) {
+					if (RxData[0] == 1) {									// start signal
+						printf("Start signal received\n");
+						motor_pwm_set_duty(15);
+					} else if (RxData[0] == 0) {							// stop signal
+						printf("Stop signal received\n");
+						if (disable_drive() == -1) {
+							printf("Error: unable to disable drive!\n");
+						}
+					}
+				}
+			} else {
+				printf("Error: failed to receive data!\n");
+			}
+		} else {
+			printf("Socket error!\n");
+		}
+		osDelay(10);
 	}
 
 	while (1) {

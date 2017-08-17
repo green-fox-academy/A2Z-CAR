@@ -116,9 +116,9 @@ int8_t system_init()
 	printf("UART Printf Example: retarget the C library printf function to the UART\r\n");
 	printf("** Test finished successfully. ** \r\n");
 
-//	if (wifi_init() != OK) {
-//		return -1;
-//	}
+	if (wifi_init() != OK) {
+		return -1;
+	}
 
 	if (servo_pwm_init() != OK) {
 		return -1;
@@ -153,11 +153,14 @@ static void StartThread(void const * argument)
 	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(servo), NULL);
 
-	osThreadDef(motor, motor_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(motor), NULL);
+//	osThreadDef(motor, motor_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(motor), NULL);
 
 //	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 //	osThreadCreate(osThread(wifi), NULL);
+
+	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(wifi_rec), NULL);
 
 	while (1) {
 	/* Delete the init thread */
