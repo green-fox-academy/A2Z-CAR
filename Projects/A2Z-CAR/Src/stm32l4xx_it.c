@@ -148,7 +148,7 @@ void SysTick_Handler(void)
 {
 }*/
 
-void TIM1_IRQHandler(void)
+void TIM4_IRQHandler(void)
 {
 	HAL_TIM_IRQHandler(&ic_handle);
 }

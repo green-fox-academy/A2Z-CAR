@@ -69,7 +69,7 @@ void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef *hlptim)
 void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim)
 {
 	//enable interrupt mode TIM1_CH2
-	__HAL_RCC_TIM1_CLK_ENABLE();
+	/*__HAL_RCC_TIM1_CLK_ENABLE();
 	HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
 
@@ -80,7 +80,21 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim)
 	GPIO_Init.Speed = GPIO_SPEED_FAST;
 	GPIO_Init.Pull = GPIO_NOPULL;
 	GPIO_Init.Mode = GPIO_AF1_TIM1;
-	HAL_GPIO_Init(GPIOB, &GPIO_Init);
+	HAL_GPIO_Init(GPIOB, &GPIO_Init);*/
+
+	//enable interrupt mode TIM4_CH3
+	__HAL_RCC_TIM4_CLK_ENABLE();
+	HAL_NVIC_SetPriority(TIM4_IRQn, 3, 0);
+	HAL_NVIC_EnableIRQ(TIM4_IRQn);
+
+	//init D2 (PD14) TIM4 input capture mode
+	__HAL_RCC_GPIOD_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_14;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_AF2_TIM4;
+	HAL_GPIO_Init(GPIOD, &GPIO_Init);
 }
 
 /**

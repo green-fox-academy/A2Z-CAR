@@ -58,7 +58,7 @@
 		<link>
 			<name>Applications/User/motor_control.c</name>
 			<type>1</type>
-			<location>C:/Green Fox/A2Z-CAR/Projects/A2Z-CAR/Src/motor_control.c</location>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/motor_control.c</locationURI>
 		</link>
 		<link>
 			<name>Applications/User/proximity_driver.c</name>
