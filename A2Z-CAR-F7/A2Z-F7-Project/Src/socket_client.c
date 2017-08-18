@@ -15,11 +15,10 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-
 int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip);
 //int send_data(int *socket);
-/* Private functions ---------------------------------------------------------*/
 
+/* Private functions ---------------------------------------------------------*/
 
 int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip)
 {
@@ -107,30 +106,29 @@ int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip)
 
 void socket_client_thread(void const *argument)
 {
-	LCD_UsrLog("Socket client - waiting for IP address...\n");
-
 	int client_socket;
 
 	// Try to connect to the server
-	if (connect_to_server(&client_socket, SERVER_PORT, CLIENT_SERVER_IP) == 0)
-	{
-		int sent_bytes = send(client_socket, &move, 1, 0);
+	if (connect_to_server(&client_socket, REMOTE_PORT, REMOTE_IP) == 0) {
+		int sent_bytes = send(client_socket, &move, sizeof(move), 0);
 		if (sent_bytes == 1) {
-			uint8_t buff[128];
-			LCD_UsrLog("Socket client - data sent\n");
+			LCD_UsrLog("Socket client - command sent\n");
 
-			int recv_bytes = recv(client_socket, buff, 127, 0);
-			if (recv_bytes >= 0) {
-				LCD_UsrLog("Socket client - data received: ");
-				buff[recv_bytes] = 0;
-				LCD_UsrLog(buff);
-				LCD_UsrLog("\n");
-			}
+//			uint8_t buff[128];
+//			int recv_bytes = recv(client_socket, buff, 127, 0);
+//			if (recv_bytes >= 0) {
+//				LCD_UsrLog("Socket client - data received: ");
+//				buff[recv_bytes] = 0;
+//				LCD_UsrLog(buff);
+//				LCD_UsrLog("\n");
+//			}
 		}
 		closesocket(client_socket);
+	} else {
+		LCD_UsrLog("Unable to create socket!\n");
 	}
 
-	LCD_UsrLog("Socket client - terminating...\n");
+	LCD_UsrLog("Socket client - terminating\n");
 
 	while (1) {
 		osThreadTerminate(NULL);
