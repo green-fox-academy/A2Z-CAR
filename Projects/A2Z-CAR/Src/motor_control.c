@@ -64,6 +64,10 @@ float pi_control()
 
 int8_t disable_drive()
 {
+	HAL_GPIO_DeInit(GPIOB, GPIO_PIN_4);
+	if (HAL_TIM_PWM_Stop(&motor_pwm_handle, TIM_CHANNEL_1) != HAL_OK) {
+		return -1;
+	}
 	if (HAL_TIM_PWM_DeInit(&servo_pwm_handle) != HAL_OK) {
 		return -1;
 	}

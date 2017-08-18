@@ -86,8 +86,8 @@ int main(void)
 		return -1;
 	}
 
-	set_direction(1);
-	motor_pwm_set_duty(75);
+//	set_direction(1);
+//	motor_pwm_set_duty(75);
 
 //	proximity_send_trigger();
 
