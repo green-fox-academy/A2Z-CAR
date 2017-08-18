@@ -109,10 +109,6 @@ void socket_client_thread(void const *argument)
 {
 	LCD_UsrLog("Socket client - waiting for IP address...\n");
 
-	// Wait for an IP address
-	while (!is_ip_ok())
-		osDelay(10);
-
 	int client_socket;
 
 	// Try to connect to the server
