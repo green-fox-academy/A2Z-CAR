@@ -66,7 +66,7 @@ void proximity_send_trigger()
 			HAL_Delay(500);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 			printf("Proxim trigger sent.\n");
-			//get_freq_psensor2();
+			get_freq_psensor2();
 			HAL_Delay(250);
 
 		}
@@ -108,7 +108,7 @@ int8_t proximity_ic2_init()
 	HAL_TIM_IC_Init(&ic_handle);
 
 	ic_ic_init.ICFilter = 0;
-	ic_ic_init.ICPolarity = TIM_ICPOLARITY_BOTHEDGE;
+	ic_ic_init.ICPolarity = TIM_ICPOLARITY_FALLING;
 	ic_ic_init.ICPrescaler = TIM_ICPSC_DIV1;
 	ic_ic_init.ICSelection = TIM_ICSELECTION_DIRECTTI;
 	HAL_TIM_IC_ConfigChannel(&ic_handle, &ic_ic_init, TIM_CHANNEL_3);
@@ -178,6 +178,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+	//printf("HAL_TIM_PeriodElapsedCallback.\n");
 	ovf_cntr++;
 }
 
@@ -188,9 +189,9 @@ float get_freq_psensor2()
 	  //TIM1_TRG_COM_TIM17_IRQn     = 26,     /*!< TIM1 Trigger and Commutation Interrupt and TIM17 global interrupt */
 	  //TIM1_CC_IRQn                = 27,     /*!< TIM1 Capture Compare Interrupt                                    */
 
-	HAL_NVIC_DisableIRQ(TIM3_IRQn);
+	HAL_NVIC_DisableIRQ(TIM4_IRQn);
 	input_capture_data_t snapshot = ic_cntr;
-	HAL_NVIC_EnableIRQ(TIM3_IRQn);
+	HAL_NVIC_EnableIRQ(TIM4_IRQn);
 
 	printf("overflows are: %f\n", (float)snapshot.ovf);
 	float steps = (float)snapshot.ovf * ic_handle.Init.Period + snapshot.last - snapshot.prev;
