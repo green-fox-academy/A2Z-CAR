@@ -109,7 +109,8 @@ void wifi_receive_thread(void const * argument)
 				if (data_len > 0) {
 					if (rec_data == 1) {								// start signal
 						printf("Start signal received\n");
-						motor_pwm_set_duty(15);
+						set_direction(1);
+						motor_pwm_set_duty(100);
 					} else if (rec_data == 0) {							// stop signal
 						printf("Stop signal received\n");
 						if (disable_drive() == -1) {
