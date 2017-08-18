@@ -165,39 +165,39 @@ void get_adc_values(uint8_t *adc_values)
 	values = adc_values;
 	a0_adc_init();
 	HAL_ADC_ConfigChannel(&adc_handle, &adc_ch_conf);
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	a1_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	a2_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	a3_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	a4_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	a5_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	d7_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	d1_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 	values++;
 
 	d0_adc_init();
-	*values = adc_measure_avg(10);
+	*values = adc_measure();
 
 }
 
@@ -208,7 +208,122 @@ uint8_t areneighbours(uint8_t a, uint8_t b) {
 	}
 	return 0;
 }
+//4
+//011101100
+//01010
+
 int8_t get_bias()
+{
+	uint8_t detail = 9;
+	//printf("bias: %d \n",bias);
+	if (bias <= (detail * 4)) {
+		former_bias = bias;
+	}
+	uint8_t bg_color, color = 1;
+	if (color == 1) {
+		bg_color = 0;
+	} else {
+		bg_color = 1;
+	}
+	get_adc_values(adc_values);
+	//uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
+	for (int i = 0; i < 9; i++) {
+		printf("%4d",adc_values[i]);
+	}
+	printf("\n");
+
+	uint8_t min_dif = 5; // the minimum difference about light and dark colors
+	uint8_t maxindex = 0, minindex = 0;
+
+	for (int i = 1; i < 9; i++) {
+		if (adc_values[i] > adc_values[maxindex]) {
+			maxindex = i; // the darkest color's index
+		} else if (adc_values[i] < adc_values[minindex]) {
+			minindex = i; // he lightest color's index
+		}
+	}
+	// if the difference between max and min adc values are bigger than min_dif,
+	// the surface is not uniform, there are possibly lines
+
+	if (adc_values[minindex] + min_dif < adc_values[maxindex]) {
+		uint8_t contrast[9];
+		uint8_t linelimit;
+			linelimit = adc_values[minindex] + (min_dif / 2);
+		for (int i = 0; i < 9; i++) {
+			contrast[i] = adc_values[i] > linelimit;
+		}
+
+		uint8_t pos = 0;
+		int8_t center[4] = {-1, -1, -1, -1}, width = 0;
+		uint8_t is_line = 0;
+		//
+		if (contrast[0] == color) {
+			is_line = 1;
+		}
+		for (int i = 1; i < 9; i++) {
+			if ((contrast[i - 1] == bg_color && contrast[i] == color )) {
+				//line left edge
+				center[pos] = i * detail;
+				width = 0;
+				is_line = 1;
+			} else if (is_line && contrast[i - 1] == color && contrast[i] == bg_color) {
+				//line right edge
+				center[pos] -=  detail * width/2;
+				pos++;
+				width = 0;
+				is_line = 0;
+			} else if (is_line) { //on a line
+				width++;
+				center[pos] += detail;
+			}
+		}
+		/*
+		if (contrast[8] == color) {
+						center[pos] = -1;
+						pos--;
+		}
+		*/
+		uint8_t linepos = 0;
+		/*
+		int8_t dif;
+		dif = center[0] - (former_bias + (detail * 4));
+		if (dif < 0)
+			dif *= (-1);
+
+		printf("diffs %d ", dif);
+		if (dif < 0)
+			printf(" !!!!! ");
+
+		int8_t mindif = dif;
+		for (int i = 1; i < pos ; i++) {
+			if (dif < mindif) {
+				mindif = dif;
+				linepos = i-1;
+				printf("linepos: %d ", i);
+			}
+			dif = center[i] - (former_bias + (detail * 4));
+			if (dif < 0)
+				dif *= (-1);
+			printf(" %d ", dif);
+		}
+		printf("\n");
+		*/
+		bias = center[linepos] - (detail * 4);
+		if (center[linepos] == -1) {
+			bias = 100;
+		}
+		//printf("bias/9: %d\n", bias / 9);
+
+		return  bias;
+
+	}
+
+
+	return 100;
+}
+/*
+ //former bias function
+int8_t get_bias1()
 {
 	get_adc_values(adc_values);
 
@@ -237,3 +352,4 @@ int8_t get_bias()
 	return 20;
 
 }
+*/

@@ -3,8 +3,8 @@
 #include "pwm_driver.h"
 #include "cmsis_os.h"
 
-uint16_t cnt = 0, cnt_limit = 100;
-int8_t global_bias = 0;
+uint16_t cnt = 0, cnt_limit = 2;
+
 void set_servo_angle(int8_t ang)
 {
 	// 5% duty cycle is the leftmost position of the steering, 10% is the rightmost,
@@ -25,23 +25,33 @@ void set_servo_angle(int8_t ang)
 
 void do_this_if_no_line()
 {
-	BSP_LED_On(LED2);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+}
+int8_t angle (int8_t current_bias)
+{
+	uint8_t p = 1, d = 1;
+	int8_t a = p * current_bias + d * ( current_bias - former_bias);
+	printf("d, a:***%3d ***%3d*** \n", d * ( current_bias - former_bias), current_bias);
+	return a;
 }
 
 void set_servo()
 {
+	uint8_t detail = 9;
 	int8_t bias = get_bias();
-	if (bias <= 12) {
-		global_bias = bias;
+	//bias = 0;
+	if (bias <= (detail * 4)) {
 		cnt = 0;
 	} else {
 		cnt++;
 	}
-	if (bias <= 12 || cnt < cnt_limit) {
-		set_servo_angle(global_bias * 4);
-		BSP_LED_Off(LED2);
+	if (bias <= (detail * 4) || cnt < cnt_limit) {
+		if (bias > (detail * 4)) {
+			set_servo_angle(angle(former_bias));
+		} else {
+			set_servo_angle(angle(bias));
+		}
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
 	} else {
@@ -53,7 +63,7 @@ void servo_control_thread(void const * argument)
 {
 	while(1) {
 		set_servo();
-		osDelay(10);
+		osDelay(500);
 	}
 	while (1) {
 		/* Delete the thread */
@@ -73,4 +83,3 @@ void led_init()
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 }
-

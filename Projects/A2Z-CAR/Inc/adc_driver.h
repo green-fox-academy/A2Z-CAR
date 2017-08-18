@@ -18,5 +18,6 @@ void adc_init();
 int8_t get_bias();
 void set_servo();
 uint8_t adc_values[9];
+int8_t former_bias, bias;
 
 #endif /* __ADC_DRIVER_H */
