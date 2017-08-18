@@ -62,7 +62,6 @@
 /* Private function prototypes -----------------------------------------------*/
 static void GPIO_ConfigAN(void);
 static void SystemClock_Config(void);
-
 static void StartThread(void const * argument);
 
 int8_t system_init();
@@ -135,7 +134,7 @@ int8_t system_init()
 		return -1;
 	}
 
-	if (proximity_ic2_init() != OK) {
+	if (proximity1_exti_init() != OK) {
 			return -1;
 	}
 
