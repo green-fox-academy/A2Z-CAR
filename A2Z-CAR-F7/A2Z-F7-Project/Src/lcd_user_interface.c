@@ -64,13 +64,13 @@ void detect_start_stop_thread(void const * argument)
 	while (1) {
 		BSP_TS_GetState(&ts_state);
 		if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
-			start = 1;
+			move = 1;
 			LCD_UsrLog ((char *)"Start command detected\n");
 			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 0);
 			osThreadCreate (osThread(client), NULL);
 			osDelay(2000);
 		} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
-			start = 0;
+			move = 0;
 			LCD_UsrLog ((char *)"Stop command detected\n");
 			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 0);
 			osThreadCreate (osThread(client), NULL);

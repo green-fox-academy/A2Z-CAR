@@ -118,7 +118,7 @@ void socket_client_thread(void const *argument)
 	// Try to connect to the server
 	if (connect_to_server(&client_socket, SERVER_PORT, CLIENT_SERVER_IP) == 0)
 	{
-		int sent_bytes = send(client_socket, &start, 1, 0);
+		int sent_bytes = send(client_socket, &move, 1, 0);
 		if (sent_bytes == 1) {
 			uint8_t buff[128];
 			LCD_UsrLog("Socket client - data sent\n");
