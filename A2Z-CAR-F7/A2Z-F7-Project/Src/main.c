@@ -154,8 +154,8 @@ static void StartThread(void const * argument)
   osThreadCreate (osThread(SOCKET_CLIENT), NULL);
 #endif
 
-  // Start the server thread
-    osThreadDef(command, detect_start_stop_command, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 4);
+  // Start the start/stop detect thread
+    osThreadDef(command, detect_start_stop_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 4);
     osThreadCreate (osThread(command), NULL);
 
   while (1) {

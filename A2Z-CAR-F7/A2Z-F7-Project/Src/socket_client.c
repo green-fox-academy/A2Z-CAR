@@ -3,6 +3,7 @@
 #include "socket_client.h"
 #include "socket_server.h"
 #include "lcd_log.h"
+#include "lcd_user_interface.h"
 #include "cmsis_os.h"
 #include "app_ethernet.h"
 #include "lwip/sockets.h"
@@ -13,7 +14,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-uint8_t start;
 /* Private function prototypes -----------------------------------------------*/
 
 int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip);

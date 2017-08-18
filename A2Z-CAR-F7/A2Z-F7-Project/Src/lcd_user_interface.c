@@ -1,9 +1,7 @@
 #include "lcd_user_interface.h"
+#include "socket_client.h"
 
 TS_StateTypeDef ts_state;
-int8_t start_car = 0;
-int8_t stop_car = 0;
-
 
 void draw_background()
 {
@@ -61,21 +59,24 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 
 }
 
-void detect_start_stop_command()
+void detect_start_stop_thread(void const * argument)
 {
-	while(1){
+	while (1) {
 		BSP_TS_GetState(&ts_state);
-
 		if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
-			start_car = 1;
+			start = 1;
 			LCD_UsrLog ((char *)"Start command detected\n");
-
+			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 0);
+			osThreadCreate (osThread(client), NULL);
+			osDelay(2000);
 		} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
-			stop_car = 1;
+			start = 0;
 			LCD_UsrLog ((char *)"Stop command detected\n");
-
+			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 0);
+			osThreadCreate (osThread(client), NULL);
+			osDelay(2000);
 		} else {
-			osDelay(100);
+			osDelay(10);
 		}
 	}
 

@@ -16,9 +16,11 @@
 
 //#define     YWINDOW_MIN         9
 
+uint8_t start;
+
 void draw_background();
 void draw_sensor_data(int sensor_num, uint8_t radius);
-void detect_start_stop_command();
+void detect_start_stop_thread();
 
 
 
