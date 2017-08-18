@@ -193,7 +193,7 @@ float get_freq_psensor2()
 	input_capture_data_t snapshot = ic_cntr;
 	HAL_NVIC_EnableIRQ(TIM4_IRQn);
 
-	printf("overflows are: %f\n", (float)snapshot.ovf);
+	//printf("overflows are: %f\n", (float)snapshot.ovf);
 	float steps = (float)snapshot.ovf * ic_handle.Init.Period + snapshot.last - snapshot.prev;
 	float tim1_clk_freq = (float)SystemCoreClock / 2 / (ic_handle.Init.Prescaler + 1); // Because clock division is 1x, so only sysclock matters
 	float tim1_clk_period = 1/ tim1_clk_freq;
@@ -203,9 +203,9 @@ float get_freq_psensor2()
 	/*if (isnan(signal_freq) || isinf(signal_freq))
 		return -1;
 	else*/
-	printf("Steps are: %f\n", steps);
-	printf("Signal Periode is: %f\n", signal_period);
-	printf("Signal Freq is: %f\n", signal_freq);
+	//printf("Steps are: %f\n", steps);
+	//printf("Signal Periode is: %f\n", signal_period);
+	//printf("Signal Freq is: %f\n", signal_freq);
 		return signal_freq;
 }
 
