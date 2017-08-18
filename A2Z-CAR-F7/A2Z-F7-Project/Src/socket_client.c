@@ -13,10 +13,11 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+uint8_t start;
 /* Private function prototypes -----------------------------------------------*/
 
 int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip);
-int send_data(int *socket);
+//int send_data(int *socket);
 /* Private functions ---------------------------------------------------------*/
 
 
@@ -47,62 +48,97 @@ int connect_to_server(int *client_sock, uint16_t server_port, char *server_ip)
 	}
 }
 
-int send_data(int *socket)
-{
-	char buff[CLIENT_BUFF_LEN];
+//int send_data(int *socket)
+//{
+//	char buff[CLIENT_BUFF_LEN];
+//
+//	// Send the data
+//	int sent_bytes = send(*socket, buff, CLIENT_BUFF_LEN, 0);
+//
+//	if (sent_bytes < 0)
+//		LCD_ErrLog("Socket client - can't send data\n");
+//
+//	// Close the string
+//	buff[sent_bytes] = '\0';
+//
+//	// Print message
+//	LCD_UsrLog("Socket server - message:");
+//	LCD_UsrLog(buff);
+//	LCD_UsrLog("\n");
+//
+//	return sent_bytes;
+//}
 
-	// Send the data
-	int sent_bytes = send(*socket, buff, CLIENT_BUFF_LEN, 0);
-
-	if (sent_bytes < 0)
-		LCD_ErrLog("Socket client - can't send data\n");
-
-	// Close the string
-	buff[sent_bytes] = '\0';
-
-	// Print message
-	LCD_UsrLog("Socket server - message:");
-	LCD_UsrLog(buff);
-	LCD_UsrLog("\n");
-
-	return sent_bytes;
-}
+//void socket_client_thread(void const *argument)
+//{
+//	LCD_UsrLog("Socket client - startup...\n");
+//	LCD_UsrLog("Socket client - waiting for IP address...\n");
+//
+//	while (1) {
+//		// Wait for an IP address
+//		while (!is_ip_ok())
+//			osDelay(10);
+//
+//		int connected = 0;
+//		int client_socket;
+//
+//		// Try to connect to the server
+//		if (connect_to_server(&client_socket, SERVER_PORT, CLIENT_SERVER_IP) == 0)
+//			connected = 1;
+//
+//		// If connected
+//		while (connected) {
+//
+//			if (send_data(&client_socket) <= 0)
+//				connected = 0;
+//			osDelay(CLIENT_SEND_INTERVAL);
+//		}
+//
+//		// If not connected close the last socket and wait a little bit and then try to reconnect
+//		closesocket(client_socket);
+//		osDelay(CLIENT_RECONNECT_INTERVAL);
+//	}
+//
+//	 while (1) {
+//	    /* Delete the Thread */
+//	    osThreadTerminate(NULL);
+//	  }
+//}
 
 void socket_client_thread(void const *argument)
 {
-	LCD_UsrLog("Socket client - startup...\n");
 	LCD_UsrLog("Socket client - waiting for IP address...\n");
 
-	while (1) {
-		// Wait for an IP address
-		while (!is_ip_ok())
-			osDelay(10);
+	// Wait for an IP address
+	while (!is_ip_ok())
+		osDelay(10);
 
-		int connected = 0;
-		int client_socket;
+	int client_socket;
 
-		// Try to connect to the server
-		if (connect_to_server(&client_socket, SERVER_PORT, CLIENT_SERVER_IP) == 0)
-			connected = 1;
+	// Try to connect to the server
+	if (connect_to_server(&client_socket, SERVER_PORT, CLIENT_SERVER_IP) == 0)
+	{
+		int sent_bytes = send(client_socket, &start, 1, 0);
+		if (sent_bytes == 1) {
+			uint8_t buff[128];
+			LCD_UsrLog("Socket client - data sent\n");
 
-		// If connected
-		while (connected) {
-
-			if (send_data(&client_socket) <= 0)
-				connected = 0;
-			osDelay(CLIENT_SEND_INTERVAL);
+			int recv_bytes = recv(client_socket, buff, 127, 0);
+			if (recv_bytes >= 0) {
+				LCD_UsrLog("Socket client - data received: ");
+				buff[recv_bytes] = 0;
+				LCD_UsrLog(buff);
+				LCD_UsrLog("\n");
+			}
 		}
-
-		// If not connected close the last socket and wait a little bit and then try to reconnect
 		closesocket(client_socket);
-		osDelay(CLIENT_RECONNECT_INTERVAL);
 	}
 
-	 while (1) {
-	    /* Delete the Thread */
-	    osThreadTerminate(NULL);
-	  }
-}
+	LCD_UsrLog("Socket client - terminating...\n");
 
+	while (1) {
+		osThreadTerminate(NULL);
+	}
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
