@@ -3,7 +3,7 @@
 ## Description
 
 Create a self-driving car, with a bunch of sensors and tune the car to get the best
-performance. The main board will be an STM32F746G-DISCO, the secondary sensor and communication board is a B-L475E-IOT01A. One team works on this project.
+performance. The main board will be an STM B-L475E-IOT01A, the secondary telemetry and logging board is the STM32F746G-DISCOVERY.
 
 The main goals are to:
 - follow a track (line)
