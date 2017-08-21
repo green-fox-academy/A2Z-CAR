@@ -92,11 +92,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 0)) {
 	  proxim1_up = 1;
 	  HAL_TIM_Base_Start_IT(&proxim_timer_handle);
-	  printf("proxim1_up: %d\n", proxim1_up);
+
 
   } else if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 1)) {
 	  proxim1_up = 0;
-	  printf("proxim1_up: %d\n", proxim1_up);
 	  HAL_TIM_Base_Stop_IT(&proxim_timer_handle);
 
   }
@@ -128,7 +127,7 @@ int8_t proximity_timer_init()
 	proxim_timer_handle.Channel = HAL_TIM_ACTIVE_CHANNEL_3;
 	proxim_timer_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	proxim_timer_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-	proxim_timer_handle.Init.Period = 9280;
+	proxim_timer_handle.Init.Period = 928;
 	proxim_timer_handle.Init.Prescaler = 4;
 	HAL_TIM_Base_Init(&proxim_timer_handle);
 	HAL_TIM_Base_Start_IT(&proxim_timer_handle);
@@ -150,7 +149,7 @@ int8_t proximity_timer_init()
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
  {
 	cm_cntr++;
-	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);
+	//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);
 
  }
 
