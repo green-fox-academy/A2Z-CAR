@@ -85,7 +85,8 @@ int main(void)
 		return -1;
 	}
 
-	proximity_send_trigger();
+
+	proximity_control_thread();
 
 	/* Init thread */
 	//osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
@@ -154,6 +155,9 @@ static void StartThread(void const * argument)
 
 	osThreadDef(motor, motor_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(motor), NULL);
+
+	osThreadDef(proxim, proximity_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(proxim), NULL);
 
 //	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 //	osThreadCreate(osThread(wifi), NULL);
