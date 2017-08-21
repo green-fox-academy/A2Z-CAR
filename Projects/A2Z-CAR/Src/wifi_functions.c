@@ -2,7 +2,7 @@
 #include "pwm_driver.h"
 #include "motor_control.h"
 
-uint8_t remote_ip[] = {10, 27, 99, 189};
+uint8_t remote_ip[] = {10, 27, 99, 89};
 uint16_t remote_port = 8002;
 uint16_t server_port = 8002;
 uint8_t rec_data;
@@ -62,9 +62,9 @@ int8_t wifi_init()
 
 void wifi_send_thread(void const * argument)
 {
-	printf("wifi thread starting... \n");
+	printf("WiFi thread starting... \n");
 	while(1) {
-		printf("> Trying to connect to Server: %d.%d.%d.%d:8002 ...\n",
+		printf("> Trying to connect to server: %d.%d.%d.%d:8002 ...\n",
 			   remote_ip[0],
 			   remote_ip[1],
 			   remote_ip[2],
@@ -99,42 +99,41 @@ void wifi_send_thread(void const * argument)
 }
 
 
-void wifi_receive_thread(void const * argument)
-{
-	while (1) {
-		printf("Starting TCP server...\n");
-		if (WIFI_StartServer(socket, WIFI_TCP_PROTOCOL, "IoT server", server_port) == WIFI_STATUS_OK) {
-			printf("TCP server started\nReceiving data...\n");
-			if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
-				if (data_len > 0) {
-					if (rec_data == 1) {								// start signal
-						printf("Start signal received\n");
-						set_direction(1);
-						motor_pwm_set_duty(100);
-					} else if (rec_data == 0) {							// stop signal
-						printf("Stop signal received\n");
-						if (disable_drive() == -1) {
-							printf("Error: unable to disable drive!\n");
-						}
-					}
-				}
-			} else {
-				printf("No data received\n");
-			}
-			printf("Closing the socket...\n");
-			if (WIFI_StopServer(socket) == WIFI_STATUS_OK) {
-				printf("Socket closed\n");
-			}
-		} else {
-			printf("Failed to start TCP server!\n");
-		}
-		osDelay(10);
-	}
-
-	while (1) {
-		/* Delete the thread */
-		osThreadTerminate(NULL);
-	}
-}
+//void wifi_receive_thread(void const * argument)
+//{
+//	while (1) {
+//		printf("Starting TCP server...\n");
+//		if (WIFI_StartServer(socket, WIFI_TCP_PROTOCOL, "IoT server", server_port) == WIFI_STATUS_OK) {
+//			printf("TCP server started\nReceiving data...\n");
+//			if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
+//				if (data_len > 0) {
+//					if (rec_data == 1) {								// start signal
+//						printf("Start signal received\n");
+//						motor_pwm_set_duty(25);
+//					} else if (rec_data == 0) {							// stop signal
+//						printf("Stop signal received\n");
+//						if (disable_drive() == -1) {
+//							printf("Error: unable to disable drive!\n");
+//						}
+//					}
+//				}
+//			} else {
+//				printf("No data received\n");
+//			}
+//			printf("Closing the socket...\n");
+//			if (WIFI_StopServer(socket) == WIFI_STATUS_OK) {
+//				printf("Socket closed\n");
+//			}
+//		} else {
+//			printf("Failed to start TCP server!\n");
+//		}
+//		osDelay(10);
+//	}
+//
+//	while (1) {
+//		/* Delete the thread */
+//		osThreadTerminate(NULL);
+//	}
+//}
 
 

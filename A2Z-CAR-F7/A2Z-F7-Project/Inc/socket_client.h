@@ -12,7 +12,7 @@
 #define CLIENT_BUFF_LEN				SERVER_BUFF_LEN
 #define CLIENT_SEND_INTERVAL		10
 #define CLIENT_RECONNECT_INTERVAL	1000
-#define REMOTE_IP			"10.27.99.201"
+#define REMOTE_IP			"10.27.99.91"
 #define REMOTE_PORT			8002
 
 /* Exported functions ------------------------------------------------------- */

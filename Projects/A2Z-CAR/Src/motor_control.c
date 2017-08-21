@@ -64,13 +64,14 @@ float pi_control()
 
 int8_t disable_drive()
 {
-	HAL_GPIO_DeInit(GPIOB, GPIO_PIN_4);
 	if (HAL_TIM_PWM_Stop(&motor_pwm_handle, TIM_CHANNEL_1) != HAL_OK) {
 		return -1;
 	}
-	if (HAL_TIM_PWM_DeInit(&servo_pwm_handle) != HAL_OK) {
+	if (HAL_TIM_PWM_DeInit(&motor_pwm_handle) != HAL_OK) {
 		return -1;
 	}
+	// Disable output pin
+	HAL_GPIO_DeInit(GPIOA, GPIO_PIN_15);
 	return 0;
 }
 
@@ -79,12 +80,12 @@ void motor_control_thread(void const * argument)
 	// set forward
 	set_direction(1);
 
-	for (uint8_t i = 100; i > 15; i -= 5) {
-		motor_pwm_set_duty(i);
-		osDelay(125);
-	}
+//	for (uint8_t i = 100; i > 15; i -= 5) {
+//		motor_pwm_set_duty(i);
+//		osDelay(125);
+//	}
 
-	required_current = 24.0;
+//	required_current = 24.0;
 
 	while(1) {
 //		measured_current = (float)adc_current_measure() / 161;

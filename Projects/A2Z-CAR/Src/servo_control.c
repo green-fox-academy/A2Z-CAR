@@ -63,6 +63,7 @@ void servo_control_thread(void const * argument)
 		set_servo();
 		osDelay(10);
 	}
+
 	while (1) {
 		/* Delete the thread */
 		osThreadTerminate(NULL);
