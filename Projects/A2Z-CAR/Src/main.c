@@ -85,7 +85,6 @@ int main(void)
 		return -1;
 	}
 
-
 	proximity_control_thread();
 
 	/* Init thread */

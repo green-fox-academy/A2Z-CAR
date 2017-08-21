@@ -6,6 +6,8 @@
  */
 #include "proximity_driver.h"
 
+
+
 static void EXTI15_10_IRQHandler_Config(void);
 uint32_t proxim1_cntr = 0;
 int8_t proxim1_up = 0;
@@ -70,7 +72,7 @@ int8_t proximity_control_thread()
 {
 
 	while (1){
-
+		cm_cntr = 0;
 		proxim1_cntr = 0;
 		proxim1_up = 0;
 		proximity_send_trigger();
@@ -80,7 +82,7 @@ int8_t proximity_control_thread()
 		}
 		proxim1_cntr = cm_cntr;
 		printf("proxim1_cntr: %lu\n\n", proxim1_cntr);
-		cm_cntr = 0;
+
 	}
 	return 0;
 }
@@ -133,8 +135,14 @@ int8_t proximity_timer_init()
 
 	printf("TIM4 init done.\n");
 
-	HAL_NVIC_DisableIRQ(TIM3_IRQn);
-	HAL_NVIC_EnableIRQ(TIM3_IRQn);
+	//init D15 (PB8) TIM4 CH3
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_8;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
+	HAL_GPIO_Init(GPIOB, &GPIO_Init);
 
 	return 0;
 }
@@ -142,5 +150,8 @@ int8_t proximity_timer_init()
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
  {
 	cm_cntr++;
+	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);
+
  }
+
 
