@@ -155,22 +155,26 @@ int8_t system_init()
   */
 static void StartThread(void const * argument)
 {
-//	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
+//	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 //	osThreadCreate(osThread(servo), NULL);
 
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(motor), NULL);
 
-//	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE);
-//	osThreadCreate(osThread(wifi_rec), NULL);
+	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(wifi_rec), NULL);
 
-	osThreadDef(wifi, wifi_send_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(wifi), NULL);
+//	osThreadDef(wifi, wifi_send_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(wifi), NULL);
 
-	while (1) {
-	/* Delete the init thread */
+	terminate_thread();
+}
+
+
+void terminate_thread()
+{
+	while (1)
 		osThreadTerminate(NULL);
-	}
 }
 
 
