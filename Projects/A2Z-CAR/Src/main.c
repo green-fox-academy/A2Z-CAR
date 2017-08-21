@@ -131,13 +131,10 @@ int8_t system_init()
 	adc_init();
 	adc_12b_init();
 
-	if (proximity_sensor_trigger_init() != OK) {
+	if (proximity_driver_init() != OK) {
 		return -1;
 	}
 
-	if (proximity1_exti_init() != OK) {
-			return -1;
-	}
 
 	return 0;
 }
