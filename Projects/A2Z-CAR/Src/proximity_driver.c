@@ -57,10 +57,10 @@ void proximity_send_trigger()
 {
 	//init trigger pin to D3 (PB0)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	HAL_Delay(500);
+	osDelay(500);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 	//printf("Proxim trigger sent.\n");
-	HAL_Delay(250);
+	osDelay(250);
 
 }
 
@@ -85,10 +85,10 @@ int8_t proximity2_exti_init()
 	return 0;
 }
 
-int8_t proximity_control_thread()
+void proximity_control_thread()
 {
 
-	while (1){
+	while (1) {
 		cm_cntr = 0;
 		proxim1_cntr = 0;
 		proxim1_up = 0;
@@ -112,11 +112,9 @@ int8_t proximity_control_thread()
 		} else if ((proxim1_cntr < 40) && (proxim2_cntr < 40)) {
 			stop_drive();
 			printf("Stop signal sent.\n");
-
 		}
-
 	}
-	return 0;
+	terminate_thread();
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)

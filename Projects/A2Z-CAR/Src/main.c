@@ -131,8 +131,8 @@ int8_t system_init()
 
 	// 8-bit ADC
 	adc_init();
-	// 12-bit ADC
-	adc_12b_init();
+//	// 12-bit ADC
+//	adc_12b_init();
 
 	if (proximity_driver_init() != OK) {
 		return -1;
@@ -156,14 +156,17 @@ static void StartThread(void const * argument)
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(motor), NULL);
 
-	osThreadDef(proxim, proximity_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(proxim), NULL);
+//	osThreadDef(proxim, proximity_control_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(proxim), NULL);
 
-//	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-//	osThreadCreate(osThread(wifi), NULL);
+//	osThreadDef(wifi_send, wifi_send_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(wifi_send), NULL);
 
-	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(wifi_rec), NULL);
+
+//	osThreadDef(wifi, wifi_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(wifi), NULL);
 
 	terminate_thread();
 }

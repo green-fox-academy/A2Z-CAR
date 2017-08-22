@@ -83,6 +83,7 @@ void motor_control_thread(void const * argument)
 	pin_init();
 	// set forward
 	set_direction(1);
+	motor_pwm_set_duty(25);
 
 //	for (uint8_t i = 100; i > 15; i -= 5) {
 //		motor_pwm_set_duty(i);
