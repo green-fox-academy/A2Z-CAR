@@ -159,11 +159,11 @@ static void StartThread(void const * argument)
 //	osThreadDef(proxim, proximity_control_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 //	osThreadCreate(osThread(proxim), NULL);
 
-//	osThreadDef(wifi_send, wifi_send_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
-//	osThreadCreate(osThread(wifi_send), NULL);
+	osThreadDef(wifi_send, wifi_send_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(wifi_send), NULL);
 
-	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(wifi_rec), NULL);
+//	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(wifi_rec), NULL);
 
 //	osThreadDef(wifi, wifi_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 //	osThreadCreate(osThread(wifi), NULL);
