@@ -62,6 +62,8 @@ int8_t wifi_init()
 
 void wifi_send_thread(void const * argument)
 {
+	uint16_t socket = 0;
+	uint8_t connected = 0;
 	printf("WiFi thread starting... \n");
 	while(1) {
 		printf("> Trying to connect to server: %d.%d.%d.%d:8002 ...\n",
@@ -69,23 +71,27 @@ void wifi_send_thread(void const * argument)
 			   remote_ip[1],
 			   remote_ip[2],
 			   remote_ip[3]);
-		if( WIFI_OpenClientConnection(0, WIFI_TCP_PROTOCOL, "TCP_CLIENT", remote_ip, remote_port, 0) == WIFI_STATUS_OK) {
+		if( WIFI_OpenClientConnection(socket, WIFI_TCP_PROTOCOL, "TCP_CLIENT", remote_ip, remote_port, 0) == WIFI_STATUS_OK) {
 			printf("> TCP Connection opened successfully.\n");
-			socket = 0;
+			connected = 1;
+			printf("trying to send data\n");
+			while (connected) {
+				char buff;
+				sprintf("S#1:%d, S#2:%d,S#3:%d,S#4:%d,S#5:%d,S#6:%d,S#7:%d,S#8:%d,S#9:%d\n", adc_values[0], adc_values[1],adc_values[2],adc_values[3],adc_values[4],adc_values[5],adc_values[6],adc_values[7],adc_values[9]);
+				if (WIFI_SendData(socket, buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) == WIFI_STATUS_OK) {
+					printf("Data sent\n");
+				} else {
+					printf("> ERROR : Failed to send Data.\n");
+					socket++;
+					connected = 0;
+				}
+				osDelay(500);
+			}
 		} else {
 			printf("> ERROR : Cannot open Connection\n");
+			socket++;
 		}
-		printf("trying to send data\n");
-		while (socket != -1) {
-			char buff;
-			sprintf("S#1:%d, S#2:%d,S#3:%d,S#4:%d,S#5:%d,S#6:%d,S#7:%d,S#8:%d,S#9:%d\n", adc_values[0], adc_values[1],adc_values[2],adc_values[3],adc_values[4],adc_values[5],adc_values[6],adc_values[7],adc_values[9]);
-			if (WIFI_SendData(socket, buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
-				printf("> ERROR : Failed to send Data.\n");
-			} else {
-				printf("Data sent\n");
-			}
-		}
-		osDelay(500);
+		osDelay(100);
 	}
 	terminate_thread();
 }
@@ -97,9 +103,9 @@ void wifi_receive_thread(void const * argument)
 		if (WIFI_StartServer(socket, WIFI_TCP_PROTOCOL, "IoT server", server_port) == WIFI_STATUS_OK) {
 			if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 				if (data_len > 0) {
-					if (rec_data == 1) {								// start signal
+					if (rec_data == 1) {				// start signal
 						motor_pwm_set_duty(25);
-					} else if (rec_data == 0) {							// stop signal
+					} else if (rec_data == 0) {			// stop signal
 						disable_drive();
 					}
 				}

@@ -86,8 +86,9 @@ int main(void)
 		return -1;
 	}
 
-//	set_direction(1);
-//	motor_pwm_set_duty(75);
+	pin_init();
+	set_direction(1);
+	motor_pwm_set_duty(25);
 
 //	proximity_send_trigger();
 
@@ -161,11 +162,11 @@ static void StartThread(void const * argument)
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(motor), NULL);
 
-	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(wifi_rec), NULL);
+	osThreadDef(wifi, wifi_send_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(wifi), NULL);
 
-//	osThreadDef(wifi, wifi_send_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-//	osThreadCreate(osThread(wifi), NULL);
+//	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(wifi_rec), NULL);
 
 	terminate_thread();
 }

@@ -15,8 +15,8 @@
 #define SSID     "A66 Guest"
 #define PASSWORD "Hello123"
 
-#define WIFI_WRITE_TIMEOUT 10000
-#define WIFI_READ_TIMEOUT  10000
+#define WIFI_WRITE_TIMEOUT 1000
+#define WIFI_READ_TIMEOUT  1000
 #define CONNECTION_TRIAL_MAX          10
 
 /* Exported functions ------------------------------------------------------- */
