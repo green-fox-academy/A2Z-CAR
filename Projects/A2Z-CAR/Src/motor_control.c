@@ -65,17 +65,17 @@ float pi_control()
 	return ctrler_out;
 }
 
-int8_t disable_drive()
+void stop_drive()
 {
-	if (HAL_TIM_PWM_Stop(&motor_pwm_handle, TIM_CHANNEL_1) != HAL_OK) {
-		return -1;
-	}
-	if (HAL_TIM_PWM_DeInit(&motor_pwm_handle) != HAL_OK) {
-		return -1;
-	}
+	HAL_TIM_PWM_Stop(&motor_pwm_handle, TIM_CHANNEL_1);
+}
+
+void disable_drive()
+{
+	stop_drive();
+	HAL_TIM_PWM_DeInit(&motor_pwm_handle);
 	// Disable output pin
 	HAL_GPIO_DeInit(GPIOA, GPIO_PIN_15);
-	return 0;
 }
 
 void motor_control_thread(void const * argument)

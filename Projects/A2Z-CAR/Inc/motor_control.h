@@ -13,7 +13,8 @@
 void pin_init();
 void set_direction(int8_t dir);
 float pi_control();
-int8_t disable_drive();
+void stop_drive();
+void disable_drive();
 void motor_control_thread(void const * argument);
 
 /* Exported constants --------------------------------------------------------*/

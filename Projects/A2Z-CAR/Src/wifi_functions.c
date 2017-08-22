@@ -72,18 +72,19 @@ void wifi_send_thread(void const * argument)
 			   remote_ip[2],
 			   remote_ip[3]);
 		if( WIFI_OpenClientConnection(socket, WIFI_TCP_PROTOCOL, "TCP_CLIENT", remote_ip, remote_port, 0) == WIFI_STATUS_OK) {
-			printf("> TCP Connection opened successfully.\n");
+			printf("> TCP connection opened successfully\n");
 			connected = 1;
-			printf("trying to send data\n");
+			printf("Trying to send data\n");
 			while (connected) {
 				char buff;
 				sprintf("S#1:%d, S#2:%d,S#3:%d,S#4:%d,S#5:%d,S#6:%d,S#7:%d,S#8:%d,S#9:%d\n", adc_values[0], adc_values[1],adc_values[2],adc_values[3],adc_values[4],adc_values[5],adc_values[6],adc_values[7],adc_values[9]);
 				if (WIFI_SendData(socket, buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) == WIFI_STATUS_OK) {
 					printf("Data sent\n");
 				} else {
-					printf("> ERROR : Failed to send Data.\n");
+					printf("> ERROR : Failed to send data, stopping car\n");
 					socket++;
 					connected = 0;
+					stop_drive();
 				}
 				osDelay(500);
 			}
