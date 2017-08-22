@@ -6,8 +6,6 @@
  */
 #include "proximity_driver.h"
 
-static void EXTI15_10_IRQHandler_Config(void);
-static void EXTI3_IRQHandler_Config(void);
 uint32_t proxim1_cntr = 0;
 int8_t proxim1_up = 0;
 uint32_t proxim2_cntr = 0;
@@ -16,10 +14,21 @@ uint32_t cm_cntr = 0;
 
 int8_t proximity_driver_init()
 {
-	proximity_timer_init();
-	proximity_sensor_trigger_init();
-	proximity1_exti_init();
-	proximity2_exti_init();
+	if (proximity_timer_init() != 0) {
+		return -1;
+	}
+
+	if (proximity_sensor_trigger_init() != 0) {
+		return -1;
+	}
+
+	if (proximity1_exti_init() != 0) {
+		return -1;
+	}
+
+	if (proximity2_exti_init() != 0) {
+		return -1;
+	}
 
 	return 0;
 }
