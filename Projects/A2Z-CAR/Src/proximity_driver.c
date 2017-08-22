@@ -6,6 +6,9 @@
  */
 #include "proximity_driver.h"
 
+static void EXTI15_10_IRQHandler_Config(void);
+static void EXTI3_IRQHandler_Config(void);
+
 uint32_t proxim1_cntr = 0;
 int8_t proxim1_up = 0;
 uint32_t proxim2_cntr = 0;
@@ -101,6 +104,16 @@ int8_t proximity_control_thread()
 		while (proxim2_up == 1);
 		proxim2_cntr = cm_cntr;
 		printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
+
+		if ((proxim1_cntr < 20) && (proxim2_cntr < 20)) {
+			disable_drive();
+			printf("Disable signal sent.\n");
+
+		} else if ((proxim1_cntr < 40) && (proxim2_cntr < 40)) {
+			stop_drive();
+			printf("Stop signal sent.\n");
+
+		}
 
 	}
 	return 0;
