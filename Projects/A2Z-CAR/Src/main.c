@@ -85,21 +85,20 @@ int main(void)
 		return -1;
 	}
 
-	proximity_control_thread();
 	pin_init();
 	set_direction(1);
 	motor_pwm_set_duty(25);
 
 
 	/* Init thread */
-	//osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-	//osThreadCreate (osThread(Start), NULL);
+	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	osThreadCreate (osThread(Start), NULL);
 
 	/* Start scheduler */
-	//osKernelStart();
+	osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
-	//for (;;);
+	for (;;);
 }
 
 
@@ -158,8 +157,8 @@ static void StartThread(void const * argument)
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(motor), NULL);
 
-	osThreadDef(proxim, proximity_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(proxim), NULL);
+//	osThreadDef(proxim, proximity_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+//	osThreadCreate(osThread(proxim), NULL);
 
 	osThreadDef(wifi, wifi_send_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(wifi), NULL);
