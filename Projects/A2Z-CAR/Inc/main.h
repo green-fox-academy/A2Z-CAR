@@ -57,7 +57,7 @@
 /* Exported macro ------------------------------------------------------------*/
 #define OK	0
 /* Exported functions ------------------------------------------------------- */
-void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim);
+
 void terminate_thread();
 
 #endif /* __MAIN_H */

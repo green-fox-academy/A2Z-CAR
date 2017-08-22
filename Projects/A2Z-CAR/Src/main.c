@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright � 2017 STMicroelectronics International N.V. 
+  * <h2><center>&copy; Copyright � 2017 STMicroelectronics International N.V.
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -62,7 +62,6 @@
 /* Private function prototypes -----------------------------------------------*/
 static void GPIO_ConfigAN(void);
 static void SystemClock_Config(void);
-
 static void StartThread(void const * argument);
 
 int8_t system_init();
@@ -86,21 +85,21 @@ int main(void)
 		return -1;
 	}
 
+	proximity_control_thread();
 	pin_init();
 	set_direction(1);
 	motor_pwm_set_duty(25);
 
-//	proximity_send_trigger();
 
 	/* Init thread */
-	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-	osThreadCreate (osThread(Start), NULL);
+	//osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	//osThreadCreate (osThread(Start), NULL);
 
 	/* Start scheduler */
-	osKernelStart();
+	//osKernelStart();
 
 	/* We should never get here as control is now taken by the scheduler */
-	for (;;);
+	//for (;;);
 }
 
 
@@ -137,13 +136,10 @@ int8_t system_init()
 	// 12-bit ADC
 	adc_12b_init();
 
-	if (proximity_sensor_trigger_init() != OK) {
+	if (proximity_driver_init() != OK) {
 		return -1;
 	}
 
-	if (proximity_ic2_init() != OK) {
-			return -1;
-	}
 
 	return 0;
 }
@@ -161,6 +157,9 @@ static void StartThread(void const * argument)
 
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(motor), NULL);
+
+	osThreadDef(proxim, proximity_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadCreate(osThread(proxim), NULL);
 
 	osThreadDef(wifi, wifi_send_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
 	osThreadCreate(osThread(wifi), NULL);

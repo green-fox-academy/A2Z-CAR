@@ -45,7 +45,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern TIM_HandleTypeDef    ic_handle;
+extern TIM_HandleTypeDef    proxim_timer_handle;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -130,6 +130,7 @@ void DebugMon_Handler(void)
   */
 void SysTick_Handler(void)
 {
+	HAL_IncTick();
 }
 
 /******************************************************************************/
@@ -148,9 +149,14 @@ void SysTick_Handler(void)
 {
 }*/
 
-void TIM1_IRQHandler(void)
+void EXTI15_10_IRQHandler(void)
 {
-	HAL_TIM_IRQHandler(&ic_handle);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
+}
+
+void TIM4_IRQHandler(void)
+{
+  	HAL_TIM_IRQHandler(&proxim_timer_handle);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

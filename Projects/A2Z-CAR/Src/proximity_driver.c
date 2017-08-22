@@ -6,29 +6,39 @@
  */
 #include "proximity_driver.h"
 
-typedef struct {
-	uint32_t ovf;
-	uint32_t prev;
-	uint32_t last;
-} input_capture_data_t;
 
-input_capture_data_t ic_cntr = {0, 0, 0};
-uint32_t ovf_cntr = 0;
-float prev_rpm_value = 0;
+
+static void EXTI15_10_IRQHandler_Config(void);
+uint32_t proxim1_cntr = 0;
+int8_t proxim1_up = 0;
+uint32_t tickstart;
+uint32_t tickstop;
+uint32_t cm_cntr = 0;
+
+int8_t proximity_driver_init()
+{
+	proximity_sensor_trigger_init();
+	proximity1_exti_init();
+	proximity_timer_init();
+
+	return 0;
+}
+
 
 
 int8_t proximity_sensor_trigger_init()
 {
-	//init D2 (PD14) as trigger for proximity sensors
-	__HAL_RCC_GPIOD_CLK_ENABLE();
+	//init D3 (PB0) as trigger for proximity sensors
+	__HAL_RCC_GPIOB_CLK_ENABLE();
 	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_14;
+	GPIO_Init.Pin = GPIO_PIN_0;
 	GPIO_Init.Speed = GPIO_SPEED_FAST;
 	GPIO_Init.Pull = GPIO_NOPULL;
 	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
-	HAL_GPIO_Init(GPIOD, &GPIO_Init);
+	HAL_GPIO_Init(GPIOB, &GPIO_Init);
 
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+
 	printf("Proxim trigger init done.\n");
 
 	return 0;
@@ -36,41 +46,21 @@ int8_t proximity_sensor_trigger_init()
 
 void proximity_send_trigger()
 {
-	printf("Proxim trigger sending started.\n");
-	while(1){
-		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-		HAL_Delay(500);
-		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-		printf("Proxim trigger sent.\n");
-		get_freq_psensor2();
-		HAL_Delay(250);
+	//printf("Proxim trigger sending started.\n");
 
-	}
+	//init trigger pin to D3 (PB0)
+
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	HAL_Delay(1500);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+	printf("Proxim trigger sent.\n");
+	HAL_Delay(250);
 }
 
-int8_t proximity_ic2_init()
+int8_t proximity1_exti_init()
 {
-	//TIM1_CH2 D3 (PB0) input capture mode
-
-	//__HAL_RCC_TIM1_CLK_ENABLE();
-	ic_handle.Instance = TIM1;
-	ic_handle.State = HAL_TIM_STATE_RESET;
-	ic_handle.Channel = HAL_TIM_ACTIVE_CHANNEL_2;
-	ic_handle.Init.RepetitionCounter = 0xFF;
-	ic_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	ic_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-	ic_handle.Init.Period = 0xFFFF;
-	ic_handle.Init.Prescaler = 0;
-	HAL_TIM_IC_Init(&ic_handle);
-
-	ic_ic_init.ICFilter = 0;
-	ic_ic_init.ICPolarity = TIM_ICPOLARITY_BOTHEDGE;
-	ic_ic_init.ICPrescaler = TIM_ICPSC_DIV1;
-	ic_ic_init.ICSelection = TIM_ICSELECTION_DIRECTTI;
-	HAL_TIM_IC_ConfigChannel(&ic_handle, &ic_ic_init, TIM_CHANNEL_2);
-
-	HAL_TIM_Base_Start_IT(&ic_handle);
-	HAL_TIM_IC_Start_IT(&ic_handle, TIM_CHANNEL_2);
+	//init D2 (PD14) EXTI mode
+	EXTI15_10_IRQHandler_Config();
 
 	printf("Proxim sensor2 init done.\n");
 
@@ -78,89 +68,89 @@ int8_t proximity_ic2_init()
 
 }
 
-/*int8_t proximity_ic1_init()
+int8_t proximity_control_thread()
 {
-	// Init pin D4(PA3) as PWM TIM5 output (alternate timers: TIM2_CH4 TIM5_CH4 TIM15_CH2)
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitDef.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitDef.Pull = GPIO_NOPULL;
-	GPIO_InitDef.Speed = GPIO_SPEED_MEDIUM;
-	GPIO_InitDef.Pin = GPIO_PIN_3;
-	GPIO_InitDef.Alternate = GPIO_AF2_TIM5;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitDef);
 
-	// TIM5 init as PWM, 10 kHz
-	__HAL_RCC_TIM5_CLK_ENABLE();
-	proxi_pwm_handle.Instance = TIM5;
-	proxi_pwm_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	proxi_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-	proxi_pwm_handle.Init.Period = 8000;
-	proxi_pwm_handle.Init.Prescaler = 0;
-	if (HAL_TIM_PWM_Init(&proxi_pwm_handle) != HAL_OK) {
-		return -1;
+	while (1){
+		cm_cntr = 0;
+		proxim1_cntr = 0;
+		proxim1_up = 0;
+		proximity_send_trigger();
+
+		while (proxim1_up == 1){
+
+		}
+		proxim1_cntr = cm_cntr;
+		printf("proxim1_cntr: %lu\n\n", proxim1_cntr);
+
 	}
+	return 0;
+}
 
-	proxi_pwm_oc_init.OCFastMode = TIM_OCFAST_DISABLE;
-	proxi_pwm_oc_init.OCIdleState = TIM_OCIDLESTATE_RESET;
-	proxi_pwm_oc_init.OCMode = TIM_OCMODE_PWM1;
-	proxi_pwm_oc_init.OCPolarity = TIM_OCPOLARITY_HIGH;
-	proxi_pwm_oc_init.Pulse = 4000;
-	HAL_TIM_PWM_ConfigChannel(&proxi_pwm_handle, &proxi_pwm_oc_init, TIM_CHANNEL_5);
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 0)) {
+	  proxim1_up = 1;
+	  HAL_TIM_Base_Start_IT(&proxim_timer_handle);
+
+
+  } else if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 1)) {
+	  proxim1_up = 0;
+	  HAL_TIM_Base_Stop_IT(&proxim_timer_handle);
+
+  }
+}
+
+static void EXTI15_10_IRQHandler_Config(void)
+{
+  GPIO_InitTypeDef   GPIO_InitStructure;
+
+  /* Enable GPIOC clock */
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /* Configure PD.14 pin as input floating */
+  GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStructure.Pull = GPIO_NOPULL;
+  GPIO_InitStructure.Pin = GPIO_PIN_14;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+  /* Enable and set EXTI lines 10 to 15 Interrupt to the lowest priority */
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+}
+
+int8_t proximity_timer_init()
+{
+	//init TIM4_CH3 10 kHz x 0,58 = 1 periode / 1 cm
+	proxim_timer_handle.Instance = TIM4;
+	proxim_timer_handle.State = HAL_TIM_STATE_RESET;
+	proxim_timer_handle.Channel = HAL_TIM_ACTIVE_CHANNEL_3;
+	proxim_timer_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	proxim_timer_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
+	proxim_timer_handle.Init.Period = 928;
+	proxim_timer_handle.Init.Prescaler = 4;
+	HAL_TIM_Base_Init(&proxim_timer_handle);
+	HAL_TIM_Base_Start_IT(&proxim_timer_handle);
+
+	printf("TIM4 init done.\n");
+
+	//init D15 (PB8) TIM4 CH3
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Pin = GPIO_PIN_8;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
+	HAL_GPIO_Init(GPIOB, &GPIO_Init);
 
 	return 0;
-
-}*/
-
-/**
-  * @brief  This function will be called if a timer input capture interrupt occures
-  * @param  Timer handle, which identifies which timer input capture triggered the interrupt
-  * @retval None
-  */
-
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-{
-	printf("HAL_TIM_IC_CaptureCallback.\n");
-	ic_cntr.prev = ic_cntr.last;
-	ic_cntr.last = TIM1->CCR2;
-	ic_cntr.ovf = ovf_cntr;
-	ovf_cntr = 0;
 }
-
-/**
-  * @brief  This function will be called if a timer overflow occures
-  * @param  Timer handle, which identifies which timer had overflow
-  * @retval None
-  */
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	ovf_cntr++;
-}
+ {
+	cm_cntr++;
+	//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);
 
-float get_freq_psensor2()
-{
-	  //TIM1_BRK_TIM15_IRQn         = 24,     /*!< TIM1 Break interrupt and TIM15 global interrupt                   */
-	  //TIM1_UP_TIM16_IRQn          = 25,     /*!< TIM1 Update Interrupt and TIM16 global interrupt                  */
-	  //TIM1_TRG_COM_TIM17_IRQn     = 26,     /*!< TIM1 Trigger and Commutation Interrupt and TIM17 global interrupt */
-	  //TIM1_CC_IRQn                = 27,     /*!< TIM1 Capture Compare Interrupt                                    */
+ }
 
-	HAL_NVIC_DisableIRQ(TIM1_CC_IRQn);
-	input_capture_data_t snapshot = ic_cntr;
-	HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
-
-	printf("overflows are: %f\n", (float)snapshot.ovf);
-	float steps = (float)snapshot.ovf * ic_handle.Init.Period + snapshot.last - snapshot.prev;
-	float tim1_clk_freq = (float)SystemCoreClock / 2 / (ic_handle.Init.Prescaler + 1); // Because clock division is 1x, so only sysclock matters
-	float tim1_clk_period = 1/ tim1_clk_freq;
-	float signal_period = steps * tim1_clk_period;
-	float signal_freq = 1 / signal_period;
-
-	/*if (isnan(signal_freq) || isinf(signal_freq))
-		return -1;
-	else*/
-	printf("Steps are: %f\n", steps);
-	printf("Signal Periode is: %f\n", signal_period);
-	printf("Signal Freq is: %f\n", signal_freq);
-		return signal_freq;
-}
 
