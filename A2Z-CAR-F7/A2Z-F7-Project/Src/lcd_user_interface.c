@@ -1,5 +1,7 @@
 #include "lcd_user_interface.h"
+#include "socket_client.h"
 
+TS_StateTypeDef ts_state;
 
 void draw_background()
 {
@@ -22,6 +24,11 @@ void draw_background()
 		BSP_LCD_DrawCircle(x, y, 25);
 		x += 50;
 	}
+	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+	BSP_LCD_FillRect(400, 140, 80, 50);
+	BSP_LCD_SetTextColor(LCD_COLOR_RED);
+	BSP_LCD_FillRect(400, 200, 80, 50);
+
 
 }
 
@@ -51,3 +58,29 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 
 }
+
+void detect_start_stop_thread(void const * argument)
+{
+	while (1) {
+		BSP_TS_GetState(&ts_state);
+		if (ts_state.touchDetected) {
+			if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
+				move = 1;
+				LCD_UsrLog ((char *)"Start command detected\n");
+
+			} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
+				move = 0;
+				LCD_UsrLog ((char *)"Stop command detected\n");
+			}
+			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+			osThreadCreate (osThread(client), NULL);
+			osDelay(2000);
+		} else {
+			osDelay(10);
+		}
+	}
+
+	while (1)
+		osThreadTerminate(NULL);
+}
+
