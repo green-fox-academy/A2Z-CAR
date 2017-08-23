@@ -86,7 +86,6 @@ void socket_server_thread(void const *argument)
 				} else {
 					//set LCD user feedback
 					draw_background();
-
 					for (uint8_t i = 0; i < 9; i++) {
 						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
 						draw_sensor_data(i, buff[i]);
@@ -97,7 +96,6 @@ void socket_server_thread(void const *argument)
 				LCD_UsrLog("\n");
 
 			} while (received_bytes > 0);
-
 		}
 		// If not connected close the last socket and wait a little bit and then try to reconnect
 		closesocket(client_socket);

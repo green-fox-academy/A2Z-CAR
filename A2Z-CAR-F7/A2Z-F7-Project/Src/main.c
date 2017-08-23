@@ -127,6 +127,7 @@ static void StartThread(void const * argument)
   /* Initialize LCD */
   BSP_Config();
   
+
   /* Create tcp_ip stack thread */
   tcpip_init(NULL, NULL);
   

@@ -457,7 +457,7 @@ Discarded input sections
  .rodata        0x00000000       0x50 Application/User/main.o
  .rodata.str1.1
                 0x00000000       0x81 Application/User/main.o
- .debug_info    0x00000000     0x1190 Application/User/main.o
+ .debug_info    0x00000000     0x1191 Application/User/main.o
  .debug_abbrev  0x00000000      0x327 Application/User/main.o
  .debug_loc     0x00000000       0x74 Application/User/main.o
  .debug_aranges

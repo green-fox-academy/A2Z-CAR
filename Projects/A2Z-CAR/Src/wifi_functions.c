@@ -6,7 +6,7 @@
 uint8_t remote_ip[] = {10, 27, 99, 89};
 uint16_t remote_port = 8002;
 uint16_t server_port = 8002;
-uint8_t rec_data;
+int8_t rec_data;
 char* modulename;
 uint8_t sent_data[] = "Hello big brother board!";
 uint16_t rec_len;
@@ -83,7 +83,18 @@ void wifi_send_thread(void const * argument)
 					socket++;
 					stop_drive();
 				}
-				osDelay(500);
+				if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
+					if (data_len > 0) {
+						if (rec_data == 1) {				// start signal
+							motor_pwm_set_duty(25);
+						} else if (rec_data == 0) {			// stop signal
+							stop_drive();
+						} else if (rec_data == -1) {		// disable signal
+							disable_drive();
+						}
+					}
+				}
+				osDelay(300);
 			} while (data_len > 0);
 		} else {
 			printf("> ERROR : Cannot open Connection\n");
