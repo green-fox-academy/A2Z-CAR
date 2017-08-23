@@ -86,6 +86,7 @@ void servo_pwm_set_duty(float duty)
 	servo_pwm_oc_init.Pulse = pulse;
 	HAL_TIM_PWM_ConfigChannel(&servo_pwm_handle, &servo_pwm_oc_init, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&servo_pwm_handle, TIM_CHANNEL_1);
+	return;
 }
 
 
@@ -100,6 +101,7 @@ void motor_pwm_set_duty(float duty)
 	motor_pwm_oc_init.Pulse = pulse;
 	HAL_TIM_PWM_ConfigChannel(&motor_pwm_handle, &motor_pwm_oc_init, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&motor_pwm_handle, TIM_CHANNEL_1);
+	return;
 }
 
 
