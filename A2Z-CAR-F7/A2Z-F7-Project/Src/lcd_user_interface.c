@@ -61,6 +61,7 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 
 void detect_start_stop_thread(void const * argument)
 {
+	move = 0;
 	while (1) {
 		BSP_TS_GetState(&ts_state);
 		if (ts_state.touchDetected) {
@@ -69,12 +70,12 @@ void detect_start_stop_thread(void const * argument)
 				LCD_UsrLog ((char *)"Start command detected\n");
 
 			} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
-				move = 0;
+				move = -1;
 				LCD_UsrLog ((char *)"Stop command detected\n");
 			}
-			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-			osThreadCreate (osThread(client), NULL);
-			osDelay(2000);
+//			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
+//			osThreadCreate (osThread(client), NULL);
+			osDelay(500);
 		} else {
 			osDelay(10);
 		}

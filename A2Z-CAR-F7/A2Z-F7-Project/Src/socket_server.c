@@ -78,14 +78,12 @@ void socket_server_thread(void const *argument)
 
 			// Receive data
 			do {
-
 				received_bytes = recv(client_socket, buff, sizeof(buff), 0);
 				// Check for error
 				if (received_bytes < 0) {
 					LCD_ErrLog("Socket server - can't receive\n");
 
 				} else {
-
 					//set LCD user feedback
 					draw_background();
 
@@ -94,6 +92,7 @@ void socket_server_thread(void const *argument)
 						draw_sensor_data(i, buff[i]);
 					}
 				}
+				send(client_socket, &move, sizeof(move), 0);
 				osDelay(10);
 				LCD_UsrLog("\n");
 
