@@ -67,7 +67,7 @@ void detect_start_stop_thread(void const * argument)
 		if (ts_state.touchDetected) {
 			if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
 				move = 1;
-				LCD_UsrLog ((char *)"Start command detected\n");
+				LCD_UsrLog ((char *)"Go command detected\n");
 
 			} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
 				move = -1;

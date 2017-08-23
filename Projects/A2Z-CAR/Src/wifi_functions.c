@@ -69,7 +69,7 @@ void wifi_send_thread(void const * argument)
 			   remote_ip[1],
 			   remote_ip[2],
 			   remote_ip[3]);
-		if( WIFI_OpenClientConnection(socket, WIFI_TCP_PROTOCOL, "TCP_CLIENT", remote_ip, remote_port, 0) == WIFI_STATUS_OK) {
+		if (WIFI_OpenClientConnection(socket, WIFI_TCP_PROTOCOL, "TCP_CLIENT", remote_ip, remote_port, 0) == WIFI_STATUS_OK) {
 			printf("> TCP connection opened successfully\n");
 			printf("Trying to send data\n");
 			do {
@@ -79,23 +79,27 @@ void wifi_send_thread(void const * argument)
 					printf("Data sent\n");
 				} else {
 					printf("> ERROR : Failed to send data, stopping car\n");
-					WIFI_CloseClientConnection(socket);
-					socket++;
 					stop_drive();
 				}
 				if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 					if (data_len > 0) {
-						if (rec_data == 1) {				// start signal
+						if (rec_data == 1) {				// go signal
+							printf("Go signal received\n");
 							motor_pwm_set_duty(25);
 						} else if (rec_data == 0) {			// stop signal
+							printf("Stop signal received\n");
 							stop_drive();
 						} else if (rec_data == -1) {		// disable signal
+							printf("Disable signal received\n");
 							disable_drive();
 						}
 					}
 				}
 				osDelay(300);
 			} while (data_len > 0);
+			WIFI_CloseClientConnection(socket);
+			socket++;
+
 		} else {
 			printf("> ERROR : Cannot open Connection\n");
 			socket++;
@@ -106,26 +110,26 @@ void wifi_send_thread(void const * argument)
 }
 
 
-void wifi_receive_thread(void const * argument)
-{
-	int32_t socket = 0;
-	while (1) {
-		if (WIFI_StartServer(socket, WIFI_TCP_PROTOCOL, "IoT server", server_port) == WIFI_STATUS_OK) {
-			if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
-				if (data_len > 0) {
-					if (rec_data == 1) {				// start signal
-						motor_pwm_set_duty(25);
-					} else if (rec_data == 0) {			// stop signal
-						disable_drive();
-					}
-				}
-			}
-		}
-		WIFI_StopServer(socket);
-		osDelay(500);
-	}
-	terminate_thread();
-}
+//void wifi_receive_thread(void const * argument)
+//{
+//	int32_t socket = 0;
+//	while (1) {
+//		if (WIFI_StartServer(socket, WIFI_TCP_PROTOCOL, "IoT server", server_port) == WIFI_STATUS_OK) {
+//			if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
+//				if (data_len > 0) {
+//					if (rec_data == 1) {				// start signal
+//						motor_pwm_set_duty(25);
+//					} else if (rec_data == 0) {			// stop signal
+//						disable_drive();
+//					}
+//				}
+//			}
+//		}
+//		WIFI_StopServer(socket);
+//		osDelay(500);
+//	}
+//	terminate_thread();
+//}
 
 
 //void wifi_thread(void const * argument)

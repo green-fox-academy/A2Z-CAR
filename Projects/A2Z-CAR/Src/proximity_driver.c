@@ -113,6 +113,7 @@ void proximity_control_thread()
 			stop_drive();
 			printf("Stop signal sent.\n");
 		}
+		osDelay(10);
 	}
 	terminate_thread();
 }
