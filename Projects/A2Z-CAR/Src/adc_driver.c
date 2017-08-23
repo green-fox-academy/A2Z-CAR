@@ -175,6 +175,7 @@ void calibrate()
 	}
 	uint8_t minindex = 0;
 	for (int j = 0; j< 9; j++) {
+
 		if (adc_avg[j] < adc_avg[minindex]) {
 			minindex = j;
 		}
