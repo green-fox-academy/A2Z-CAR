@@ -83,7 +83,7 @@ int main(void)
 	if (system_init() != OK) {
 		return -1;
 	}
-
+	calibrate();
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
 	osThreadCreate (osThread(Start), NULL);
