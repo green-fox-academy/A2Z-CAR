@@ -16,11 +16,13 @@
 
 //#define     YWINDOW_MIN         9
 
-uint8_t move;
+int8_t move;
 
 void draw_background();
 void draw_sensor_data(int sensor_num, uint8_t radius);
+void draw_buttons();
 void detect_start_stop_thread();
+
 
 
 

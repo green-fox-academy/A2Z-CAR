@@ -85,6 +85,8 @@ int main(void)
 		return -1;
 	}
 
+	calibrate();
+
 //	pin_init();
 //	set_direction(1);
 //	motor_pwm_set_duty(25);
@@ -129,15 +131,16 @@ int8_t system_init()
 		return -1;
 	}
 
+	led_init();
+
 	// 8-bit ADC
 	adc_init();
-	// 12-bit ADC
-	adc_12b_init();
+//	// 12-bit ADC
+//	adc_12b_init();
 
 	if (proximity_driver_init() != OK) {
 		return -1;
 	}
-
 
 	return 0;
 }
@@ -150,20 +153,17 @@ int8_t system_init()
   */
 static void StartThread(void const * argument)
 {
-//	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-//	osThreadCreate(osThread(servo), NULL);
+	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	volatile osThreadId s = osThreadCreate(osThread(servo), NULL);
 
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(motor), NULL);
+	volatile osThreadId m = osThreadCreate(osThread(motor), NULL);
 
-	osThreadDef(proxim, proximity_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-	osThreadCreate(osThread(proxim), NULL);
+	osThreadDef(proxim, proximity_control_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);
 
-//	osThreadDef(wifi, wifi_send_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-//	osThreadCreate(osThread(wifi), NULL);
-
-//	osThreadDef(wifi_rec, wifi_receive_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-//	osThreadCreate(osThread(wifi_rec), NULL);
+	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	volatile osThreadId w = osThreadCreate(osThread(wifi_comm), NULL);
 
 	terminate_thread();
 }
