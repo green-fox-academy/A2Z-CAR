@@ -124,6 +124,7 @@ int8_t proximity_control_thread()
 
 		} else {
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);	//green led
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 		}
 
 	}
