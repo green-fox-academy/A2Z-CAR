@@ -160,34 +160,35 @@ void adc_init()
 
 }
 //void calibrate(uint8_t *calibration)
-void calibrate()
+void calibrate(uint8_t *calibration)
 { //measure sensor values, create multiplier to the sensors to make them even on even surface
 	uint8_t values[9];
-	uint32_t adc_avg[9];
+	uint16_t adc_avg[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	uint8_t *cal;
-	//cal = calibration;
+	cal = calibration;
+
 	for (int i = 0; i< 100; i++) {
 		get_adc_values(values);
 		for (int j = 0; j< 9; j++) {
-			adc_avg[j] += values[j];
+			adc_avg[j] = adc_avg[j] + values[j];
 		}
-		//osDelay(20);
+		HAL_Delay(20);
 	}
 	uint8_t minindex = 0;
 	for (int j = 0; j< 9; j++) {
-
 		if (adc_avg[j] < adc_avg[minindex]) {
 			minindex = j;
 		}
+	}
+	for (int j = 0; j< 9; j++) {
 		adc_avg[j] /= 100;
 	}
-	printf("cal: \n");
 	for (int j = 0; j< 9; j++) {
-		//*cal = 100 * adc_avg[minindex] / adc_avg[j];
-		printf("%5d",100 * adc_avg[minindex] / adc_avg[j]);
+		values[j] = (200 * adc_avg[minindex] / adc_avg[j]);
+		//printf("%5d",values[j]);
+		*cal = values[j];
 		cal++;
 	}
-	printf("\n");
 }
 void get_adc_values(uint8_t *adc_values)
 {
@@ -210,18 +211,13 @@ void get_adc_values(uint8_t *adc_values)
 	*values = adc_measure();
 	values+=2;
 
-	uint8_t x;
 
 	d7_adc_init();
 	*values = adc_measure();
-	x = *values;
 	values+=2;
 
-	//d0_adc_init();
-	//*values = adc_measure();
-	*values = x;
-
-
+	d0_adc_init();
+	*values = adc_measure();
 
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
@@ -250,9 +246,6 @@ uint8_t areneighbours(uint8_t a, uint8_t b) {
 	}
 	return 0;
 }
-//4
-//011101100
-//01010
 
 int8_t get_bias()
 {
@@ -269,12 +262,19 @@ int8_t get_bias()
 	}
 	get_adc_values(adc_values);
 	printf("adc:\n");
-	//uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
+
 	for (int i = 0; i < 9; i++) {
 		printf(" %4d",adc_values[i]);
 	}
-	printf("\n");
+	printf("\n ");
+	//uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
+	for (int i = 0; i < 9; i++) {
+		printf(" %4d",adc_values[i] * multiplier_percent[i] / 200);
+		adc_values[i] = adc_values[i] * multiplier_percent[i] / 200;
+	}
 
+
+	printf("\n");
 	uint8_t min_dif = 30, dif; // the minimum difference about light and dark colors
 	uint8_t maxindex = 0, minindex = 0;
 

@@ -83,7 +83,7 @@ int main(void)
 	if (system_init() != OK) {
 		return -1;
 	}
-	calibrate();
+	calibrate(multiplier_percent);
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
 	osThreadCreate (osThread(Start), NULL);
@@ -117,15 +117,11 @@ int8_t system_init()
 	if (servo_pwm_init() != OK) {
 		return -1;
 	}
-
 	if (motor_pwm_init() != OK) {
 		return -1;
 	}
-
 	led_init();
-
 	adc_init();
-
 	return 0;
 }
 
