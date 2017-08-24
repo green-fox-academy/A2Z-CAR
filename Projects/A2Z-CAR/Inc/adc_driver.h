@@ -16,6 +16,7 @@ ADC_ChannelConfTypeDef adc_ch_conf;
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void adc_init();
+void adc_12b_init();
 int8_t get_bias();
 void set_servo();
 void calibrate();
