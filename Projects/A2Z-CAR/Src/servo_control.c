@@ -66,7 +66,7 @@ void servo_control_thread(void const * argument)
 {
 	while(1) {
 		set_servo();
-		osDelay(60000);
+		osDelay(10);
 	}
 
 	terminate_thread();

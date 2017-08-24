@@ -140,7 +140,7 @@ void wifi_comm_thread(void const * argument)
 					}
 				}
 
-				osDelay(300);
+				osDelay(20);
 			}
 
 			WIFI_CloseClientConnection(socket);
