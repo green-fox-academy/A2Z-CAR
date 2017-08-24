@@ -59,7 +59,7 @@ int8_t wifi_init()
 }
 
 
-void wifi_send_thread(void const * argument)
+void wifi_comm_thread(void const * argument)
 {
 	uint32_t socket = 0;
 	uint8_t started = 0;
@@ -87,9 +87,9 @@ void wifi_send_thread(void const * argument)
 					adc_values[5],
 					adc_values[6],
 					adc_values[7],
-					adc_values[9]);
+					adc_values[8]);
 
-				if (WIFI_SendData(socket, buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+				if (WIFI_SendData(socket, &buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 					printf("> ERROR : Failed to send data\n");
 					connected = 0;
 					if (started == 1) {

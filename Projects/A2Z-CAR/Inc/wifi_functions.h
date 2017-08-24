@@ -21,8 +21,6 @@
 
 /* Exported functions ------------------------------------------------------- */
 int8_t wifi_init();
-void wifi_send_thread(void const * argument);
-void wifi_receive_thread(void const * argument);
-void wifi_thread(void const * argument);
+void wifi_comm_thread(void const * argument);
 
 #endif /* __WIFI_FUNCTIONS_H */
