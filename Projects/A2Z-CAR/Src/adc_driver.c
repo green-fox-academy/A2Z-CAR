@@ -160,7 +160,7 @@ void adc_init()
 
 }
 //void calibrate(uint8_t *calibration)
-void calibrate()
+int8_t calibrate()
 { //measure sensor values, create multiplier to the sensors to make them even on even surface
 	uint8_t values[9];
 	uint32_t adc_avg[9];
@@ -181,14 +181,16 @@ void calibrate()
 		}
 		adc_avg[j] /= 100;
 	}
-	printf("cal: \n");
+	//printf("cal: \n");
 	for (int j = 0; j< 9; j++) {
 		//*cal = 100 * adc_avg[minindex] / adc_avg[j];
-		printf("%5d",100 * adc_avg[minindex] / adc_avg[j]);
+		//printf("%5d",100 * adc_avg[minindex] / adc_avg[j]);
 		cal++;
 	}
 	printf("\n");
+	return 0;
 }
+
 void get_adc_values(uint8_t *adc_values)
 {
 	uint8_t *values;
@@ -268,12 +270,12 @@ int8_t get_bias()
 		bg_color = 1;
 	}
 	get_adc_values(adc_values);
-	printf("adc:\n");
+	//printf("adc:\n");
 	//uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
-	for (int i = 0; i < 9; i++) {
-		printf(" %4d",adc_values[i]);
-	}
-	printf("\n");
+	//for (int i = 0; i < 9; i++) {
+	//	printf(" %4d",adc_values[i]);
+	//}
+	//printf("\n");
 
 	uint8_t min_dif = 30, dif; // the minimum difference about light and dark colors
 	uint8_t maxindex = 0, minindex = 0;
@@ -293,10 +295,10 @@ int8_t get_bias()
 		uint8_t linelimit;
 		//linelimit = adc_values[minindex] + (min_dif / 2);
 		linelimit = adc_values[minindex] + ( 10 * dif / 11);
-		for (int i = 0; i < 9; i++) {
+		/*for (int i = 0; i < 9; i++) {
 			contrast[i] = adc_values[i] > linelimit;
 			printf(" %4d",contrast[i]);
-		}
+		}*/
 
 		uint8_t pos = 0;
 		int8_t center[4] = {-1, -1, -1, -1}, width = 0;

@@ -17,9 +17,10 @@ ADC_ChannelConfTypeDef adc_ch_conf;
 void adc_init();
 int8_t get_bias();
 void set_servo();
-void calibrate();
+int8_t calibrate();
 //void calibrate(uint8_t *calibration);
-uint8_t adc_values[9], multiplier_percent[9];
+uint8_t adc_values[9];
+uint8_t multiplier_percent[9];
 int8_t former_bias, bias;
 
 #endif /* __ADC_DRIVER_H */

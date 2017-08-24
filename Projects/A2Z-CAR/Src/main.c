@@ -85,7 +85,7 @@ int main(void)
 		return -1;
 	}
 
-	calibrate();
+
 
 //	pin_init();
 //	set_direction(1);
@@ -138,6 +138,7 @@ int8_t system_init()
 //	// 12-bit ADC
 //	adc_12b_init();
 
+
 	if (proximity_driver_init() != OK) {
 		return -1;
 	}
@@ -162,7 +163,7 @@ static void StartThread(void const * argument)
 	osThreadDef(proxim, proximity_control_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);
 
-	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId w = osThreadCreate(osThread(wifi_comm), NULL);
 
 	terminate_thread();

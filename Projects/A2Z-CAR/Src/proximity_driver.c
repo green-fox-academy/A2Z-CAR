@@ -5,6 +5,7 @@
  *      Author: AND
  */
 #include "proximity_driver.h"
+#include "cmsis_os.h"
 
 static void EXTI15_10_IRQHandler_Config(void);
 static void EXTI3_IRQHandler_Config(void);
@@ -62,10 +63,10 @@ void proximity_send_trigger()
 {
 	//init trigger pin to D3 (PB0)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	HAL_Delay(100);
+	osDelay(100);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 	//printf("Proxim trigger sent.\n");
-	HAL_Delay(100);
+	osDelay(100);
 
 }
 
@@ -102,7 +103,7 @@ int8_t proximity_control_thread()
 			osDelay(1);
 		}
 		proxim1_cntr = cm_cntr;
-		printf("proxim1_cntr: %lu\n", proxim1_cntr);
+		//printf("proxim1_cntr: %lu\n", proxim1_cntr);
 
 		cm_cntr = 0;
 		proxim2_cntr = 0;
@@ -112,7 +113,7 @@ int8_t proximity_control_thread()
 			osDelay(1);
 		}
 		proxim2_cntr = cm_cntr;
-		printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
+		//printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
 
 		if ((proxim1_cntr > 450) || (proxim2_cntr > 450)) {
 			//disable_drive();
