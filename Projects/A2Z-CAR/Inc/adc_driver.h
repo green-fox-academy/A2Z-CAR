@@ -9,6 +9,7 @@
 
 /* Exported types ------------------------------------------------------------*/
 ADC_HandleTypeDef adc_handle;
+ADC_HandleTypeDef adc_12b_handle;
 ADC_ChannelConfTypeDef adc_ch_conf;
 
 /* Exported constants --------------------------------------------------------*/

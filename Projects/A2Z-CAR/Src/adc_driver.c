@@ -114,6 +114,14 @@ uint16_t adc_measure()
 	return HAL_ADC_GetValue(&adc_handle);
 }
 
+uint16_t adc_rpm_measure()
+{
+	HAL_ADC_Start(&adc_12b_handle);
+	HAL_ADC_PollForConversion(&adc_12b_handle, HAL_MAX_DELAY);
+	return HAL_ADC_GetValue(&adc_12b_handle);
+}
+
+
 uint16_t adc_measure_avg(uint8_t num)
 {
 	uint32_t avg = 0, avg2 = 0;
