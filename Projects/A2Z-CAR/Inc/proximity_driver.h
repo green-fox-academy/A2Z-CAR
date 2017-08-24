@@ -19,8 +19,8 @@ void proximity_send_trigger();
 int8_t proximity1_exti_init();
 int8_t proximity2_exti_init();
 int8_t proximity_timer_init();
-void proximity_control_thread();
-
+int8_t led_feedback_init();
+int8_t proximity_control_thread();
 
 TIM_HandleTypeDef proxim_timer_handle;
 
