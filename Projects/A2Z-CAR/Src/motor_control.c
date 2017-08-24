@@ -7,12 +7,12 @@
 float ctrler_out_min = 0;
 float ctrler_out_max = 100;
 
-float p_value = 0.001;
-float i_value = 0.001;
-float error = 0.0;
-float integral = 0.0;
-float required_current = 0.0;
-float measured_current = 0.0;
+float p_value = 0.1;
+float i_value = 0.1;
+int16_t error = 0;
+int16_t integral = 0;
+int16_t required_rpm = 0;
+int16_t measured_rpm = 0;
 float ctrler_out = 0.0;
 
 void print_float(float value, int decimal_digits)
@@ -51,9 +51,9 @@ void set_direction(int8_t dir)
 
 float pi_control()
 {
-	error = required_current - measured_current;
+	error = required_rpm - measured_rpm;
 	integral += error;
-	ctrler_out = p_value * error + i_value * integral;
+	ctrler_out = p_value * (float)error + i_value * (float)integral;
 	if (ctrler_out < ctrler_out_min) {
 		ctrler_out = ctrler_out_min;
 		integral -= error;
@@ -90,10 +90,10 @@ void motor_control_thread(void const * argument)
 //		osDelay(125);
 //	}
 
-//	required_current = 24.0;
+//	required_rpm = 500;
 
 	while(1) {
-//		measured_current = (float)adc_current_measure() / 161;
+//		measured_rpm = adc_rpm_measure();
 //		print_float(measured_current, 1);
 //		printf("   ");
 //		print_float(pi_control(), 1);

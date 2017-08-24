@@ -3,13 +3,9 @@
 #include "motor_control.h"
 #include "main.h"
 
-uint8_t remote_ip[] = {10, 27, 99, 89};
+uint8_t remote_ip[] = {10, 27, 99, 226};
 uint16_t remote_port = 8002;
-uint16_t server_port = 8002;
 int8_t rec_data;
-char* modulename;
-uint8_t sent_data[] = "Hello big brother board!";
-uint16_t rec_len;
 uint8_t  mac_addr[6];
 uint8_t  ip_addr[4];
 uint16_t data_len;

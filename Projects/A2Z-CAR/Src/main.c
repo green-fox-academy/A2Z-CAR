@@ -136,7 +136,7 @@ int8_t system_init()
 	// 8-bit ADC
 	adc_init();
 //	// 12-bit ADC
-//	adc_12b_init();
+	adc_12b_init();
 
 	if (proximity_driver_init() != OK) {
 		return -1;
