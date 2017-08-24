@@ -33,6 +33,11 @@ int8_t proximity_driver_init()
 		return -1;
 	}
 
+	if (led_feedback_init() != 0) {
+		return -1;
+	}
+
+
 	return 0;
 }
 
@@ -105,14 +110,20 @@ int8_t proximity_control_thread()
 		proxim2_cntr = cm_cntr;
 		printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
 
-		if ((proxim1_cntr < 20) && (proxim2_cntr < 20)) {
+		if ((proxim1_cntr < 30) && (proxim2_cntr < 30)) {
 			disable_drive();
 			printf("Disable signal sent.\n");
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);	//red led
 
-		} else if ((proxim1_cntr < 40) && (proxim2_cntr < 40)) {
+		} else if ((proxim1_cntr < 50) && (proxim2_cntr < 50)) {
 			stop_drive();
 			printf("Stop signal sent.\n");
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
+			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
 
+		} else {
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);	//green led
 		}
 
 	}
@@ -194,15 +205,6 @@ int8_t proximity_timer_init()
 
 	printf("TIM4 init done.\n");
 
-	//init D15 (PB8) TIM4 CH3
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_Init;
-	GPIO_Init.Pin = GPIO_PIN_8;
-	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
-	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
-	HAL_GPIO_Init(GPIOB, &GPIO_Init);
-
 	return 0;
 }
 
@@ -213,4 +215,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 }
 
+int8_t led_feedback_init()
+{
+	//Initialize D11 and D12 (PA6 and PA7) as LED output
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_Init;
+	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pin = GPIO_PIN_6 | GPIO_PIN_7;
+	HAL_GPIO_Init(GPIOA, &GPIO_Init);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
 
+	return 0;
+}

@@ -23,12 +23,12 @@ void set_servo_angle(int8_t ang)
 	servo_pwm_set_duty(duty);
 }
 
-void do_this_if_no_line()
+/*void do_this_if_no_line()
 {
 	BSP_LED_On(LED2);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
-}
+}*/
 
 void set_servo()
 {
@@ -45,20 +45,20 @@ void set_servo()
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
 	} else {
-		do_this_if_no_line();
+		//do_this_if_no_line();
 	}
 }
 
 void servo_control_thread(void const * argument)
 {
-	// Initialize D14 and D15 (PB9 and PB8) as LED output
+	/* Initialize D14 and D15 (PB9 and PB8) as LED output
 	GPIO_InitDef.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitDef.Pull = GPIO_NOPULL;
 	GPIO_InitDef.Speed = GPIO_SPEED_FAST;
 	GPIO_InitDef.Pin = GPIO_PIN_8 | GPIO_PIN_9;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitDef);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);*/
 
 	while(1) {
 		set_servo();
