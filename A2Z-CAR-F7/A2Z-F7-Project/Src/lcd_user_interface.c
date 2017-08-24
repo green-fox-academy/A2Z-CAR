@@ -66,15 +66,13 @@ void detect_start_stop_thread(void const * argument)
 		BSP_TS_GetState(&ts_state);
 		if (ts_state.touchDetected) {
 			if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
-				move = 1;
+				move = 2;
 				LCD_UsrLog ((char *)"Go command detected\n");
 
 			} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
-				move = -1;
-				LCD_UsrLog ((char *)"Stop command detected\n");
+				move = -2;
+				LCD_UsrLog ((char *)"Disable command detected\n");
 			}
-//			osThreadDef(client, socket_client_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
-//			osThreadCreate (osThread(client), NULL);
 			osDelay(500);
 		} else {
 			osDelay(10);

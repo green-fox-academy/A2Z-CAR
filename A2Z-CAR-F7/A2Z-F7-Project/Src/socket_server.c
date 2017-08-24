@@ -86,18 +86,20 @@ void socket_server_thread(void const *argument)
 				} else {
 					//set LCD user feedback
 					draw_background();
-					for (uint8_t i = 0; i < 9; i++) {
-						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
-						draw_sensor_data(i, buff[i]);
-					}
+//					for (uint8_t i = 0; i < 9; i++) {
+//						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
+//						draw_sensor_data(i, buff[i]);
+//					}
+					LCD_UsrLog("Socket server - data received\n");
 				}
+
 				send(client_socket, &move, sizeof(move), 0);
-				osDelay(10);
-				LCD_UsrLog("\n");
+				LCD_UsrLog("Socket server - data sent\n");
+				osDelay(20);
 
 			} while (received_bytes > 0);
 		}
-		// If not connected close the last socket and wait a little bit and then try to reconnect
+		// If not connected, close the last socket, wait a little bit and then try to reconnect
 		closesocket(client_socket);
 		LCD_UsrLog("Socket server - connection closed\n");
 		osDelay(10);

@@ -63,17 +63,20 @@ void wifi_send_thread(void const * argument)
 {
 	uint32_t socket = 0;
 	uint8_t started = 0;
+	uint8_t connected = 0;
+
 	printf("WiFi thread starting... \n");
 	while(1) {
-		printf("> Trying to connect to server: %d.%d.%d.%d:8002 ...\n",
-			   remote_ip[0],
-			   remote_ip[1],
-			   remote_ip[2],
-			   remote_ip[3]);
+		printf("Trying to connect to server: %d.%d.%d.%d:8002 ...\n",
+			remote_ip[0],
+			remote_ip[1],
+			remote_ip[2],
+			remote_ip[3]);
 		if (WIFI_OpenClientConnection(socket, WIFI_TCP_PROTOCOL, "TCP_CLIENT", remote_ip, remote_port, 0) == WIFI_STATUS_OK) {
-			printf("> TCP connection opened successfully\n");
+			printf("TCP connection opened successfully\n");
+			connected = 1;
 			printf("Trying to send data\n");
-			do {
+			while (connected) {
 				char buff;
 				sprintf("S#1:%d, S#2:%d,S#3:%d,S#4:%d,S#5:%d,S#6:%d,S#7:%d,S#8:%d,S#9:%d\n",
 					adc_values[0],
@@ -85,56 +88,63 @@ void wifi_send_thread(void const * argument)
 					adc_values[6],
 					adc_values[7],
 					adc_values[9]);
-				if (WIFI_SendData(socket, buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) == WIFI_STATUS_OK) {
-					printf("Data sent\n");
-				} else {
+
+				if (WIFI_SendData(socket, buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 					printf("> ERROR : Failed to send data\n");
+					connected = 0;
 					if (started == 1) {
 						printf("Stopping car\n");
 						stop_drive();
 						started = 0;
 					}
-				}
-				if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
-					if (data_len > 0) {
-						if (rec_data == 1) {				// go signal
-							printf("Go signal received\n");
-							if (started == 0) {
-								printf("Starting car\n");
-								motor_pwm_set_duty(25);
-								started = 1;
+				} else {
+					printf("Data sent\n");
+
+					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
+						if (data_len > 0) {
+							if (rec_data == 2) {				// go signal
+								printf("Go signal received\n");
+								if (started == 0) {
+									printf("Starting car\n");
+									motor_pwm_set_duty(25);
+									started = 1;
+								}
+							} else if (rec_data == 0) {			// stop signal
+								printf("Stop signal received\n");
+								if (started == 1) {
+									stop_drive();
+									started = 0;
+								}
+							} else if (rec_data == -2) {		// disable signal
+								printf("Disable signal received\n");
+								disable_drive();
+								terminate_thread();
 							}
-						} else if (rec_data == 0) {			// stop signal
-							printf("Stop signal received\n");
+						} else {
+							printf("No data\n");
 							if (started == 1) {
+								printf("Stopping car\n");
 								stop_drive();
 								started = 0;
 							}
-						} else if (rec_data == -1) {		// disable signal
-							printf("Disable signal received\n");
-							disable_drive();
-							terminate_thread();
 						}
+
 					} else {
-						printf("No data\n");
+						printf("Nothing received\n");
+						connected = 0;
 						if (started == 1) {
 							printf("Stopping car\n");
 							stop_drive();
 							started = 0;
 						}
 					}
-				} else {
-					printf("Nothing received\n");
-					if (started == 1) {
-						printf("Stopping car\n");
-						stop_drive();
-						started = 0;
-					}
 				}
+
 				osDelay(300);
-			} while (data_len > 0);
+			}
+
 			WIFI_CloseClientConnection(socket);
-//			socket++;
+
 		} else {
 			printf("> ERROR : Cannot open connection\n");
 			if (started == 1) {
@@ -142,10 +152,11 @@ void wifi_send_thread(void const * argument)
 				stop_drive();
 				started = 0;
 			}
-//			socket++;
 		}
+
 		osDelay(500);
 	}
+
 	terminate_thread();
 }
 
