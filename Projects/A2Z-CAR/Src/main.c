@@ -126,13 +126,10 @@ int8_t system_init()
 	if (servo_pwm_init() != OK) {
 		return -1;
 	}
-
 	if (motor_pwm_init() != OK) {
 		return -1;
 	}
-
 	led_init();
-
 	// 8-bit ADC
 	adc_init();
 //	// 12-bit ADC
@@ -141,7 +138,6 @@ int8_t system_init()
 	if (proximity_driver_init() != OK) {
 		return -1;
 	}
-
 	return 0;
 }
 

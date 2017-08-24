@@ -32,7 +32,7 @@ int8_t angle (int8_t current_bias)
 	//int8_t a = current_bias;
 	//printf("d, a:***%3d ***%3d*** \n", d * ( current_bias - former_bias), current_bias);
 	//printf("angle: %4d \n",a);
-	printf("d comp:  %4d \n",d * ( current_bias - former_bias));
+	//printf("d comp:  %4d \n",d * ( current_bias - former_bias));
 	return a;
 }
 void do_this_if_no_line()
@@ -66,7 +66,7 @@ void servo_control_thread(void const * argument)
 {
 	while(1) {
 		set_servo();
-		osDelay(10);
+		osDelay(3);
 	}
 
 	terminate_thread();
