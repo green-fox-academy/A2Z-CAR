@@ -62,7 +62,7 @@ void proximity_send_trigger()
 {
 	//init trigger pin to D3 (PB0)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	HAL_Delay(500);
+	HAL_Delay(250);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 	//printf("Proxim trigger sent.\n");
 	HAL_Delay(250);
@@ -98,27 +98,31 @@ int8_t proximity_control_thread()
 		proxim1_cntr = 0;
 		proxim1_up = 0;
 		proximity_send_trigger();
-		while (proxim1_up == 1);
+		while (proxim1_up == 1){
+			osDelay(5);
+		}
 		proxim1_cntr = cm_cntr;
-		printf("proxim1_cntr: %lu\n", proxim1_cntr);
+		//printf("proxim1_cntr: %lu\n", proxim1_cntr);
 
 		cm_cntr = 0;
 		proxim2_cntr = 0;
 		proxim2_up = 0;
 		proximity_send_trigger();
-		while (proxim2_up == 1);
+		while (proxim2_up == 1){
+			osDelay(5);
+		}
 		proxim2_cntr = cm_cntr;
-		printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
+		//printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
 
 		if ((proxim1_cntr < 30) && (proxim2_cntr < 30)) {
-			disable_drive();
-			printf("Disable signal sent.\n");
+			//disable_drive();
+			//printf("Disable signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);	//red led
 
 		} else if ((proxim1_cntr < 50) && (proxim2_cntr < 50)) {
-			stop_drive();
-			printf("Stop signal sent.\n");
+			//stop_drive();
+			//printf("Stop signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
 
