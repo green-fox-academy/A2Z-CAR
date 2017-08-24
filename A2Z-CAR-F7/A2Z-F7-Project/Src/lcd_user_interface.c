@@ -1,8 +1,12 @@
 #include "lcd_user_interface.h"
+#include "socket_client.h"
 
+TS_StateTypeDef ts_state;
 
 void draw_background()
 {
+
+	//draw basic background for sensor data visualization
 	int x = 15;
 	int y = 48;
 	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
@@ -20,16 +24,20 @@ void draw_background()
 		BSP_LCD_DrawCircle(x, y, 25);
 		x += 50;
 	}
+	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+	BSP_LCD_FillRect(400, 140, 80, 50);
+	BSP_LCD_SetTextColor(LCD_COLOR_RED);
+	BSP_LCD_FillRect(400, 200, 80, 50);
+
 
 }
 
 void draw_sensor_data(int sensor_num, uint8_t radius)
 {
+	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);
 	int y = 73;
 
-
-	//LCD_UsrLog("radius, %d\n", radius);
 	if (radius <= 10) {
 		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
 		BSP_LCD_FillCircle(x, y, 5);
@@ -50,3 +58,28 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 
 }
+
+void detect_start_stop_thread(void const * argument)
+{
+	move = 0;
+	while (1) {
+		BSP_TS_GetState(&ts_state);
+		if (ts_state.touchDetected) {
+			if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
+				move = 2;
+				LCD_UsrLog ((char *)"Go command detected\n");
+
+			} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
+				move = -2;
+				LCD_UsrLog ((char *)"Disable command detected\n");
+			}
+			osDelay(500);
+		} else {
+			osDelay(10);
+		}
+	}
+
+	while (1)
+		osThreadTerminate(NULL);
+}
+

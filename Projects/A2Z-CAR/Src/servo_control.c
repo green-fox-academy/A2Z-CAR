@@ -2,9 +2,9 @@
 #include "adc_driver.h"
 #include "pwm_driver.h"
 #include "cmsis_os.h"
+#include "main.h"
 
 uint16_t cnt = 0, cnt_limit = 100;
-int8_t global_bias = 0;
 
 void set_servo_angle(int8_t ang)
 {
@@ -22,30 +22,52 @@ void set_servo_angle(int8_t ang)
 	servo_pwm_set_duty(duty);
 }
 
+
+int8_t angle (int8_t current_bias)
+{
+	uint8_t p = 1, d = 0;
+	int8_t a = p * current_bias + d * ( current_bias - former_bias);
+	//int8_t a = current_bias;
+	//printf("d, a:***%3d ***%3d*** \n", d * ( current_bias - former_bias), current_bias);
+	//printf("angle: %4d \n",a);
+	printf("d comp:  %4d \n",d * ( current_bias - former_bias));
+	return a;
+}
 void do_this_if_no_line()
 {
-	BSP_LED_On(LED2);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+	set_servo_angle(angle(former_bias));
 }
-
 void set_servo()
 {
+	uint8_t detail = 9;
 	int8_t bias = get_bias();
-	if (bias <= 12) {
-		global_bias = bias;
+	//bias = 0;
+	if (bias <= (detail * 4)) {
 		cnt = 0;
 	} else {
 		cnt++;
 	}
-	if (bias <= 12 || cnt < cnt_limit) {
-		set_servo_angle(global_bias * 4);
-		BSP_LED_Off(LED2);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
+	if (bias <= (detail * 4) || cnt < cnt_limit) {
+		if (bias > (detail * 4)) {
+			set_servo_angle(angle(former_bias));
+		} else {
+			set_servo_angle(angle(bias));
+		}
 	} else {
 		do_this_if_no_line();
 	}
+}
+
+void servo_control_thread(void const * argument)
+{
+	while(1) {
+		set_servo();
+		osDelay(10);
+	}
+
+	terminate_thread();
 }
 
 void led_init()
@@ -58,20 +80,5 @@ void led_init()
 	HAL_GPIO_Init(GPIOB, &GPIO_InitDef);
 
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
 }
-
-void servo_control_thread(void const * argument)
-{
-	while(1) {
-		set_servo();
-		osDelay(10);
-	}
-	while (1) {
-		/* Delete the thread */
-		osThreadTerminate(NULL);
-	}
-}
-
-
-

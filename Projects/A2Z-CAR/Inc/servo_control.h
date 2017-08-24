@@ -14,7 +14,7 @@
 void set_servo_angle(int8_t angle);
 void stop();
 void set_servo();
-void servo_control_thread(void const * argument);
 void led_init();
+void servo_control_thread(void const * argument);
 
 #endif /* __SERVO_CONTROL_H */

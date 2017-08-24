@@ -53,13 +53,13 @@ int8_t motor_pwm_init()
 	GPIO_InitDef.Alternate = GPIO_AF1_TIM2;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitDef);
 
-	// TIM2 init as PWM, 10 kHz
+	// TIM2 init as PWM, 1 kHz
 	__HAL_RCC_TIM2_CLK_ENABLE();
 	motor_pwm_handle.Instance = TIM2;
 	motor_pwm_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	motor_pwm_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-	motor_pwm_handle.Init.Period = 8000;
-	motor_pwm_handle.Init.Prescaler = 0;
+	motor_pwm_handle.Init.Period = 16000;
+	motor_pwm_handle.Init.Prescaler = 4;
 	if (HAL_TIM_PWM_Init(&motor_pwm_handle) != HAL_OK) {
 		return -1;
 	}
@@ -86,6 +86,7 @@ void servo_pwm_set_duty(float duty)
 	servo_pwm_oc_init.Pulse = pulse;
 	HAL_TIM_PWM_ConfigChannel(&servo_pwm_handle, &servo_pwm_oc_init, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&servo_pwm_handle, TIM_CHANNEL_1);
+	return;
 }
 
 
@@ -100,4 +101,7 @@ void motor_pwm_set_duty(float duty)
 	motor_pwm_oc_init.Pulse = pulse;
 	HAL_TIM_PWM_ConfigChannel(&motor_pwm_handle, &motor_pwm_oc_init, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&motor_pwm_handle, TIM_CHANNEL_1);
+	return;
 }
+
+

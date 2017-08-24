@@ -13,6 +13,7 @@
 #define CLIENT_BUFF_LEN		SERVER_BUFF_LEN
 
 /* Exported functions ------------------------------------------------------- */
+void terminate_thread();
 void socket_server_thread(void const *argument);
 
 #endif /* __SOCKET_SERVER_H */

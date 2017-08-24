@@ -62,7 +62,7 @@ void socket_server_thread(void const *argument)
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
 	int client_socket;
-	uint8_t buff[9] = {255, 255, 255, 255, 255, 255, 255, 255, 255};
+
 
 	while (1) {
 		// Accept incoming connections
@@ -73,45 +73,43 @@ void socket_server_thread(void const *argument)
 			LCD_ErrLog("Socket server - invalid client socket\n");
 		} else {
 			// Define buffer for incoming message
-
+			uint8_t buff[9] = {255, 255, 255, 255, 255, 255, 255, 255, 255};
 			int received_bytes = 0;
 
 			// Receive data
-			do {
-
+			while (1) {
 				received_bytes = recv(client_socket, buff, sizeof(buff), 0);
 				// Check for error
-				if (received_bytes < 0) {
+				if (received_bytes < 1) {
 					LCD_ErrLog("Socket server - can't receive\n");
-				} else {
-					draw_background();
-					//set LCD user feedback
+					break;
+				}
 
+				//set LCD user feedback
+				draw_background();
 					for (uint8_t i = 0; i < 9; i++) {
 						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
 						draw_sensor_data(i, buff[i]);
 					}
+				LCD_UsrLog("Socket server - data received\n");
+
+				int sent_bytes = 0;
+				sent_bytes = send(client_socket, &move, sizeof(move), 0);
+				if (sent_bytes < 1) {
+					LCD_ErrLog("Socket server - can't send\n");
+					break;
+
 				}
-				osDelay(10);
-				LCD_UsrLog("\n");
+				LCD_UsrLog("Socket server - data sent\n");
 
-			} while (received_bytes > 0);
-
-			// Close the socket
-			closesocket(client_socket);
-
-		LCD_UsrLog("Socket server - connection closed\n");
+				osDelay(20);
+			}
 		}
+		// If not connected, close the last socket, wait a little bit and then try to reconnect
+		closesocket(client_socket);
+		LCD_UsrLog("Socket server - connection closed\n");
+		osDelay(10);
 	}
-
-	// Close socket
-	closesocket(server_socket);
-
-	while (1) {
-		LCD_UsrLog("Socket server - server socket closed\n");
-		osDelay(1000);
-	}
-
 	terminate_thread();
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -15,12 +15,12 @@
 #define SSID     "A66 Guest"
 #define PASSWORD "Hello123"
 
-#define WIFI_WRITE_TIMEOUT 10000
-#define WIFI_READ_TIMEOUT  10000
+#define WIFI_WRITE_TIMEOUT 1000
+#define WIFI_READ_TIMEOUT  1000
 #define CONNECTION_TRIAL_MAX          10
 
 /* Exported functions ------------------------------------------------------- */
 int8_t wifi_init();
-void wifi_send_thread(void const * argument);
+void wifi_comm_thread(void const * argument);
 
 #endif /* __WIFI_FUNCTIONS_H */

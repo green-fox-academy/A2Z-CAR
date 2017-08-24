@@ -10,10 +10,13 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+void pin_init();
+void set_direction(int8_t dir);
 float pi_control();
+void stop_drive();
+void disable_drive();
+void motor_control_thread(void const * argument);
 
 /* Exported constants --------------------------------------------------------*/
-float ctrler_out_min = 0;
-float ctrler_out_max = 100;
 
 #endif /* __MOTOR_CONTROL_H */

@@ -127,6 +127,7 @@ static void StartThread(void const * argument)
   /* Initialize LCD */
   BSP_Config();
   
+
   /* Create tcp_ip stack thread */
   tcpip_init(NULL, NULL);
   
@@ -153,6 +154,10 @@ static void StartThread(void const * argument)
   osThreadDef(SOCKET_CLIENT, socket_client_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
   osThreadCreate (osThread(SOCKET_CLIENT), NULL);
 #endif
+
+  // Start the start/stop detect thread
+    osThreadDef(command, detect_start_stop_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 4);
+    osThreadCreate (osThread(command), NULL);
 
   while (1) {
     /* Delete the Init Thread */ 
@@ -290,20 +295,7 @@ static void SystemClock_Config(void)
   * @param  None
   * @retval Measured value (0-4095)
   */
-/*uint16_t adc_measure()
-{
-	HAL_ADC_Start(&adc_handle);
 
-	HAL_ADC_PollForConversion(&adc_handle, HAL_MAX_DELAY);
-	LCD_UsrLog("ADC measure in progress\n");
-
-	HAL_ADC_Stop(&adc_handle);
-
-
-	LCD_UsrLog("ADC value: %lu\n", HAL_ADC_GetValue(&adc_handle));
-
-	return HAL_ADC_GetValue(&adc_handle);
-}*/
 
 /**
   * @brief  This function is executed in case of error occurrence.
