@@ -19,7 +19,7 @@ int8_t get_bias();
 void set_servo();
 void calibrate();
 //void calibrate(uint8_t *calibration);
-uint8_t adc_values[9], multiplier_percent[9];
+uint8_t adc_values[9], max_bg[9];
 int8_t former_bias, bias;
 
 #endif /* __ADC_DRIVER_H */
