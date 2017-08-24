@@ -226,6 +226,7 @@ static void BSP_Config(void)
   /* Show Header and Footer texts */
   LCD_LOG_SetHeader((uint8_t *)"A2Z Car controller");
   LCD_LOG_SetFooter((uint8_t *)"STM32746G-DISCO - GreenFoxAcademy");
+  draw_buttons();
   draw_background();
   
   LCD_UsrLog ((char *)"Notification - Ethernet Initialization ...\n");
