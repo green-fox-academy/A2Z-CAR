@@ -85,8 +85,6 @@ int main(void)
 		return -1;
 	}
 
-	calibrate();
-
 //	pin_init();
 //	set_direction(1);
 //	motor_pwm_set_duty(25);
@@ -126,10 +124,10 @@ int8_t system_init()
 	if (servo_pwm_init() != OK) {
 		return -1;
 	}
+
 	if (motor_pwm_init() != OK) {
 		return -1;
 	}
-	led_init();
 
 	adc_init();			// 8-bit ADC
 

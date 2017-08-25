@@ -1,5 +1,9 @@
 #include "adc_driver.h"
+
+ADC_HandleTypeDef adc_handle;
+ADC_ChannelConfTypeDef adc_ch_conf;
 uint8_t group;
+int8_t bias;
 void get_adc_values(uint8_t *adc_values);
 
 void gpio_init()
