@@ -5,30 +5,26 @@ TS_StateTypeDef ts_state;
 
 void draw_background()
 {
-
 	//draw basic background for sensor data visualization
 	int x = 15;
-	int y = 48;
-	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+	int y = 53;
 
 	for (uint8_t j = 0; j < 9; j++) {
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKGRAY);
 		BSP_LCD_FillRect(x, y, 49, 49);
+		BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+		BSP_LCD_DrawRect(x, y, 50, 50);
 		x += 50;
 	}
 
 	x = 40;
-	y = 73;
+	y = 78;
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 
 	for (uint8_t j = 0; j < 9; j++) {
 		BSP_LCD_DrawCircle(x, y, 25);
 		x += 50;
 	}
-	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
-	BSP_LCD_FillRect(400, 140, 80, 50);
-	BSP_LCD_SetTextColor(LCD_COLOR_RED);
-	BSP_LCD_FillRect(400, 200, 80, 50);
-
 
 }
 
@@ -36,7 +32,7 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 {
 	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);
-	int y = 73;
+	int y = 78;
 
 	if (radius <= 10) {
 		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
@@ -59,19 +55,47 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 
 }
 
+void draw_buttons() {
+	BSP_LCD_SetFont(&Font16);
+	BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+	BSP_LCD_FillRect(5, 0, 80, 50); //START Button coordinates (5, 5, 80, 50)
+	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	BSP_LCD_DrawRect(5, 0, 80, 51); //START Button coordinates (5, 5, 80, 50)
+	BSP_LCD_SetTextColor(LCD_COLOR_RED);
+	BSP_LCD_FillRect(395, 0, 80, 50); //STOP Button coordinates (395, 5, 80, 50)
+	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	BSP_LCD_DrawRect(395, 0, 80, 51); //STOP Button coordinates (395, 5, 80, 50)
+	BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+	BSP_LCD_DisplayStringAt(20, 18, (uint8_t *)"START", LEFT_MODE);
+	BSP_LCD_DisplayStringAt(412, 18, (uint8_t *)"STOP", LEFT_MODE);
+	BSP_LCD_SetFont(&Font12);
+}
+
+
 void detect_start_stop_thread(void const * argument)
 {
 	move = 0;
 	while (1) {
 		BSP_TS_GetState(&ts_state);
 		if (ts_state.touchDetected) {
-			if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 140) && (ts_state.touchY[0] < 190)) {
+			if ((ts_state.touchX[0] < 85) && (ts_state.touchY[0] < 55)) {
+				//START Button coordinates (5, 5, 80, 50)
 				move = 2;
 				LCD_UsrLog ((char *)"Go command detected\n");
+				BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+				BSP_LCD_FillRect(5, 5, 80, 50);
+				osDelay(50);
+				draw_buttons();
 
-			} else if ((ts_state.touchX[0] > 400) && (ts_state.touchY[0] > 200) && (ts_state.touchY[0] < 250)) {
+			} else if ((ts_state.touchX[0] > 395) && (ts_state.touchY[0] < 55)) {
+				//STOP Button coordinates (395, 5, 80, 50)
 				move = -2;
 				LCD_UsrLog ((char *)"Disable command detected\n");
+				BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+				BSP_LCD_FillRect(395, 5, 80, 50);
+				osDelay(50);
+				draw_buttons();
+
 			}
 			osDelay(500);
 		} else {
