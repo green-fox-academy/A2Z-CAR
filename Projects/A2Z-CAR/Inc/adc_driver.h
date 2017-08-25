@@ -23,7 +23,7 @@ int8_t calibrate();
 
 //void calibrate(uint8_t *calibration);
 
-
+uint8_t max_bg[9];
 uint8_t adc_values[9];
 uint8_t multiplier_percent[9];
 int8_t former_bias, bias;

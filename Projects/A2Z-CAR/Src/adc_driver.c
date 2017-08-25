@@ -185,7 +185,7 @@ int8_t calibrate()
 	}
 	//printf("cal: \n");
 	for (int j = 0; j< 9; j++) {
-		//*cal = 100 * adc_avg[minindex] / adc_avg[j];
+		*cal = 100 * adc_avg[minindex] / adc_avg[j];
 		//printf("%5d",100 * adc_avg[minindex] / adc_avg[j]);
 		cal++;
 	}
@@ -262,12 +262,15 @@ int8_t get_bias()
 	//printf("bias: %d \n",bias);
 	if (bias <= (detail * 4)) {
 		former_bias = bias;
+
 	}
 	uint8_t bg_color, color = 1;
 	if (color == 1) {
 		bg_color = 0;
+
 	} else {
 		bg_color = 1;
+
 	}
 	get_adc_values(adc_values);
 	//printf("adc:\n");
@@ -283,8 +286,10 @@ int8_t get_bias()
 	for (int i = 1; i < 9; i++) {
 		if (adc_values[i] > adc_values[maxindex]) {
 			maxindex = i; // the darkest color's index
+
 		} else if (adc_values[i] < adc_values[minindex]) {
 			minindex = i; // he lightest color's index
+
 		}
 	}
 	// if the difference between max and min adc values are bigger than min_dif,
@@ -307,18 +312,21 @@ int8_t get_bias()
 		if (contrast[0] == color) {
 			is_line = 1;
 		}
+
 		for (int i = 1; i < 9; i++) {
 			if ((contrast[i - 1] == bg_color && contrast[i] == color )) {
 				//line left edge
 				center[pos] = i * detail;
 				width = 0;
 				is_line = 1;
+
 			} else if (is_line && contrast[i - 1] == color && contrast[i] == bg_color) {
 				//line right edge
 				center[pos] -=  detail * width/2;
 				pos++;
 				width = 0;
 				is_line = 0;
+
 			} else if (is_line) { //on a line
 				width++;
 				center[pos] += detail;
@@ -364,8 +372,6 @@ int8_t get_bias()
 		return  bias;
 
 	}
-
-
 	return 100;
 }
 /*
