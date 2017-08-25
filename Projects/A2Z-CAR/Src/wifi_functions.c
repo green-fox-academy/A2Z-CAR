@@ -3,6 +3,11 @@
 #include "motor_control.h"
 #include "main.h"
 
+#define SSID     "A66 Guest"
+#define PASSWORD "Hello123"
+#define WIFI_WRITE_TIMEOUT 1000
+#define WIFI_READ_TIMEOUT  1000
+
 uint8_t remote_ip[] = {10, 27, 99, 226};
 uint16_t remote_port = 8002;
 int8_t rec_data;
@@ -54,7 +59,6 @@ int8_t wifi_init()
 	return 0;
 }
 
-
 void wifi_comm_thread(void const * argument)
 {
 	uint32_t socket = 0;
@@ -98,7 +102,7 @@ void wifi_comm_thread(void const * argument)
 
 					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 						if (data_len > 0) {
-							if (rec_data == 2) {				// go signal
+							if (rec_data == 1) {				// go signal
 								printf("Go signal received\n");
 								if (started == 0) {
 									printf("Starting car\n");
@@ -111,7 +115,7 @@ void wifi_comm_thread(void const * argument)
 									stop_drive();
 									started = 0;
 								}
-							} else if (rec_data == -2) {		// disable signal
+							} else if (rec_data == -1) {		// disable signal
 								printf("Disable signal received\n");
 								disable_drive();
 								terminate_thread();
@@ -156,7 +160,6 @@ void wifi_comm_thread(void const * argument)
 	terminate_thread();
 }
 
-
 //void wifi_receive_thread(void const * argument)
 //{
 //	int32_t socket = 0;
@@ -177,7 +180,6 @@ void wifi_comm_thread(void const * argument)
 //	}
 //	terminate_thread();
 //}
-
 
 //void wifi_thread(void const * argument)
 //{

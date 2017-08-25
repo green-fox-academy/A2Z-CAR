@@ -130,10 +130,10 @@ int8_t system_init()
 		return -1;
 	}
 	led_init();
-	// 8-bit ADC
-	adc_init();
-//	// 12-bit ADC
-	adc_12b_init();
+
+	adc_init();			// 8-bit ADC
+
+	adc_12b_init();		// 12-bit ADC
 
 	if (proximity_driver_init() != OK) {
 		return -1;
@@ -155,10 +155,10 @@ static void StartThread(void const * argument)
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId m = osThreadCreate(osThread(motor), NULL);
 
-	osThreadDef(proxim, proximity_control_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(proxim, proximity_control_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);
 
-	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId w = osThreadCreate(osThread(wifi_comm), NULL);
 
 	terminate_thread();

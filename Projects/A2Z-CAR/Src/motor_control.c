@@ -15,6 +15,9 @@ int16_t required_rpm = 0;
 int16_t measured_rpm = 0;
 float ctrler_out = 0.0;
 
+float pi_control();
+void print_float(float value, int decimal_digits);
+
 void print_float(float value, int decimal_digits)
 {
 	int i = 1;
@@ -80,15 +83,9 @@ void disable_drive()
 
 void motor_control_thread(void const * argument)
 {
-	pin_init();
-	// set forward
-	set_direction(1);
-//	motor_pwm_set_duty(25);
-
-//	for (uint8_t i = 100; i > 15; i -= 5) {
-//		motor_pwm_set_duty(i);
-//		osDelay(125);
-//	}
+	pin_init();			// initialize direction pins
+	set_direction(1);	// set forward
+	motor_pwm_set_duty(25);
 
 //	required_rpm = 500;
 

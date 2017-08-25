@@ -12,13 +12,6 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define SSID     "A66 Guest"
-#define PASSWORD "Hello123"
-
-#define WIFI_WRITE_TIMEOUT 1000
-#define WIFI_READ_TIMEOUT  1000
-#define CONNECTION_TRIAL_MAX          10
-
 /* Exported functions ------------------------------------------------------- */
 int8_t wifi_init();
 void wifi_comm_thread(void const * argument);

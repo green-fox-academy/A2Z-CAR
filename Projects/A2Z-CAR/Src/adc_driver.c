@@ -1,6 +1,14 @@
 #include "adc_driver.h"
+
+ADC_HandleTypeDef adc_handle;
+ADC_HandleTypeDef adc_12b_handle;
+ADC_ChannelConfTypeDef adc_ch_conf;
 uint8_t group;
+uint8_t adc_values[9], max_bg[9];
+int8_t bias;
+//void calibrate(uint8_t *calibration);
 void get_adc_values(uint8_t *adc_values);
+
 void gpio_init()
 {
 	GPIO_InitTypeDef GPIO_Init;

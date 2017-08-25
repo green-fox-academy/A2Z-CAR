@@ -8,20 +8,14 @@
 #include "stdio.h"
 
 /* Exported types ------------------------------------------------------------*/
-ADC_HandleTypeDef adc_handle;
-ADC_HandleTypeDef adc_12b_handle;
-ADC_ChannelConfTypeDef adc_ch_conf;
-
 /* Exported constants --------------------------------------------------------*/
+int8_t former_bias;
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void adc_init();
 void adc_12b_init();
-int8_t get_bias();
-void set_servo();
 void calibrate();
-//void calibrate(uint8_t *calibration);
-uint8_t adc_values[9], max_bg[9];
-int8_t former_bias, bias;
+int8_t get_bias();
 
 #endif /* __ADC_DRIVER_H */
