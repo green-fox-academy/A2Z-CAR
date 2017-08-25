@@ -91,14 +91,13 @@ void socket_server_thread(void const *argument)
 						LCD_UsrLog("S#%d:%d; ", i + 1, buff[i]);
 						draw_sensor_data(i, buff[i]);
 					}
-				LCD_UsrLog("Socket server - data received\n");
+				LCD_UsrLog("\nSocket server - data received\n");
 
 				int sent_bytes = 0;
 				sent_bytes = send(client_socket, &move, sizeof(move), 0);
 				if (sent_bytes < 1) {
 					LCD_ErrLog("Socket server - can't send\n");
 					break;
-
 				}
 				LCD_UsrLog("Socket server - data sent\n");
 

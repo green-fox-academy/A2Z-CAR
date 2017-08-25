@@ -9,7 +9,7 @@
 #define WIFI_WRITE_TIMEOUT 1000
 #define WIFI_READ_TIMEOUT  1000
 
-uint8_t remote_ip[] = {10, 27, 99, 226};
+uint8_t remote_ip[] = {10, 27, 99, 99};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
@@ -109,7 +109,7 @@ void wifi_comm_thread(void const * argument)
 								//printf("Go signal received\n");
 								if (started == 0) {
 									printf("Starting car\n");
-									motor_pwm_set_duty(25);
+									go();
 									started = 1;
 								}
 							} else if (rec_data == 0) {			// stop signal

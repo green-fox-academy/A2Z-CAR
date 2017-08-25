@@ -14411,18 +14411,18 @@ LOAD c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.13
  .rodata.str1.1
                 0x08012722        0x6 Application/User/ethernetif.o
  .rodata.str1.1
-                0x08012728       0x38 Application/User/lcd_user_interface.o
+                0x08012728       0x35 Application/User/lcd_user_interface.o
  .rodata.str1.1
-                0x08012760       0x81 Application/User/main.o
+                0x0801275d       0x81 Application/User/main.o
  .rodata.str1.1
-                0x080127e1      0x213 Application/User/socket_server.o
+                0x080127de      0x214 Application/User/socket_server.o
  .rodata.str1.1
-                0x080129f4       0x14 Middlewares/FreeRTOS/tasks.o
+                0x080129f2       0x14 Middlewares/FreeRTOS/tasks.o
  .rodata.str1.1
-                0x08012a08        0x7 Middlewares/LwIP/Api/tcpip.o
+                0x08012a06        0x7 Middlewares/LwIP/Api/tcpip.o
  .rodata.str1.1
-                0x08012a0f       0x68 Middlewares/LwIP/Core/tcp.o
- *fill*         0x08012a77        0x1 
+                0x08012a0d       0x68 Middlewares/LwIP/Core/tcp.o
+ *fill*         0x08012a75        0x3 
  .rodata._global_impure_ptr
                 0x08012a78        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.13.3.201707031232/tools/compiler/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/fpv5-sp-d16\libc_nano.a(lib_a-impure.o)
                 0x08012a78                _global_impure_ptr

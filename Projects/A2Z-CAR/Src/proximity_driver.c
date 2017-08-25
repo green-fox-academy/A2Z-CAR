@@ -70,11 +70,10 @@ void proximity_send_trigger()
 {
 	//init trigger pin to D3 (PB0)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	osDelay(100);
+	osDelay(150);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 	//printf("Proxim trigger sent.\n");
-	osDelay(100);
-
+	osDelay(150);
 }
 
 int8_t proximity1_exti_init()
@@ -85,7 +84,6 @@ int8_t proximity1_exti_init()
 	printf("Proxim sensor1 init done.\n");
 
 	return 0;
-
 }
 
 int8_t proximity2_exti_init()
@@ -123,25 +121,26 @@ int8_t proximity_control_thread()
 
 		if ((proxim1_cntr > 450) || (proxim2_cntr > 450) ||
 			(proxim1_cntr <= 0) || (proxim2_cntr <= 0))	{
-			//stop_drive();
-			//printf("Invalid proximity data.\n");
+			stop_drive();
+			printf("Invalid proximity data.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET); 	//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
 		}else if ((proxim1_cntr < 30) || (proxim2_cntr < 30)) {
 			//disable_drive();
-			//printf("Disable signal sent.\n");
+			stop_drive();
+			printf("Disable signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
 
 		} else if ((proxim1_cntr < 50) || (proxim2_cntr < 50)) {
-			//stop_drive();
-			//printf("Stop signal sent.\n");
+			stop_drive();
+			printf("Stop signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
 			osDelay(100);
 
 		} else {
-			//motor_pwm_set_duty(25);
+			go();
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 		}
@@ -152,62 +151,60 @@ int8_t proximity_control_thread()
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 0)) {
+	if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 0)) {
 	  proxim1_up = 1;
 	  HAL_TIM_Base_Start_IT(&proxim_timer_handle);
 	  //printf("D2-PD14 up\n");
 
-  } else if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 1)) {
+	} else if ((GPIO_Pin == GPIO_PIN_14) && (proxim1_up == 1)) {
 	  proxim1_up = 0;
 	  HAL_TIM_Base_Stop_IT(&proxim_timer_handle);
 	  //printf("D2-PD14 down\n");
 
-  } else if ((GPIO_Pin == GPIO_PIN_3) && (proxim2_up == 0)) {
+	} else if ((GPIO_Pin == GPIO_PIN_3) && (proxim2_up == 0)) {
 	  proxim2_up = 1;
 	  HAL_TIM_Base_Start_IT(&proxim_timer_handle);
 	  //printf("D4-PA3 up\n");
 
-  } else if ((GPIO_Pin == GPIO_PIN_3) && (proxim2_up == 1)) {
+	} else if ((GPIO_Pin == GPIO_PIN_3) && (proxim2_up == 1)) {
 	  proxim2_up = 0;
 	  HAL_TIM_Base_Stop_IT(&proxim_timer_handle);
 	  //printf("D4-PA3 down\n");
-  }
+	}
 }
 
 static void EXTI15_10_IRQHandler_Config(void)
 {
-  GPIO_InitTypeDef   GPIO_InitStructure;
-  /* Configure D2 -- PD14 pin as input floating */
-  /* Enable GPIOD clock */
-  __HAL_RCC_GPIOD_CLK_ENABLE();
+	GPIO_InitTypeDef   GPIO_InitStructure;
+	/* Configure D2 -- PD14 pin as input floating */
+	/* Enable GPIOD clock */
+	__HAL_RCC_GPIOD_CLK_ENABLE();
 
-  GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStructure.Pull = GPIO_NOPULL;
-  GPIO_InitStructure.Pin = GPIO_PIN_14;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
+	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING_FALLING;
+	GPIO_InitStructure.Pull = GPIO_NOPULL;
+	GPIO_InitStructure.Pin = GPIO_PIN_14;
+	HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-  /* Enable and set EXTI lines 10 to 15 Interrupt to the lowest priority */
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 2, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-
+	/* Enable and set EXTI lines 10 to 15 Interrupt to the lowest priority */
+	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 2, 0);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
 static void EXTI3_IRQHandler_Config(void)
 {
 	GPIO_InitTypeDef   GPIO_InitStructure;
-	  /* Configure D4 -- PA3 pin as input floating */
-  /* Enable GPIOA clock */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+	/* Configure D4 -- PA3 pin as input floating */
+	/* Enable GPIOA clock */
+	__HAL_RCC_GPIOA_CLK_ENABLE();
 
-  GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStructure.Pull = GPIO_NOPULL;
-  GPIO_InitStructure.Pin = GPIO_PIN_3;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING_FALLING;
+	GPIO_InitStructure.Pull = GPIO_NOPULL;
+	GPIO_InitStructure.Pin = GPIO_PIN_3;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-  /* Enable and set EXTI lines 10 to 15 Interrupt to the lowest priority */
-  HAL_NVIC_SetPriority(EXTI3_IRQn, 2, 0);
-  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-
+	/* Enable and set EXTI lines 10 to 15 Interrupt to the lowest priority */
+	HAL_NVIC_SetPriority(EXTI3_IRQn, 2, 0);
+	HAL_NVIC_EnableIRQ(EXTI3_IRQn);
 }
 
 int8_t proximity_timer_init()
@@ -232,7 +229,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	cm_cntr++;
 	//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);
-
 }
 
 int8_t led_feedback_init()

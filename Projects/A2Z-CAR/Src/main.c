@@ -147,8 +147,8 @@ int8_t system_init()
   */
 static void StartThread(void const * argument)
 {
-	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	volatile osThreadId s = osThreadCreate(osThread(servo), NULL);
+//	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+//	volatile osThreadId s = osThreadCreate(osThread(servo), NULL);
 
 	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId m = osThreadCreate(osThread(motor), NULL);
@@ -156,8 +156,8 @@ static void StartThread(void const * argument)
 	osThreadDef(proxim, proximity_control_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);
 
-	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
-	volatile osThreadId w = osThreadCreate(osThread(wifi_comm), NULL);
+//	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+//	volatile osThreadId w = osThreadCreate(osThread(wifi_comm), NULL);
 
 	terminate_thread();
 }

@@ -81,11 +81,16 @@ void disable_drive()
 	HAL_GPIO_DeInit(GPIOA, GPIO_PIN_15);
 }
 
+void go()
+{
+	motor_pwm_set_duty(25);
+}
+
 void motor_control_thread(void const * argument)
 {
 	pin_init();			// initialize direction pins
 	set_direction(1);	// set forward
-	motor_pwm_set_duty(25);
+	go();
 
 //	required_rpm = 500;
 
@@ -97,7 +102,7 @@ void motor_control_thread(void const * argument)
 //		printf("\n");
 //		osDelay(125);
 //		motor_pwm_set_duty(pi_control());
-		osDelay(10);
+		osDelay(100);
 	}
 
 	terminate_thread();

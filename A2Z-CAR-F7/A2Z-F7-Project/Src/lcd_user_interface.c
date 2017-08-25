@@ -89,8 +89,10 @@ void detect_start_stop_thread(void const * argument)
 
 			} else if ((ts_state.touchX[0] > 395) && (ts_state.touchY[0] < 55)) {
 				//STOP Button coordinates (395, 5, 80, 50)
-				move = -1;
-				LCD_UsrLog ((char *)"Disable command detected\n");
+//				move = -1;
+//				LCD_UsrLog ((char *)"Disable command detected\n");
+				move = 0;
+				LCD_UsrLog ((char *)"Stop command detected\n");
 				BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 				BSP_LCD_FillRect(395, 5, 80, 50);
 				osDelay(50);
