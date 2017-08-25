@@ -40,6 +40,15 @@ void gpio_init()
 
 	GPIO_Init.Pin = GPIO_PIN_5;
 	HAL_GPIO_Init(GPIOA, &GPIO_Init);
+
+
+	// Initialize D14 and D15 (PB9 and PB8) as LED output
+	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Speed = GPIO_SPEED_FAST;
+	GPIO_Init.Pin = GPIO_PIN_8 | GPIO_PIN_9;
+	HAL_GPIO_Init(GPIOB, &GPIO_Init);
+
 }
 
 void a0_adc_init()

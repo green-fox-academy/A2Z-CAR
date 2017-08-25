@@ -24,5 +24,6 @@ int8_t proximity_control_thread();
 
 TIM_HandleTypeDef proxim_timer_handle;
 
+uint16_t distance;
 
 #endif /* APPLICATIONS_USER_PROXIMITY_DRIVER_H_ */

@@ -28,7 +28,7 @@ void draw_background()
 
 }
 
-void draw_sensor_data(int sensor_num, uint8_t radius)
+void draw_sensor_data(int sensor_num, uint8_t radius, uint16_t distance)
 {
 	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);
@@ -52,7 +52,49 @@ void draw_sensor_data(int sensor_num, uint8_t radius)
 	}
 
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-
+	//object distance feedback coordinates (16, 103, 449, 50)
+	if (distance > 400) {
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+	} else if ((distance < 400) && (distance > 200)) {
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+	} else if ((distance < 200) && (distance > 100)) {
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKYELLOW);
+		BSP_LCD_FillRect(300, 103, 149, 50);
+	} else if ((distance < 100) && (distance > 50)) {
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKYELLOW);
+		BSP_LCD_FillRect(300, 103, 149, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
+		BSP_LCD_FillRect(350, 103, 100, 50);
+	} else if ((distance < 50) && (distance > 30)) {
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKYELLOW);
+		BSP_LCD_FillRect(300, 103, 149, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
+		BSP_LCD_FillRect(350, 103, 100, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_RED);
+		BSP_LCD_FillRect(400, 103, 49, 50);
+	} else if (distance < 30) {
+		BSP_LCD_SetTextColor(LCD_COLOR_DARKRED);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		osDelay(20);
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+	}
 }
 
 void draw_buttons() {
@@ -69,6 +111,11 @@ void draw_buttons() {
 	BSP_LCD_DisplayStringAt(20, 18, (uint8_t *)"START", LEFT_MODE);
 	BSP_LCD_DisplayStringAt(412, 18, (uint8_t *)"STOP", LEFT_MODE);
 	BSP_LCD_SetFont(&Font12);
+	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	BSP_LCD_DrawRect(15, 102, 450, 51); //object distance feedback coordinates (16, 103, 449, 50)
+	BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+	BSP_LCD_FillRect(16, 103, 449, 50); //object distance feedback coordinates (16, 103, 449, 50)
+
 }
 
 

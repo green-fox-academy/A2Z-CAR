@@ -112,6 +112,9 @@ int8_t proximity_control_thread()
 			osDelay(1);
 		}
 		proxim2_cntr = cm_cntr;
+
+		distance = (proxim1_cntr + proxim2_cntr)/2;
+
 		//printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
 
 		if ((proxim1_cntr > 450) || (proxim2_cntr > 450) ||
