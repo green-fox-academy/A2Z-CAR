@@ -66,14 +66,12 @@ void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef *hlptim)
   __HAL_RCC_LPTIM1_RELEASE_RESET();
 }
 
-HAL_TIM_Base_MspInit()
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
 {
 	//enable interrupt mode TIM4_CH3
 	__HAL_RCC_TIM4_CLK_ENABLE();
 	HAL_NVIC_SetPriority(TIM4_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(TIM4_IRQn);
-
-
 }
 
 

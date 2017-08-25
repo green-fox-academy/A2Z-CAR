@@ -14,11 +14,16 @@ ADC_ChannelConfTypeDef adc_ch_conf;
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+
+void gpio_init();
 void adc_init();
 int8_t get_bias();
 void set_servo();
 int8_t calibrate();
+
 //void calibrate(uint8_t *calibration);
+
+
 uint8_t adc_values[9];
 uint8_t multiplier_percent[9];
 int8_t former_bias, bias;

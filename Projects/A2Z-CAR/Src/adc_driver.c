@@ -1,6 +1,7 @@
 #include "adc_driver.h"
 uint8_t group;
 void get_adc_values(uint8_t *adc_values);
+
 void gpio_init()
 {
 	GPIO_InitTypeDef GPIO_Init;
@@ -161,7 +162,8 @@ void adc_init()
 }
 //void calibrate(uint8_t *calibration)
 int8_t calibrate()
-{ //measure sensor values, create multiplier to the sensors to make them even on even surface
+{
+	//measure sensor values, create multiplier to the sensors to make them even on even surface
 	uint8_t values[9];
 	uint32_t adc_avg[9];
 	uint8_t *cal;
@@ -187,7 +189,7 @@ int8_t calibrate()
 		//printf("%5d",100 * adc_avg[minindex] / adc_avg[j]);
 		cal++;
 	}
-	printf("\n");
+	printf("Calibration done.\n");
 	return 0;
 }
 
@@ -222,8 +224,6 @@ void get_adc_values(uint8_t *adc_values)
 	//d0_adc_init();
 	//*values = adc_measure();
 	*values = x;
-
-
 
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);

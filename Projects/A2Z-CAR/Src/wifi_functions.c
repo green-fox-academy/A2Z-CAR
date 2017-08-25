@@ -1,7 +1,7 @@
 #include "wifi_functions.h"
 #include "pwm_driver.h"
 #include "motor_control.h"
-#include "main.h"
+#include "adc_driver.h"
 
 uint8_t remote_ip[] = {10, 27, 99, 89};
 uint16_t remote_port = 8002;
@@ -79,8 +79,7 @@ void wifi_comm_thread(void const * argument)
 			printf("Trying to send data\n");
 			while (connected) {
 				osDelay(10);
-				uint8_t adc_values[9] = {0, 25, 50, 75, 100, 125, 150, 200, 255};
-				char buff;
+				//char buff;
 				/*sprintf("S#1:%d, S#2:%d,S#3:%d,S#4:%d,S#5:%d,S#6:%d,S#7:%d,S#8:%d,S#9:%d\n",
 					adc_values[0],
 					adc_values[1],
@@ -92,7 +91,7 @@ void wifi_comm_thread(void const * argument)
 					adc_values[7],
 					adc_values[8]);*/
 
-				if (WIFI_SendData(socket, &adc_values, sizeof(adc_values), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+				if (WIFI_SendData(socket, adc_values, sizeof(adc_values), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 					printf("> ERROR : Failed to send data\n");
 					connected = 0;
 					if (started == 1) {
@@ -103,7 +102,7 @@ void wifi_comm_thread(void const * argument)
 				} else {
 					//printf("Data sent\n");
 
-					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
+					if (WIFI_ReceiveData(socket, rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 						if (data_len > 0) {
 							if (rec_data == 2) {				// go signal
 								//printf("Go signal received\n");
@@ -121,8 +120,11 @@ void wifi_comm_thread(void const * argument)
 							} else if (rec_data == -2) {		// disable signal
 								//printf("Disable signal received\n");
 								disable_drive();
-								terminate_thread();
+								while (1){
+									osThreadTerminate(NULL);
+								}
 							}
+
 						} else {
 							//printf("No data\n");
 							if (started == 1) {

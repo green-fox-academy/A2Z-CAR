@@ -85,12 +85,6 @@ int main(void)
 		return -1;
 	}
 
-
-
-//	pin_init();
-//	set_direction(1);
-//	motor_pwm_set_duty(25);
-
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
 	osThreadCreate (osThread(Start), NULL);
@@ -131,12 +125,14 @@ int8_t system_init()
 		return -1;
 	}
 
-	led_init();
-
 	// 8-bit ADC
 	adc_init();
 //	// 12-bit ADC
 //	adc_12b_init();
+
+	pin_init(); //init motor control pins
+
+	set_direction(1);	//set motor direction forward
 
 
 	if (proximity_driver_init() != OK) {
@@ -154,13 +150,13 @@ int8_t system_init()
   */
 static void StartThread(void const * argument)
 {
-	osThreadDef(servo, servo_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(servo, servo_control_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId s = osThreadCreate(osThread(servo), NULL);
 
-	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	volatile osThreadId m = osThreadCreate(osThread(motor), NULL);
+	//osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+	//volatile osThreadId m = osThreadCreate(osThread(motor), NULL);
 
-	osThreadDef(proxim, proximity_control_thread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(proxim, proximity_control_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);
 
 	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
