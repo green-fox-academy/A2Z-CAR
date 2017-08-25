@@ -71,6 +71,6 @@ void servo_control_thread(void const * argument)
 			set_servo();
 			osDelay(10);
 	}
-	terminate_thread();
 
+	terminate_thread();
 }

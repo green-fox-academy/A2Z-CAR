@@ -2,6 +2,7 @@
 #include "pwm_driver.h"
 #include "motor_control.h"
 #include "adc_driver.h"
+#include "main.h"
 
 #define SSID     "A66 Guest"
 #define PASSWORD "Hello123"
@@ -102,7 +103,7 @@ void wifi_comm_thread(void const * argument)
 				} else {
 					//printf("Data sent\n");
 
-					if (WIFI_ReceiveData(socket, rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
+					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 						if (data_len > 0) {
 							if (rec_data == 1) {				// go signal
 								//printf("Go signal received\n");

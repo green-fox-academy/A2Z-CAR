@@ -80,7 +80,7 @@ void detect_start_stop_thread(void const * argument)
 		if (ts_state.touchDetected) {
 			if ((ts_state.touchX[0] < 85) && (ts_state.touchY[0] < 55)) {
 				//START Button coordinates (5, 5, 80, 50)
-				move = 2;
+				move = 1;
 				LCD_UsrLog ((char *)"Go command detected\n");
 				BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 				BSP_LCD_FillRect(5, 5, 80, 50);
@@ -89,7 +89,7 @@ void detect_start_stop_thread(void const * argument)
 
 			} else if ((ts_state.touchX[0] > 395) && (ts_state.touchY[0] < 55)) {
 				//STOP Button coordinates (395, 5, 80, 50)
-				move = -2;
+				move = -1;
 				LCD_UsrLog ((char *)"Disable command detected\n");
 				BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 				BSP_LCD_FillRect(395, 5, 80, 50);

@@ -17,8 +17,6 @@ void adc_init();
 void adc_12b_init();
 int8_t calibrate();
 int8_t get_bias();
-uint8_t max_bg[9];
 uint8_t adc_values[9];
-uint8_t multiplier_percent[9];
 
 #endif /* __ADC_DRIVER_H */
