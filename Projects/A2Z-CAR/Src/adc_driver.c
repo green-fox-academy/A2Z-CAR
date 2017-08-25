@@ -166,7 +166,7 @@ int8_t calibrate()
 	//measure sensor values, create multiplier to the sensors to make them even on even surface
 	uint8_t values[9];
 	uint32_t adc_avg[9];
-	uint8_t *cal;
+
 	//cal = calibration;
 	for (int i = 0; i< 100; i++) {
 		get_adc_values(values);
@@ -183,12 +183,7 @@ int8_t calibrate()
 		}
 		adc_avg[j] /= 100;
 	}
-	//printf("cal: \n");
-	for (int j = 0; j< 9; j++) {
-		*cal = 100 * adc_avg[minindex] / adc_avg[j];
-		//printf("%5d",100 * adc_avg[minindex] / adc_avg[j]);
-		cal++;
-	}
+
 	printf("Calibration done.\n");
 	return 0;
 }
