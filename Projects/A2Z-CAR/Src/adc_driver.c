@@ -271,7 +271,7 @@ int8_t get_bias()
 	}
 	get_adc_values(adc_values);
 	//printf("adc:\n");
-	//uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
+	uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
 	//for (int i = 0; i < 9; i++) {
 	//	printf(" %4d",adc_values[i]);
 	//}
@@ -295,10 +295,10 @@ int8_t get_bias()
 		uint8_t linelimit;
 		//linelimit = adc_values[minindex] + (min_dif / 2);
 		linelimit = adc_values[minindex] + ( 10 * dif / 11);
-		/*for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 9; i++) {
 			contrast[i] = adc_values[i] > linelimit;
-			printf(" %4d",contrast[i]);
-		}*/
+			//printf(" %4d",contrast[i]);
+		}
 
 		uint8_t pos = 0;
 		int8_t center[4] = {-1, -1, -1, -1}, width = 0;

@@ -43,7 +43,7 @@ void set_servo()
 {
 	uint8_t detail = 9;
 	int8_t bias = get_bias();
-	printf("bias: %4d \n", bias);
+	//printf("bias: %4d \n", bias);
 	if (bias <= (detail * 4)) {
 		cnt = 0;
 	} else {
@@ -66,7 +66,7 @@ void servo_control_thread(void const * argument)
 
 	while(1) {
 			set_servo();
-			osDelay(500);
+			osDelay(10);
 	}
 	terminate_thread();
 
