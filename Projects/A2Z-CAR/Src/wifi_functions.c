@@ -3,6 +3,14 @@
 #include "motor_control.h"
 #include "adc_driver.h"
 #include "main.h"
+#include "proximity_driver.h"
+
+typedef struct
+{
+	uint8_t buff_adc_data[9];
+	uint16_t buff_distance;
+
+} sensor_data;
 
 #define SSID     "A66 Guest"
 #define PASSWORD "Hello123"
@@ -92,7 +100,15 @@ void wifi_comm_thread(void const * argument)
 					adc_values[7],
 					adc_values[8]);*/
 
-				if (WIFI_SendData(socket, adc_values, sizeof(adc_values), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
+				sensor_data buff;
+				for (int i = 0; i < 9; i++) {
+					buff.buff_adc_data[i] = adc_values[i];
+				}
+
+				buff.buff_distance = distance;
+
+
+				if (WIFI_SendData(socket, &buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 					printf("> ERROR : Failed to send data\n");
 					connected = 0;
 					if (started == 1) {
