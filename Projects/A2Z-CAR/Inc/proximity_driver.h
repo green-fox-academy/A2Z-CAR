@@ -16,5 +16,5 @@
 int8_t proximity_driver_init();
 int8_t proximity_control_thread();
 
-uint16_t distance;
+uint32_t distance;
 #endif /* APPLICATIONS_USER_PROXIMITY_DRIVER_H_ */
