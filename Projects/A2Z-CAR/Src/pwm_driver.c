@@ -1,5 +1,11 @@
 #include "pwm_driver.h"
 
+TIM_HandleTypeDef servo_pwm_handle;
+TIM_HandleTypeDef proxi_pwm_handle;
+TIM_OC_InitTypeDef servo_pwm_oc_init;
+TIM_OC_InitTypeDef motor_pwm_oc_init;
+TIM_OC_InitTypeDef proxi_pwm_oc_init;
+
 /**
   * @brief  Initializes TIM3 as PWM source
   * @param  None
