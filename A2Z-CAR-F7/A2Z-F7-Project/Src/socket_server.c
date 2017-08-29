@@ -17,7 +17,7 @@
 typedef struct
 {
 	uint8_t buff_adc_data[9];
-	uint16_t buff_distance;
+	uint32_t buff_distance;
 } sensor_data;
 
 /* Private function prototypes -----------------------------------------------*/
