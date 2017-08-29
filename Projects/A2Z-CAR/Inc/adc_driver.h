@@ -16,7 +16,7 @@ uint8_t adc_values[9];
 /* Exported functions ------------------------------------------------------- */
 void adc_init();
 void adc_12b_init();
-int8_t calibrate();
+void calibrate();
 int8_t get_bias();
 uint16_t adc_rpm_measure();
 
