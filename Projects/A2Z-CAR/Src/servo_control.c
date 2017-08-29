@@ -41,7 +41,7 @@ void do_this_if_no_line()
 {
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
-	set_servo_angle(angle(former_bias));
+	//set_servo_angle(angle(former_bias));
 }
 
 void set_servo()
@@ -67,9 +67,10 @@ void set_servo()
 
 void servo_control_thread(void const * argument)
 {
+	calibrate();
 	while(1) {
 		set_servo();
-		osDelay(3);
+		osDelay(10);
 	}
 	while (1) {
 		/* Delete the thread */

@@ -247,12 +247,11 @@ void get_adc_values(uint8_t *adc_values)
 
 	d7_adc_init();
 	*values = adc_measure();
-	x = *values;
+
 	values+=2;
 
-	//d0_adc_init();
-	//*values = adc_measure();
-	*values = x;
+	d0_adc_init();
+	*values = adc_measure();
 
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_RESET);
@@ -304,9 +303,9 @@ int8_t get_bias()
 	uint8_t contrast[9];
 	for (int i = 0; i < 9; i++) {
 		contrast[i] = adc_values[i] > (max_bg[i] + 10);
-		printf(" %4d",contrast[i]);
+		//printf(" %4d",contrast[i]);
 	}
-	printf("\n");
+	//printf("\n");
 	uint8_t pos = 0;
 	int8_t center[4] = {-1, -1, -1, -1}, width = 0;
 	uint8_t is_line = 0;
