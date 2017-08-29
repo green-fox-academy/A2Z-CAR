@@ -17,7 +17,7 @@
 typedef struct
 {
 	uint8_t buff_adc_data[9];
-	uint16_t buff_distance;
+	uint32_t buff_distance;
 } sensor_data;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,7 +80,6 @@ void socket_server_thread(void const *argument)
 		} else {
 			// Define buffer for incoming message
 			sensor_data buff;
-			buff.buff_distance = 400;
 
 			int received_bytes = 0;
 
@@ -99,14 +98,13 @@ void socket_server_thread(void const *argument)
 						LCD_UsrLog("S#%d:%d; ", i + 1, buff.buff_adc_data[i]);
 						draw_sensor_data(i, buff.buff_adc_data[i], buff.buff_distance);
 					}
-				LCD_UsrLog("Socket server - data received\n");
+				LCD_UsrLog("\nSocket server - data received\n");
 
 				int sent_bytes = 0;
 				sent_bytes = send(client_socket, &move, sizeof(move), 0);
 				if (sent_bytes < 1) {
 					LCD_ErrLog("Socket server - can't send\n");
 					break;
-
 				}
 				LCD_UsrLog("Socket server - data sent\n");
 
@@ -117,6 +115,7 @@ void socket_server_thread(void const *argument)
 		closesocket(client_socket);
 		LCD_UsrLog("Socket server - connection closed\n");
 		osDelay(10);
+		LCD_UsrLog("Socket server - listening...\n");
 	}
 	terminate_thread();
 }

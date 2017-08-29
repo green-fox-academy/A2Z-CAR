@@ -144,9 +144,9 @@ void DHCP_thread(void const * argument)
          
           sprintf((char *)iptxt, "%s", ip4addr_ntoa((const ip4_addr_t *)&netif->ip_addr));   
           LCD_UsrLog ("DHCP client - IP address assigned by a DHCP server: %s\n", iptxt);
-          uint8_t *footer_text[40];
+          uint8_t footer_text[40];
           sprintf((char *)footer_text, "GreenFoxAcademy - IP: %s", iptxt);
-          LCD_LOG_SetFooter(&footer_text);
+          LCD_LOG_SetFooter(footer_text);
         }
         else
         {
