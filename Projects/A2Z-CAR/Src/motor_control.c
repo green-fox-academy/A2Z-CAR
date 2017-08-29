@@ -92,11 +92,11 @@ void motor_control_thread(void const * argument)
 //	set_direction(1);	// set forward
 //	go();
 
-	required_rpm = 2000;
+//	required_rpm = 2000;
 
 	while(1) {
-		measured_rpm = adc_rpm_measure();
-		motor_pwm_set_duty(pi_control());
+//		measured_rpm = adc_rpm_measure();
+//		motor_pwm_set_duty(pi_control());
 		osDelay(10);
 	}
 
