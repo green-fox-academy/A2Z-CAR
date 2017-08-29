@@ -131,7 +131,7 @@ int8_t system_init()
 
 	adc_init();			// 8-bit ADC
 
-	adc_12b_init();		// 12-bit ADC
+	//adc_12b_init();		// 12-bit ADC
 
 	if (proximity_driver_init() != OK) {
 		return -1;
@@ -156,7 +156,7 @@ static void StartThread(void const * argument)
 	osThreadDef(proxim, proximity_control_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE * 2);
 	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);
 
-	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
+	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE * 4);
 	volatile osThreadId w = osThreadCreate(osThread(wifi_comm), NULL);
 
 	terminate_thread();
