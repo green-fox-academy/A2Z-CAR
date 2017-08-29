@@ -197,7 +197,7 @@ int8_t proximity_control_thread()
 			osDelay(1);
 		}
 		proxim1_cntr = cm_cntr;
-		printf("proxim1_cntr: %lu\n", proxim1_cntr);
+		//printf("proxim1_cntr: %lu\n", proxim1_cntr);
 		cm_cntr = 0;
 		proxim2_cntr = 0;
 		proximity2_send_trigger();
@@ -205,7 +205,7 @@ int8_t proximity_control_thread()
 			osDelay(1);
 		}
 		proxim2_cntr = cm_cntr;
-		printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
+		//printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
 
 		distance = (proxim1_cntr + proxim2_cntr)/2;
 		printf("distance: %lu\n\n", distance);

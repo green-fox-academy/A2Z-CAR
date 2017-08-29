@@ -88,21 +88,16 @@ void go()
 
 void motor_control_thread(void const * argument)
 {
-	pin_init();			// initialize direction pins
-	set_direction(1);	// set forward
-	go();
+//	pin_init();			// initialize direction pins
+//	set_direction(1);	// set forward
+//	go();
 
-//	required_rpm = 500;
+	required_rpm = 2000;
 
 	while(1) {
-//		measured_rpm = adc_rpm_measure();
-//		print_float(measured_current, 1);
-//		printf("   ");
-//		print_float(pi_control(), 1);
-//		printf("\n");
-//		osDelay(125);
-//		motor_pwm_set_duty(pi_control());
-		osDelay(100);
+		measured_rpm = adc_rpm_measure();
+		motor_pwm_set_duty(pi_control());
+		osDelay(10);
 	}
 
 	terminate_thread();

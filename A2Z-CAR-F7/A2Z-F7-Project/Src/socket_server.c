@@ -80,7 +80,6 @@ void socket_server_thread(void const *argument)
 		} else {
 			// Define buffer for incoming message
 			sensor_data buff;
-			buff.buff_distance = 400;
 
 			int received_bytes = 0;
 
@@ -116,6 +115,7 @@ void socket_server_thread(void const *argument)
 		closesocket(client_socket);
 		LCD_UsrLog("Socket server - connection closed\n");
 		osDelay(10);
+		LCD_UsrLog("Socket server - listening...\n");
 	}
 	terminate_thread();
 }
