@@ -10,7 +10,7 @@
 TIM_HandleTypeDef proxim_timer_handle;
 uint32_t proxim1_cntr = 0;
 uint32_t proxim2_cntr = 0;
-int8_t proxim_flag = 0;
+int8_t proxim_flag = 1;
 uint32_t cm_cntr = 0;
 
 int8_t proximity_sensor1_trigger_init();
@@ -138,7 +138,7 @@ static void EXTI3_IRQHandler_Config(void)
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 
 	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING_FALLING;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
+	GPIO_InitStructure.Pull = GPIO_PULLUP;
 	GPIO_InitStructure.Pin = GPIO_PIN_3;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -193,7 +193,7 @@ int8_t proximity_control_thread()
 		cm_cntr = 0;
 		proxim1_cntr = 0;
 		proximity1_send_trigger();
-		while (proxim_flag == 1){
+		while (proxim_flag == 0){
 			osDelay(1);
 		}
 		proxim1_cntr = cm_cntr;
@@ -201,7 +201,7 @@ int8_t proximity_control_thread()
 		cm_cntr = 0;
 		proxim2_cntr = 0;
 		proximity2_send_trigger();
-		while (proxim_flag == 1){
+		while (proxim_flag == 0){
 			osDelay(1);
 		}
 		proxim2_cntr = cm_cntr;
