@@ -10,7 +10,7 @@
 TIM_HandleTypeDef proxim_timer_handle;
 uint32_t proxim1_cntr = 0;
 uint32_t proxim2_cntr = 0;
-int8_t proxim_flag = 1;
+int8_t proxim_flag = 0;
 uint32_t cm_cntr = 0;
 
 int8_t proximity_sensor1_trigger_init();
@@ -116,16 +116,16 @@ int8_t proximity_exti_init()
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (proxim_flag == 0) {
-		HAL_NVIC_EnableIRQ(TIM4_IRQn);
+		HAL_NVIC_DisableIRQ(TIM4_IRQn);
 		proxim_flag = 1;
 		//HAL_TIM_Base_Start_IT(&proxim_timer_handle);
-		//printf("D4-PA3 up\n");
+		printf("up   ");
 
 	} else if (proxim_flag == 1) {
-		HAL_NVIC_DisableIRQ(TIM4_IRQn);
+		HAL_NVIC_EnableIRQ(TIM4_IRQn);
 		proxim_flag = 0;
 		//HAL_TIM_Base_Stop_IT(&proxim_timer_handle);
-		//printf("D4-PA3 down\n");
+		printf("down\n");
 
 	}
 }
@@ -197,7 +197,7 @@ int8_t proximity_control_thread()
 			osDelay(1);
 		}
 		proxim1_cntr = cm_cntr;
-		//printf("proxim1_cntr: %lu\n", proxim1_cntr);
+		printf("proxim1_cntr: %lu", proxim1_cntr);
 		cm_cntr = 0;
 		proxim2_cntr = 0;
 		proximity2_send_trigger();
@@ -205,7 +205,7 @@ int8_t proximity_control_thread()
 			osDelay(1);
 		}
 		proxim2_cntr = cm_cntr;
-		//printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
+		printf("proxim2_cntr: %lu - \n", proxim2_cntr);
 
 		distance = (proxim1_cntr + proxim2_cntr)/2;
 		printf("distance: %lu\n\n", distance);

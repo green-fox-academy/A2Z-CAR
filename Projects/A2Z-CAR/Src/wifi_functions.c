@@ -16,7 +16,7 @@ typedef struct
 #define WIFI_WRITE_TIMEOUT 1000
 #define WIFI_READ_TIMEOUT  1000
 
-uint8_t remote_ip[] = {10, 27, 99, 49};
+uint8_t remote_ip[] = {10, 27, 99, 102};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
@@ -86,27 +86,16 @@ void wifi_comm_thread(void const * argument)
 			connected = 1;
 //			printf("Trying to send data\n");
 			while (connected) {
-//				char buff;
-//				sprintf("S#1:%d, S#2:%d,S#3:%d,S#4:%d,S#5:%d,S#6:%d,S#7:%d,S#8:%d,S#9:%d\n",
-//					adc_values[0],
-//					adc_values[1],
-//					adc_values[2],
-//					adc_values[3],
-//					adc_values[4],
-//					adc_values[5],
-//					adc_values[6],
-//					adc_values[7],
-//					adc_values[8]);
 
-//				for (int i = 0; i < 9; i++) {
-//					buff.buff_adc_data[i] = adc_values[i];
-//				}
 				for (int i = 0; i < 9; i++) {
-					buff.buff_adc_data[i] = i * 30;
+					buff.buff_adc_data[i] = adc_values[i];
 				}
+//				for (int i = 0; i < 9; i++) {
+//					buff.buff_adc_data[i] = i * 30;
+//				}
 
-//				buff.buff_distance = distance;
-				buff.buff_distance = 300;
+				buff.buff_distance = distance;
+//				buff.buff_distance = 300;
 
 
 				if (WIFI_SendData(socket, &buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
