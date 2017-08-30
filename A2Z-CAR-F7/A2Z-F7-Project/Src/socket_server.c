@@ -14,12 +14,6 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
-typedef struct
-{
-	uint8_t buff_adc_data[9];
-	uint16_t buff_distance;
-} sensor_data;
-
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -80,7 +74,6 @@ void socket_server_thread(void const *argument)
 		} else {
 			// Define buffer for incoming message
 			sensor_data buff;
-			buff.buff_distance = 400;
 
 			int received_bytes = 0;
 
@@ -96,10 +89,10 @@ void socket_server_thread(void const *argument)
 				//set LCD user feedback
 				draw_background();
 					for (uint8_t i = 0; i < 9; i++) {
-						LCD_UsrLog("S#%d:%d; ", i + 1, buff.buff_adc_data[i]);
+						//LCD_UsrLog("S#%d:%d; ", i + 1, buff.buff_adc_data[i]);
 						draw_sensor_data(i, buff.buff_adc_data[i], buff.buff_distance);
 					}
-				LCD_UsrLog("Socket server - data received\n");
+				LCD_UsrLog("distance: %lu\n",buff.buff_distance);
 
 				int sent_bytes = 0;
 				sent_bytes = send(client_socket, &move, sizeof(move), 0);

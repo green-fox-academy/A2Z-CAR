@@ -28,7 +28,7 @@ void draw_background()
 
 }
 
-void draw_sensor_data(int sensor_num, uint8_t radius, uint16_t distance)
+void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance)
 {
 	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);

@@ -16,6 +16,13 @@
 void terminate_thread();
 void socket_server_thread(void const *argument);
 
+typedef struct
+{
+	uint8_t buff_adc_data[9];
+	uint32_t buff_distance;
+
+} sensor_data;
+
 #endif /* __SOCKET_SERVER_H */
 
 
