@@ -8,24 +8,16 @@
 #include "stdio.h"
 
 /* Exported types ------------------------------------------------------------*/
-ADC_HandleTypeDef adc_handle;
-ADC_ChannelConfTypeDef adc_ch_conf;
-
 /* Exported constants --------------------------------------------------------*/
+int8_t former_bias;
+uint8_t adc_values[9];
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-
-void gpio_init();
 void adc_init();
+void adc_12b_init();
+void calibrate();
 int8_t get_bias();
-void set_servo();
-int8_t calibrate();
-
-//void calibrate(uint8_t *calibration);
-
-uint8_t max_bg[9];
-uint8_t adc_values[9];
-uint8_t multiplier_percent[9];
-int8_t former_bias, bias;
+uint16_t adc_rpm_measure();
 
 #endif /* __ADC_DRIVER_H */

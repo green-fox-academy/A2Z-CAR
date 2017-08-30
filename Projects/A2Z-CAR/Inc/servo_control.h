@@ -11,9 +11,6 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void set_servo_angle(int8_t angle);
-void stop();
-void set_servo();
 void led_init();
 void servo_control_thread(void const * argument);
 
