@@ -198,7 +198,7 @@ int8_t proximity_control_thread()
 			cm_cntr = 0;
 			proxim1_cntr = 0;
 			proxim_flag = 1;
-			proximity2_send_trigger();
+			proximity1_send_trigger();
 
 			while (proxim_flag == 0){
 				//printf("interrupt 1.\n");

@@ -156,7 +156,7 @@ static void StartThread(void const * argument)
 	osThreadDef(proxim, proximity_control_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);
 
-	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE * 2);
+	osThreadDef(wifi_comm, wifi_comm_thread, osPriorityIdle, 0, configMINIMAL_STACK_SIZE * 2);
 	volatile osThreadId w = osThreadCreate(osThread(wifi_comm), NULL);
 
 	terminate_thread();
