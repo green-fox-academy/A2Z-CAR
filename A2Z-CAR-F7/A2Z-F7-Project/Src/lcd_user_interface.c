@@ -1,5 +1,5 @@
 #include "lcd_user_interface.h"
-#include "socket_client.h"
+#include "socket_server.h"
 
 TS_StateTypeDef ts_state;
 
@@ -118,7 +118,6 @@ void draw_buttons() {
 
 }
 
-
 void detect_start_stop_thread(void const * argument)
 {
 	move = 0;
@@ -152,7 +151,6 @@ void detect_start_stop_thread(void const * argument)
 		}
 	}
 
-	while (1)
-		osThreadTerminate(NULL);
+	terminate_thread();
 }
 

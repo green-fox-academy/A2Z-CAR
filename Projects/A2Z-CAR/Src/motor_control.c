@@ -83,7 +83,7 @@ void disable_drive()
 
 void go()
 {
-	motor_pwm_set_duty(25);
+	motor_pwm_set_duty(15);
 }
 
 void motor_control_thread(void const * argument)
