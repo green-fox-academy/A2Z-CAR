@@ -16,7 +16,7 @@ typedef struct
 #define WIFI_WRITE_TIMEOUT 1000
 #define WIFI_READ_TIMEOUT  1000
 
-uint8_t remote_ip[] = {10, 27, 99, 47};
+uint8_t remote_ip[] = {10, 27, 99, 102};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
@@ -86,15 +86,15 @@ void wifi_comm_thread(void const * argument)
 			connected = 1;
 //			printf("Trying to send data\n");
 			while (connected) {
-//				for (int i = 0; i < 9; i++) {
-//					buff.buff_adc_data[i] = adc_values[i];
-//				}
 				for (int i = 0; i < 9; i++) {
-					buff.buff_adc_data[i] = i * 30;
+					buff.buff_adc_data[i] = adc_values[i];
 				}
+//				for (int i = 0; i < 9; i++) {
+//					buff.buff_adc_data[i] = i * 30;
+//				}
 
-//				buff.buff_distance = distance;
-				buff.buff_distance = 300;
+				buff.buff_distance = distance;
+//				buff.buff_distance = 300;
 
 
 				if (WIFI_SendData(socket, &buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
