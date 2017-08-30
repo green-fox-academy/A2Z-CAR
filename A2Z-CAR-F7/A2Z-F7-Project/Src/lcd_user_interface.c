@@ -28,7 +28,7 @@ void draw_background()
 
 }
 
-void draw_sensor_data(int sensor_num, uint8_t radius, uint16_t distance)
+void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance)
 {
 	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);
@@ -57,41 +57,21 @@ void draw_sensor_data(int sensor_num, uint8_t radius, uint16_t distance)
 		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
 		BSP_LCD_FillRect(16, 103, 449, 50);
 	} else if ((distance < 400) && (distance > 200)) {
-		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
-		BSP_LCD_FillRect(16, 103, 449, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
+		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
 		BSP_LCD_FillRect(16, 103, 449, 50);
 	} else if ((distance < 200) && (distance > 100)) {
-		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_SetTextColor(LCD_COLOR_YELLOW);
 		BSP_LCD_FillRect(16, 103, 449, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
-		BSP_LCD_FillRect(16, 103, 449, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKYELLOW);
-		BSP_LCD_FillRect(300, 103, 149, 50);
 	} else if ((distance < 100) && (distance > 50)) {
-		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
-		BSP_LCD_FillRect(16, 103, 449, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
-		BSP_LCD_FillRect(16, 103, 449, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKYELLOW);
-		BSP_LCD_FillRect(300, 103, 149, 50);
 		BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
-		BSP_LCD_FillRect(350, 103, 100, 50);
+		BSP_LCD_FillRect(16, 103, 449, 50);
 	} else if ((distance < 50) && (distance > 30)) {
-		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
-		BSP_LCD_FillRect(16, 103, 449, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKGREEN);
-		BSP_LCD_FillRect(16, 103, 449, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKYELLOW);
-		BSP_LCD_FillRect(300, 103, 149, 50);
-		BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
-		BSP_LCD_FillRect(350, 103, 100, 50);
 		BSP_LCD_SetTextColor(LCD_COLOR_RED);
-		BSP_LCD_FillRect(400, 103, 49, 50);
-	} else if (distance < 30) {
-		BSP_LCD_SetTextColor(LCD_COLOR_DARKRED);
 		BSP_LCD_FillRect(16, 103, 449, 50);
-		osDelay(20);
+	} else if (distance < 30) {
+		BSP_LCD_SetTextColor(LCD_COLOR_RED);
+		BSP_LCD_FillRect(16, 103, 449, 50);
+		osDelay(10);
 		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
 		BSP_LCD_FillRect(16, 103, 449, 50);
 	}

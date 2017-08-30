@@ -14,11 +14,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
-typedef struct
-{
-	uint8_t buff_adc_data[9];
-	uint32_t buff_distance;
-} sensor_data;
+sensor_data buff;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -77,9 +73,8 @@ void socket_server_thread(void const *argument)
 		// Check the client socket
 		if (client_socket < 0) {
 			LCD_ErrLog("Socket server - invalid client socket\n");
+
 		} else {
-			// Define buffer for incoming message
-			sensor_data buff;
 
 			int received_bytes = 0;
 
@@ -94,11 +89,11 @@ void socket_server_thread(void const *argument)
 
 				//set LCD user feedback
 				draw_background();
-					for (uint8_t i = 0; i < 9; i++) {
-						LCD_UsrLog("S#%d:%d; ", i + 1, buff.buff_adc_data[i]);
-						draw_sensor_data(i, buff.buff_adc_data[i], buff.buff_distance);
-					}
-				LCD_UsrLog("\nSocket server - data received\n");
+				for (uint8_t i = 0; i < 9; i++) {
+					//LCD_UsrLog("S#%d:%d; ", i + 1, buff.buff_adc_data[i]);
+					draw_sensor_data(i, buff.buff_adc_data[i], buff.buff_distance);
+				}
+				LCD_UsrLog("Distance: %lu\n", buff.buff_distance);
 
 				int sent_bytes = 0;
 				sent_bytes = send(client_socket, &move, sizeof(move), 0);
