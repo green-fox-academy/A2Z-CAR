@@ -91,9 +91,19 @@ void socket_server_thread(void const *argument)
 				draw_background();
 				for (uint8_t i = 0; i < 9; i++) {
 					//LCD_UsrLog("S#%d:%d; ", i + 1, buff.buff_adc_data[i]);
-					draw_sensor_data(i, buff.buff_adc_data[i], buff.buff_distance);
+					draw_sensor_data(i, buff.buff_adc_data[i], buff.buff_distance, buff.line_feedback);
 				}
-				LCD_UsrLog("Distance: %lu\n", buff.buff_distance);
+
+				if (buff.line_feedback == 1) {
+					LCD_UsrLog("Distance: %lu, line is ok.\n", buff.buff_distance);
+				}
+
+				if (buff.line_feedback == 0) {
+					BSP_LCD_SetTextColor(LCD_COLOR_RED);
+					LCD_UsrLog("Distance: %lu, NO LINE.\n", buff.buff_distance);
+					BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+
+				}
 
 				int sent_bytes = 0;
 				sent_bytes = send(client_socket, &move, sizeof(move), 0);
@@ -101,7 +111,7 @@ void socket_server_thread(void const *argument)
 					LCD_ErrLog("Socket server - can't send\n");
 					break;
 				}
-				LCD_UsrLog("Socket server - data sent\n");
+				//LCD_UsrLog("Socket server - data sent\n");
 
 				osDelay(20);
 			}
