@@ -23,6 +23,8 @@ int8_t led_feedback_init();
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void proximity1_send_trigger();
 void proximity2_send_trigger();
+uint32_t read_proximity_data();
+uint8_t process_proximity(uint32_t distance);
 
 
 int8_t proximity_driver_init()
@@ -187,51 +189,9 @@ int8_t led_feedback_init()
 	return 0;
 }
 
-int8_t proximity_control_thread()
+uint8_t process_proximity(uint32_t distance)
 {
-	while (1){
-		uint8_t measure_failed = 0;
-		uint32_t sum =0;
-
-		for (int i = 0; i < 10; i++){
-
-			cm_cntr = 0;
-			proxim1_cntr = 0;
-			proxim_flag = 1;
-			proximity1_send_trigger();
-
-			while (proxim_flag == 0){
-				//printf("interrupt 1.\n");
-				osDelay(1);
-			}
-			proxim1_cntr = cm_cntr;
-			//printf("proxim1_cntr: %lu", proxim1_cntr);
-			cm_cntr = 0;
-			proxim2_cntr = 0;
-			proxim_flag = 1;
-			proximity2_send_trigger();
-
-			while (proxim_flag == 0){
-				//printf("interrupt 2.\n");
-				osDelay(1);
-			}
-			proxim2_cntr = cm_cntr;
-			//printf("proxim2_cntr: %lu - \n", proxim2_cntr);
-
-			if ((proxim1_cntr > 600) || (proxim2_cntr > 600)){
-				//measure failure
-				measure_failed++;
-
-			} else if ((proxim1_cntr < 600) && (proxim2_cntr < 600)){
-				sum = sum + (proxim1_cntr + proxim2_cntr);
-
-			}
-		}
-		distance = sum / (2 * (10 - measure_failed));
-
-		printf("distance: %lu, failure: %d\n\n", distance, measure_failed);
-
-		if (distance < 30) {
+	if (distance < 30) {
 			//stop_drive();
 			//printf("Disable signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
@@ -254,6 +214,69 @@ int8_t proximity_control_thread()
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 		}
+
+	return 0;
+}
+
+uint32_t read_proximity_data()
+{
+	uint8_t measure_failed = 0;
+	uint32_t sum =0;
+
+	for (int i = 0; i < 10; i++){
+
+		cm_cntr = 0;
+		proxim1_cntr = 0;
+		proxim_flag = 1;
+		proximity1_send_trigger();
+
+		while (proxim_flag == 0){
+			//printf("interrupt 1.\n");
+			osDelay(1);
+		}
+		proxim1_cntr = cm_cntr;
+		//printf("proxim1_cntr: %lu", proxim1_cntr);
+		cm_cntr = 0;
+		proxim2_cntr = 0;
+		proxim_flag = 1;
+		proximity2_send_trigger();
+
+		while (proxim_flag == 0){
+			//printf("interrupt 2.\n");
+			osDelay(1);
+		}
+		proxim2_cntr = cm_cntr;
+		//printf("proxim2_cntr: %lu - \n", proxim2_cntr);
+
+		if ((proxim1_cntr > 600) || (proxim2_cntr > 600)){
+			//measure failure
+			measure_failed++;
+
+		} else if ((proxim1_cntr < 600) && (proxim2_cntr < 600)){
+			sum = sum + (proxim1_cntr + proxim2_cntr);
+
+		}
 	}
+
+	distance = sum / (2 * (10 - measure_failed));
+	printf("distance: %lu, failure: %d\n\n", distance, measure_failed);
+
+	return distance;
+}
+
+int8_t proximity_control_thread()
+{
+	while (1){
+
+		uint32_t measured_distance = read_proximity_data();
+
+		process_proximity(measured_distance);
+
+
+	}
+	while (1) {
+		osThreadTerminate(NULL);
+	}
+
 	return 0;
 }
