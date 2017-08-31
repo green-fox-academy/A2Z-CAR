@@ -243,7 +243,7 @@ int8_t proximity_control_thread()
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
 
-		} else if ((distance < 100)  && (distance > 50)) {
+		} else if ((distance < 150)  && (distance > 50)) {
 			//slow down
 			//printf("Stop signal sent.\n");
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
