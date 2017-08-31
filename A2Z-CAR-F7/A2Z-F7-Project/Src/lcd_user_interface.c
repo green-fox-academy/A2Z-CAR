@@ -28,7 +28,7 @@ void draw_background()
 
 }
 
-void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance, uint8_t line_feedback)
+void draw_line_sensor_data(int sensor_num, uint8_t radius, uint8_t line_feedback)
 {
 	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);
@@ -51,34 +51,53 @@ void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance, uint8_t
 		BSP_LCD_FillCircle(x, y, 24);
 	}
 
+}
+
+void draw_proximity_sensor_data(uint32_t distance)
+{
+	BSP_LCD_SetFont(&Font16);
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 	//object distance feedback coordinates (16, 103, 449, 50)
 	if (distance > 400) {
 		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+		BSP_LCD_DisplayStringAt(0, 120, (uint8_t *)"no object detected", CENTER_MODE);
 	} else if ((distance < 400) && (distance > 200)) {
 		BSP_LCD_SetTextColor(LCD_COLOR_GREEN);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_DisplayStringAt(0, 120, (uint8_t *)"object detected, distance ok", CENTER_MODE);
 	} else if ((distance < 200) && (distance > 100)) {
 		BSP_LCD_SetTextColor(LCD_COLOR_YELLOW);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_DisplayStringAt(0, 120, (uint8_t *)"object detected, distance ok", CENTER_MODE);
 	} else if ((distance < 100) && (distance > 50)) {
 		BSP_LCD_SetTextColor(LCD_COLOR_ORANGE);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_DisplayStringAt(0, 120, (uint8_t *)"object detected, SLOW DOWN", CENTER_MODE);
 	} else if ((distance < 50) && (distance > 30)) {
 		BSP_LCD_SetTextColor(LCD_COLOR_RED);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_DisplayStringAt(0, 120, (uint8_t *)"STOP!", CENTER_MODE);
 	} else if ((distance < 30) && (distance > 1)) {
 		BSP_LCD_SetTextColor(LCD_COLOR_RED);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_DisplayStringAt(0, 120, (uint8_t *)"DANGER", CENTER_MODE);
 		osDelay(10);
 		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
 		BSP_LCD_FillRect(16, 103, 449, 50);
 	} else if (distance == 0) {
 		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+		BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+		BSP_LCD_DisplayStringAt(0, 120, (uint8_t *)"no object detected", CENTER_MODE);
 	}
-
+	BSP_LCD_SetFont(&Font12);
 }
 
 void draw_buttons() {

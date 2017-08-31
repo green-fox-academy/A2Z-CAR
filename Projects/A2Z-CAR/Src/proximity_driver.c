@@ -189,39 +189,10 @@ int8_t led_feedback_init()
 	return 0;
 }
 
-uint8_t process_proximity(uint32_t distance)
-{
-	if (distance < 30) {
-			//stop_drive();
-			//printf("Disable signal sent.\n");
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
-
-		} else if ((distance < 50) && (distance > 30)) {
-			//stop_drive();
-			//printf("Stop signal sent.\n");
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
-
-		} else if ((distance < 150)  && (distance > 50)) {
-			//slow down
-			//printf("Stop signal sent.\n");
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
-
-		} else {
-			//go();
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
-		}
-
-	return 0;
-}
-
 uint32_t read_proximity_data()
 {
 	uint8_t measure_failed = 0;
-	uint32_t sum =0;
+	uint32_t sum = 0;
 
 	for (int i = 0; i < 10; i++){
 
@@ -264,6 +235,36 @@ uint32_t read_proximity_data()
 	return distance;
 }
 
+
+uint8_t process_proximity(uint32_t distance)
+{
+	if (distance < 30) {
+			//stop_drive();
+			//printf("Disable signal sent.\n");
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
+
+		} else if ((distance < 50) && (distance > 30)) {
+			//stop_drive();
+			//printf("Stop signal sent.\n");
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
+			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
+
+		} else if ((distance < 150)  && (distance > 50)) {
+			//slow down
+			//printf("Stop signal sent.\n");
+			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
+
+		} else {
+			//go();
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
+		}
+
+	return 0;
+}
+
 int8_t proximity_control_thread()
 {
 	while (1){
@@ -272,8 +273,8 @@ int8_t proximity_control_thread()
 
 		process_proximity(measured_distance);
 
-
 	}
+
 	while (1) {
 		osThreadTerminate(NULL);
 	}
