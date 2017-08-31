@@ -12,13 +12,6 @@
 #define SERVER_BUFF_LEN		255
 #define CLIENT_BUFF_LEN		SERVER_BUFF_LEN
 
-typedef struct
-{
-	uint8_t buff_adc_data[9];
-	uint16_t buff_distance;
-
-} sensor_data;
-
 /* Exported functions ------------------------------------------------------- */
 void terminate_thread();
 void socket_server_thread(void const *argument);
