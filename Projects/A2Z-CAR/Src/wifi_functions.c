@@ -5,12 +5,6 @@
 #include "main.h"
 #include "proximity_driver.h"
 
-typedef struct
-{
-	uint8_t buff_adc_data[9];
-	uint16_t buff_distance;
-} sensor_data;
-
 #define SSID     "A66 Guest"
 #define PASSWORD "Hello123"
 #define WIFI_WRITE_TIMEOUT 1000
@@ -22,7 +16,6 @@ int8_t rec_data;
 uint8_t  mac_addr[6];
 uint8_t  ip_addr[4];
 uint16_t data_len;
-//uint8_t adc_values[9];
 
 int8_t wifi_init()
 {
@@ -85,15 +78,12 @@ void wifi_comm_thread(void const * argument)
 			connected = 1;
 			printf("Trying to send data\n");
 			while (connected) {
-//				for (int i = 0; i < 9; i++) {
-//					buff.buff_adc_data[i] = adc_values[i];
-//				}
 				for (int i = 0; i < 9; i++) {
-					buff.buff_adc_data[i] = i * 30;
+					buff.buff_adc_data[i] = adc_values[i];
 				}
 
-//				buff.buff_distance = distance;
-				buff.buff_distance = 300;
+				buff.buff_distance = distance;
+				buff.line_feedback = 1;
 
 				if (WIFI_SendData(socket, &buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 					printf("> ERROR : Failed to send data\n");

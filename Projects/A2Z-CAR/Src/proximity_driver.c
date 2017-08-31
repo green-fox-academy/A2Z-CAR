@@ -57,7 +57,7 @@ int8_t proximity_sensor1_trigger_init()
 	GPIO_InitTypeDef GPIO_Init;
 	GPIO_Init.Pin = GPIO_PIN_0;
 	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Pull = GPIO_PULLUP;
 	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
 	HAL_GPIO_Init(GPIOB, &GPIO_Init);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
@@ -74,7 +74,7 @@ int8_t proximity_sensor2_trigger_init()
 	GPIO_InitTypeDef GPIO_Init;
 	GPIO_Init.Pin = GPIO_PIN_14;
 	GPIO_Init.Speed = GPIO_SPEED_FAST;
-	GPIO_Init.Pull = GPIO_NOPULL;
+	GPIO_Init.Pull = GPIO_PULLUP;
 	GPIO_Init.Mode = GPIO_MODE_OUTPUT_PP;
 	HAL_GPIO_Init(GPIOD, &GPIO_Init);
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
@@ -87,21 +87,21 @@ int8_t proximity_sensor2_trigger_init()
 void proximity1_send_trigger()
 {
 	//init trigger pin to D3 (PB0)
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	osDelay(100);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+	osDelay(1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
 	//printf("Proxim trigger sent.\n");
-	osDelay(10);
+	osDelay(1);
 }
 
 void proximity2_send_trigger()
 {
 	//init trigger pin to D2 (PD14)
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-	osDelay(100);
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+	osDelay(1);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
 	//printf("Proxim trigger sent.\n");
-	osDelay(10);
+	osDelay(1);
 }
 
 int8_t proximity_exti_init()
@@ -116,16 +116,17 @@ int8_t proximity_exti_init()
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (proxim_flag == 0) {
-		HAL_NVIC_EnableIRQ(TIM4_IRQn);
+		HAL_NVIC_DisableIRQ(TIM4_IRQn);
 		proxim_flag = 1;
+
 		//HAL_TIM_Base_Start_IT(&proxim_timer_handle);
-		//printf("D4-PA3 up\n");
+		//printf("up   ");
 
 	} else if (proxim_flag == 1) {
-		HAL_NVIC_DisableIRQ(TIM4_IRQn);
+		HAL_NVIC_EnableIRQ(TIM4_IRQn);
 		proxim_flag = 0;
 		//HAL_TIM_Base_Stop_IT(&proxim_timer_handle);
-		//printf("D4-PA3 down\n");
+		//printf("down\n");
 
 	}
 }
@@ -136,9 +137,9 @@ static void EXTI3_IRQHandler_Config(void)
 	/* Configure D4 -- PA3 pin as input floating */
 	/* Enable GPIOA clock */
 	__HAL_RCC_GPIOA_CLK_ENABLE();
-
+	GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
 	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING_FALLING;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
+	GPIO_InitStructure.Pull = GPIO_PULLUP;
 	GPIO_InitStructure.Pin = GPIO_PIN_3;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -186,43 +187,67 @@ int8_t led_feedback_init()
 	return 0;
 }
 
-
 int8_t proximity_control_thread()
 {
 	while (1){
-		cm_cntr = 0;
-		proxim1_cntr = 0;
-		proximity1_send_trigger();
-		while (proxim_flag == 1){
-			osDelay(1);
+		uint8_t measure_failed = 0;
+		uint32_t sum =0;
+
+		for (int i = 0; i < 10; i++){
+
+			cm_cntr = 0;
+			proxim1_cntr = 0;
+			proxim_flag = 1;
+			proximity1_send_trigger();
+
+			while (proxim_flag == 0){
+				//printf("interrupt 1.\n");
+				osDelay(1);
+			}
+			proxim1_cntr = cm_cntr;
+			//printf("proxim1_cntr: %lu", proxim1_cntr);
+			cm_cntr = 0;
+			proxim2_cntr = 0;
+			proxim_flag = 1;
+			proximity2_send_trigger();
+
+			while (proxim_flag == 0){
+				//printf("interrupt 2.\n");
+				osDelay(1);
+			}
+			proxim2_cntr = cm_cntr;
+			//printf("proxim2_cntr: %lu - \n", proxim2_cntr);
+
+			if ((proxim1_cntr > 600) || (proxim2_cntr > 600)){
+				//measure failure
+				measure_failed++;
+
+			} else if ((proxim1_cntr < 600) && (proxim2_cntr < 600)){
+				sum = sum + (proxim1_cntr + proxim2_cntr);
+
+			}
 		}
-		proxim1_cntr = cm_cntr;
-		//printf("proxim1_cntr: %lu\n", proxim1_cntr);
-		cm_cntr = 0;
-		proxim2_cntr = 0;
-		proximity2_send_trigger();
-		while (proxim_flag == 1){
-			osDelay(1);
-		}
-		proxim2_cntr = cm_cntr;
-		//printf("proxim2_cntr: %lu\n\n", proxim2_cntr);
+		distance = sum / (2 * (10 - measure_failed));
 
-		distance = (proxim1_cntr + proxim2_cntr)/2;
-		printf("distance: %lu\n\n", distance);
+		printf("distance: %lu, failure: %d\n\n", distance, measure_failed);
 
-
-		if ((proxim1_cntr < 30) || (proxim2_cntr < 30)) {
-			//disable_drive();
+		if (distance < 30) {
 			//stop_drive();
 			//printf("Disable signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
 
-		} else if ((proxim1_cntr < 50) || (proxim2_cntr < 50)) {
+		} else if ((distance < 50) && (distance > 30)) {
 			//stop_drive();
 			//printf("Stop signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
+
+		} else if ((distance < 150)  && (distance > 50)) {
+			//slow down
+			//printf("Stop signal sent.\n");
+			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 
 		} else {
 			//go();
