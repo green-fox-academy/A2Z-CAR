@@ -1,4 +1,4 @@
-*/SW4STM32/*/*
+SW4STM32/*/*
 !*.cproject
 !*.project
 !*.ld
