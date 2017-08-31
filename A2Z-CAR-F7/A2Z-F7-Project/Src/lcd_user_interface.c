@@ -28,7 +28,7 @@ void draw_background()
 
 }
 
-void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance)
+void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance, uint8_t line_feedback)
 {
 	//visualize sensor data using color code
 	int x = 40 + (sensor_num * 50);
@@ -68,13 +68,17 @@ void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance)
 	} else if ((distance < 50) && (distance > 30)) {
 		BSP_LCD_SetTextColor(LCD_COLOR_RED);
 		BSP_LCD_FillRect(16, 103, 449, 50);
-	} else if (distance < 30) {
+	} else if ((distance < 30) && (distance > 1)) {
 		BSP_LCD_SetTextColor(LCD_COLOR_RED);
 		BSP_LCD_FillRect(16, 103, 449, 50);
 		osDelay(10);
 		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
 		BSP_LCD_FillRect(16, 103, 449, 50);
+	} else if (distance == 0) {
+		BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
+		BSP_LCD_FillRect(16, 103, 449, 50);
 	}
+
 }
 
 void draw_buttons() {

@@ -20,6 +20,7 @@ typedef struct
 {
 	uint8_t buff_adc_data[9];
 	uint32_t buff_distance;
+	uint8_t line_feedback;
 
 } sensor_data;
 

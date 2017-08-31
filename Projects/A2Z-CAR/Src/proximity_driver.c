@@ -232,17 +232,22 @@ int8_t proximity_control_thread()
 		printf("distance: %lu, failure: %d\n\n", distance, measure_failed);
 
 		if (distance < 30) {
-			//disable_drive();
 			//stop_drive();
 			//printf("Disable signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
 
-		} else if (distance < 50) {
+		} else if ((distance < 50) && (distance > 30)) {
 			//stop_drive();
 			//printf("Stop signal sent.\n");
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
+
+		} else if ((distance < 150)  && (distance > 50)) {
+			//slow down
+			//printf("Stop signal sent.\n");
+			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 
 		} else {
 			//go();
