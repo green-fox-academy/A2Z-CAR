@@ -16,7 +16,7 @@ typedef struct
 #define WIFI_WRITE_TIMEOUT 1000
 #define WIFI_READ_TIMEOUT  1000
 
-uint8_t remote_ip[] = {10, 27, 99, 102};
+uint8_t remote_ip[] = {10, 27, 99, 169};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
