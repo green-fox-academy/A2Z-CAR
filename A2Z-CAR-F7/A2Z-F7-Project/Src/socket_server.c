@@ -8,6 +8,8 @@
 #include "stm32746g_discovery_ts.h"
 #include <string.h>
 #include "lcd_user_interface.h"
+#include "stm32f7xx_it.h"
+
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -65,7 +67,6 @@ void socket_server_thread(void const *argument)
 	socklen_t client_addr_len = sizeof(client_addr);
 	int client_socket;
 
-
 	while (1) {
 		// Accept incoming connections
 		client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_addr_len);
@@ -80,9 +81,14 @@ void socket_server_thread(void const *argument)
 
 			// Receive data
 			while (1) {
-				received_bytes = recv(client_socket, &buff, sizeof(buff), 0);
+				uint32_t start_time = HAL_GetTick();
+				uint32_t elapsed_time;
+				do {
+					received_bytes = recv(client_socket, &buff, sizeof(buff), MSG_DONTWAIT);
+					elapsed_time = HAL_GetTick() - start_time;
+				} while ((elapsed_time < 2000) && (received_bytes < 1));
 				// Check for error
-				if (received_bytes < 1) {
+				if (elapsed_time >= 2000) {
 					LCD_ErrLog("Socket server - can't receive\n");
 					break;
 				}
