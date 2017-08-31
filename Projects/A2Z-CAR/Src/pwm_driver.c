@@ -16,7 +16,7 @@ int8_t servo_pwm_init()
 	// Initialize pin D5 (PB4) as PWM (TIM3) output
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 	GPIO_InitDef.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitDef.Pull = GPIO_NOPULL;
+	GPIO_InitDef.Pull = GPIO_PULLDOWN;
 	GPIO_InitDef.Speed = GPIO_SPEED_MEDIUM;
 	GPIO_InitDef.Pin = GPIO_PIN_4;
 	GPIO_InitDef.Alternate = GPIO_AF2_TIM3;
@@ -53,7 +53,7 @@ int8_t motor_pwm_init()
 	// Initialize pin D9 (PA15) as PWM (TIM2) output
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	GPIO_InitDef.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitDef.Pull = GPIO_NOPULL;
+	GPIO_InitDef.Pull = GPIO_PULLDOWN;
 	GPIO_InitDef.Speed = GPIO_SPEED_MEDIUM;
 	GPIO_InitDef.Pin = GPIO_PIN_15;
 	GPIO_InitDef.Alternate = GPIO_AF1_TIM2;
