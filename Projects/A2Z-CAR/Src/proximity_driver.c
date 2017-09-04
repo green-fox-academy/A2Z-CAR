@@ -275,9 +275,7 @@ int8_t proximity_control_thread()
 
 	}
 
-	while (1) {
-		osThreadTerminate(NULL);
-	}
+	terminate_thread();
 
 	return 0;
 }

@@ -111,11 +111,14 @@ void socket_server_thread(void const *argument)
 
 				}
 
-				int sent_bytes = 0;
-				sent_bytes = send(client_socket, &move, sizeof(move), 0);
-				if (sent_bytes < 1) {
-					LCD_ErrLog("Socket server - can't send\n");
-					break;
+				if (touch == 1) {
+					int sent_bytes = 0;
+					sent_bytes = send(client_socket, &move, sizeof(move), 0);
+					if (sent_bytes < 1) {
+						LCD_ErrLog("Socket server - can't send\n");
+						break;
+					}
+					touch = 0;
 				}
 				//LCD_UsrLog("Socket server - data sent\n");
 

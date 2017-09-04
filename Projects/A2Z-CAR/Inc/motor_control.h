@@ -15,6 +15,8 @@ void set_direction(int8_t dir);
 void stop_drive();
 void disable_drive();
 void go();
+void accelerate();
+void decelerate();
 void motor_control_thread(void const * argument);
 
 /* Exported constants --------------------------------------------------------*/

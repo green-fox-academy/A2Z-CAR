@@ -10,7 +10,7 @@
 #define WIFI_WRITE_TIMEOUT 1000
 #define WIFI_READ_TIMEOUT  1000
 
-uint8_t remote_ip[] = {10, 27, 99, 159};
+uint8_t remote_ip[] = {10, 27, 99, 131};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
@@ -112,6 +112,16 @@ void wifi_comm_thread(void const * argument)
 									stop_drive();
 									started = 0;
 								}
+							} else if (rec_data == 3) {			// accelerate signal
+								printf("Accelerate signal received\n");
+								if (started == 1) {
+									accelerate();
+								}
+							} else if (rec_data == 2) {			// decelerate signal
+								printf("Decelerate signal received\n");
+								if (started == 1) {
+									decelerate();
+								}
 							} else if (rec_data == -1) {		// disable signal
 								printf("Disable signal received\n");
 								disable_drive();
@@ -120,11 +130,11 @@ void wifi_comm_thread(void const * argument)
 
 						} else {
 							printf("No data\n");
-							if (started == 1) {
-								printf("Stopping car\n");
-								stop_drive();
-								started = 0;
-							}
+//							if (started == 1) {
+//								printf("Stopping car\n");
+//								stop_drive();
+//								started = 0;
+//							}
 						}
 
 					} else {
