@@ -235,7 +235,6 @@ uint32_t read_proximity_data()
 	return distance;
 }
 
-
 uint8_t process_proximity(uint32_t distance)
 {
 	if (distance < 30) {
@@ -268,15 +267,14 @@ uint8_t process_proximity(uint32_t distance)
 int8_t proximity_control_thread()
 {
 	while (1){
-
 		uint32_t measured_distance = read_proximity_data();
-
 		process_proximity(measured_distance);
 
 	}
 
 	while (1) {
 		osThreadTerminate(NULL);
+
 	}
 
 	return 0;
