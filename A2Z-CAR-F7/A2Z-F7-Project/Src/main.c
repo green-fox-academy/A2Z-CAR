@@ -224,7 +224,7 @@ static void BSP_Config(void)
   BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
   
   /* Show Header and Footer texts */
-  LCD_LOG_SetHeader((uint8_t *)"A2Z Car controller");
+  LCD_LOG_SetHeader((uint8_t *)"A2Z Car");
   LCD_LOG_SetFooter((uint8_t *)"STM32746G-DISCO - GreenFoxAcademy");
   draw_buttons();
   draw_background();
