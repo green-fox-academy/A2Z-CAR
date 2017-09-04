@@ -1,5 +1,5 @@
 #include "lcd_user_interface.h"
-#include "socket_client.h"
+#include "socket_server.h"
 
 TS_StateTypeDef ts_state;
 
@@ -121,33 +121,46 @@ void draw_buttons() {
 
 }
 
-
 void detect_start_stop_thread(void const * argument)
 {
 	move = 0;
+	touch = 0;
 	while (1) {
 		BSP_TS_GetState(&ts_state);
 		if (ts_state.touchDetected) {
-			if ((ts_state.touchX[0] < 85) && (ts_state.touchY[0] < 55)) {
-				//START Button coordinates (5, 5, 80, 50)
-				move = 1;
-				LCD_UsrLog ((char *)"Go command detected\n");
-				BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-				BSP_LCD_FillRect(5, 5, 80, 50);
-				osDelay(50);
-				draw_buttons();
+			if (ts_state.touchY[0] < 56) {
+				if (ts_state.touchX[0] < 86) {
+					//START Button coordinates (5, 5, 80, 50)
+					move = 1;
+					touch = 1;
+					LCD_UsrLog ((char *)"Go command detected\n");
+					BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+					BSP_LCD_FillRect(5, 5, 80, 50);
+					osDelay(50);
+					draw_buttons();
 
-			} else if ((ts_state.touchX[0] > 395) && (ts_state.touchY[0] < 55)) {
-				//STOP Button coordinates (395, 5, 80, 50)
-//				move = -1;
-//				LCD_UsrLog ((char *)"Disable command detected\n");
-				move = 0;
-				LCD_UsrLog ((char *)"Stop command detected\n");
-				BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-				BSP_LCD_FillRect(395, 5, 80, 50);
-				osDelay(50);
-				draw_buttons();
+				} else if (ts_state.touchX[0] < 166) {
+					move = 3;
+					touch = 1;
+					LCD_UsrLog ((char *)"Accelerate command detected\n");
 
+				} else if (ts_state.touchX[0] > 394) {
+					//STOP Button coordinates (395, 5, 80, 50)
+	//				move = -1;
+	//				LCD_UsrLog ((char *)"Disable command detected\n");
+					move = 0;
+					touch = 1;
+					LCD_UsrLog ((char *)"Stop command detected\n");
+					BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+					BSP_LCD_FillRect(395, 5, 80, 50);
+					osDelay(50);
+					draw_buttons();
+
+				} else if (ts_state.touchX[0] > 314) {
+					move = 2;
+					touch = 1;
+					LCD_UsrLog ((char *)"Decelerate command detected\n");
+				}
 			}
 			osDelay(500);
 		} else {
@@ -155,7 +168,6 @@ void detect_start_stop_thread(void const * argument)
 		}
 	}
 
-	while (1)
-		osThreadTerminate(NULL);
+	terminate_thread();
 }
 

@@ -85,10 +85,6 @@ int main(void)
 		return -1;
 	}
 
-//	pin_init();
-//	set_direction(1);
-//	motor_pwm_set_duty(25);
-
 	/* Init thread */
 	osThreadDef(Start, StartThread, osPriorityNormal, 0, configMINIMAL_STACK_SIZE * 2);
 	osThreadCreate (osThread(Start), NULL);
@@ -136,6 +132,10 @@ int8_t system_init()
 	if (proximity_driver_init() != OK) {
 		return -1;
 	}
+
+	pin_init();
+	set_direction(1);
+
 	return 0;
 }
 
@@ -150,8 +150,8 @@ static void StartThread(void const * argument)
 	osThreadDef(servo, servo_control_thread, osPriorityAboveNormal, 0, configMINIMAL_STACK_SIZE);
 	volatile osThreadId s = osThreadCreate(osThread(servo), NULL);
 
-	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
-	volatile osThreadId m = osThreadCreate(osThread(motor), NULL);
+//	osThreadDef(motor, motor_control_thread, osPriorityBelowNormal, 0, configMINIMAL_STACK_SIZE);
+//	volatile osThreadId m = osThreadCreate(osThread(motor), NULL);
 
 	osThreadDef(proxim, proximity_control_thread, osPriorityHigh, 0, configMINIMAL_STACK_SIZE * 2);
 	volatile osThreadId p = osThreadCreate(osThread(proxim), NULL);

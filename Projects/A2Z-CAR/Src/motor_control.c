@@ -14,9 +14,11 @@ int16_t integral = 0;
 int16_t required_rpm = 0;
 int16_t measured_rpm = 0;
 float ctrler_out = 0.0;
+float duty;
 
 float pi_control();
 void print_float(float value, int decimal_digits);
+
 
 void print_float(float value, int decimal_digits)
 {
@@ -30,6 +32,7 @@ void print_float(float value, int decimal_digits)
 	printf("%d.%d", int_part, fract_part);
 }
 
+
 void pin_init()
 {
 	// Initialize pin D6 and D8 (PB1 and PB2) as output for motor direction control
@@ -41,6 +44,7 @@ void pin_init()
 	HAL_GPIO_Init(GPIOB, &GPIO_InitDef);
 }
 
+
 void set_direction(int8_t dir)
 {
 	if (dir == 1) {				// set forward
@@ -51,6 +55,7 @@ void set_direction(int8_t dir)
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
 	}
 }
+
 
 float pi_control()
 {
@@ -68,10 +73,12 @@ float pi_control()
 	return ctrler_out;
 }
 
+
 void stop_drive()
 {
 	HAL_TIM_PWM_Stop(&motor_pwm_handle, TIM_CHANNEL_1);
 }
+
 
 void disable_drive()
 {
@@ -81,16 +88,36 @@ void disable_drive()
 	HAL_GPIO_DeInit(GPIOA, GPIO_PIN_15);
 }
 
+
 void go()
 {
-	motor_pwm_set_duty(25);
+	for (uint8_t i = 25; i > 16; i--) {
+		duty = i;
+		motor_pwm_set_duty(duty);
+		osDelay(30);
+	}
 }
+
+
+void accelerate()
+{
+	duty *= 1.2;
+	motor_pwm_set_duty(duty);
+}
+
+
+void decelerate()
+{
+	duty *= 0.8;
+	motor_pwm_set_duty(duty);
+}
+
 
 void motor_control_thread(void const * argument)
 {
-//	pin_init();			// initialize direction pins
-//	set_direction(1);	// set forward
-//	go();
+	pin_init();			// initialize direction pins
+	set_direction(1);	// set forward
+	go();
 
 //	required_rpm = 2000;
 
