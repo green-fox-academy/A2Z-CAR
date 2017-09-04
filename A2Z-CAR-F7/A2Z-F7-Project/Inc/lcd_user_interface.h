@@ -19,10 +19,10 @@
 int8_t move;
 
 void draw_background();
-void draw_sensor_data(int sensor_num, uint8_t radius, uint32_t distance, uint8_t line_feedback);
 void draw_buttons();
 void detect_start_stop_thread();
-
+void draw_line_sensor_data(int sensor_num, uint8_t radius, uint8_t line_feedback);
+void draw_proximity_sensor_data(uint32_t distance);
 
 
 

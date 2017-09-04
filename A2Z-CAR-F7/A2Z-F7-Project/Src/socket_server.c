@@ -97,9 +97,9 @@ void socket_server_thread(void const *argument)
 				draw_background();
 				for (uint8_t i = 0; i < 9; i++) {
 					//LCD_UsrLog("S#%d:%d; ", i + 1, buff.buff_adc_data[i]);
-					draw_sensor_data(i, buff.buff_adc_data[i], buff.buff_distance, buff.line_feedback);
+					draw_line_sensor_data(i, buff.buff_adc_data[i], buff.line_feedback);
 				}
-
+				draw_proximity_sensor_data(buff.buff_distance);
 				if (buff.line_feedback == 1) {
 					LCD_UsrLog("Distance: %lu, line is ok.\n", buff.buff_distance);
 				}
