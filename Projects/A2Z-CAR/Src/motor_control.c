@@ -83,14 +83,14 @@ void disable_drive()
 
 void go()
 {
-	motor_pwm_set_duty(25);
+	motor_pwm_set_duty(20);
 }
 
 void motor_control_thread(void const * argument)
 {
-//	pin_init();			// initialize direction pins
-//	set_direction(1);	// set forward
-//	go();
+	pin_init();			// initialize direction pins
+	set_direction(1);	// set forward
+	go();
 
 //	required_rpm = 2000;
 
