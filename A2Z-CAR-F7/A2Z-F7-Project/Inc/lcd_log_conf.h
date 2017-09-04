@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    FreeRTOS\FreeRTOS_LowPower_LPTIM\Inc\stm32l4xx_it..h
+  * @file    LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/lcd_log_conf.h
   * @author  MCD Application Team
-  * @version V1.8.0
-  * @date    21-April-2017
-  * @brief   This file contains the headers of the interrupt handlers.
+  * @version V1.2.0
+  * @date    30-December-2016
+  * @brief   LCD Log configuration file.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright © 2017 STMicroelectronics International N.V. 
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics International N.V. 
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -46,37 +46,106 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_IT_H
-#define __STM32L4xx_IT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef  __LCD_LOG_CONF_H
+#define  __LCD_LOG_CONF_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h" 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "stm32746g_discovery_lcd.h" 
+#include <stdio.h>
 
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void TIM4_IRQHandler(void);
-void EXTI3_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
 
-#ifdef __cplusplus
-}
+/** @addtogroup LCD_LOG
+  * @{
+  */
+  
+/** @defgroup LCD_LOG
+  * @brief This file is the 
+  * @{
+  */ 
+
+
+/** @defgroup LCD_LOG_CONF_Exported_Defines
+  * @{
+  */ 
+
+/* Comment the line below to disable the scroll back and forward features */
+#define     LCD_SCROLL_ENABLED      1 
+
+/* Define the Fonts  */
+#define     LCD_LOG_HEADER_FONT                   Font16
+#define     LCD_LOG_FOOTER_FONT                   Font12
+#define     LCD_LOG_TEXT_FONT                     Font12
+            
+/* Define the LCD LOG Color  */
+#define     LCD_LOG_BACKGROUND_COLOR              LCD_COLOR_WHITE
+#define     LCD_LOG_TEXT_COLOR                    LCD_COLOR_DARKBLUE
+#define     LCD_LOG_DEFAULT_COLOR                 LCD_COLOR_DARKBLUE
+
+#define     LCD_LOG_SOLID_BACKGROUND_COLOR        0X78008080					//0XFF3CB479
+#define     LCD_LOG_SOLID_TEXT_COLOR              LCD_COLOR_WHITE
+
+/* Define the cache depth */
+#define     CACHE_SIZE              100
+#define     YWINDOW_SIZE            7
+
+#if (YWINDOW_SIZE > 17)
+  #error "Wrong YWINDOW SIZE"
 #endif
 
-#endif /* __STM32L4xx_IT_H */
+/* Redirect the printf to the LCD */
+#ifdef __GNUC__
+/* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
+   set to 'Yes') calls __io_putchar() */
+#define LCD_LOG_PUTCHAR int __io_putchar(int ch)
+#else
+#define LCD_LOG_PUTCHAR int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+
+
+/** @defgroup LCD_LOG_CONF_Exported_TypesDefinitions
+  * @{
+  */ 
+
+/**
+  * @}
+  */ 
+
+
+/** @defgroup LCD_LOG_Exported_Macros
+  * @{
+  */ 
+
+
+/**
+  * @}
+  */ 
+
+/** @defgroup LCD_LOG_CONF_Exported_Variables
+  * @{
+  */ 
+
+/**
+  * @}
+  */ 
+
+/** @defgroup LCD_LOG_CONF_Exported_FunctionsPrototype
+  * @{
+  */ 
+
+/**
+  * @}
+  */ 
+
+
+#endif /* __LCD_LOG_CONF_H */
+
+/**
+  * @}
+  */ 
+
+/**
+  * @}
+  */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

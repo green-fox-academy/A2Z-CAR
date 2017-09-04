@@ -36,6 +36,16 @@
 			<locationURI>PARENT-1-PROJECT_LOC/startup_stm32l475xx.s</locationURI>
 		</link>
 		<link>
+			<name>Applications/SW4STM32/syscalls.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/syscalls.c</locationURI>
+		</link>
+		<link>
+			<name>Applications/User/adc_driver.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/adc_driver.c</locationURI>
+		</link>
+		<link>
 			<name>Applications/User/low_power_tick_management_LPTIM.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/low_power_tick_management_LPTIM.c</locationURI>
@@ -46,14 +56,29 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Src/main.c</locationURI>
 		</link>
 		<link>
+			<name>Applications/User/motor_control.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/motor_control.c</locationURI>
+		</link>
+		<link>
+			<name>Applications/User/proximity_driver.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/proximity_driver.c</locationURI>
+		</link>
+		<link>
+			<name>Applications/User/pwm_driver.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/pwm_driver.c</locationURI>
+		</link>
+		<link>
+			<name>Applications/User/servo_control.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/servo_control.c</locationURI>
+		</link>
+		<link>
 			<name>Applications/User/stm32l4xx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32l4xx_hal_msp.c</locationURI>
-		</link>
-		<link>
-			<name>Applications/User/stm32l4xx_hal_tim.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Applications/User/stm32l4xx_it.c</name>
@@ -64,6 +89,16 @@
 			<name>Applications/User/stm32l4xx_timebase_lptim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Src/stm32l4xx_timebase_lptim.c</locationURI>
+		</link>
+		<link>
+			<name>Applications/User/uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/uart.c</locationURI>
+		</link>
+		<link>
+			<name>Applications/User/wifi_functions.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Src/wifi_functions.c</locationURI>
 		</link>
 		<link>
 			<name>Applications/WIFI/es_wifi.c</name>
@@ -169,6 +204,16 @@
 			<name>Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_spi_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_tim.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_tim_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_uart.c</name>

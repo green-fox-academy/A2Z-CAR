@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    FreeRTOS\FreeRTOS_LowPower_LPTIM\Inc\stm32l4xx_it..h
+  * @file    LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/app_ethernet.h 
   * @author  MCD Application Team
-  * @version V1.8.0
-  * @date    21-April-2017
-  * @brief   This file contains the headers of the interrupt handlers.
+  * @version V1.2.0
+  * @date    30-December-2016
+  * @brief   Header for app_ethernet.c module
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright © 2017 STMicroelectronics International N.V. 
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics International N.V. 
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -46,37 +46,40 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_IT_H
-#define __STM32L4xx_IT_H
+#ifndef __APP_ETHERNET_H
+#define __APP_ETHERNET_H
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h" 
+#include "lwip/netif.h"
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+/* DHCP process states */
+#define DHCP_OFF                   (uint8_t) 0
+#define DHCP_START                 (uint8_t) 1
+#define DHCP_WAIT_ADDRESS          (uint8_t) 2
+#define DHCP_ADDRESS_ASSIGNED      (uint8_t) 3
+#define DHCP_TIMEOUT               (uint8_t) 4
+#define DHCP_LINK_DOWN             (uint8_t) 5
+   
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void TIM4_IRQHandler(void);
-void EXTI3_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
+uint8_t is_ip_ok();
+void User_notification(struct netif *netif);
+#ifdef USE_DHCP
+void DHCP_thread(void const * argument);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __STM32L4xx_IT_H */
+#endif /* __APP_ETHERNET_H */
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

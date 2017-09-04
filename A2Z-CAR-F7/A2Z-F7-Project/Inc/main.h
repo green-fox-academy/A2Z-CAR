@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    FreeRTOS\FreeRTOS_LowPower_LPTIM\Inc\stm32l4xx_it..h
+  * @file    LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/main.h 
   * @author  MCD Application Team
-  * @version V1.8.0
-  * @date    21-April-2017
-  * @brief   This file contains the headers of the interrupt handlers.
+  * @version V1.2.0
+  * @date    30-December-2016
+  * @brief   Header for main.c module
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright © 2017 STMicroelectronics International N.V. 
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics International N.V. 
   * All rights reserved.</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without 
@@ -46,37 +46,54 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_IT_H
-#define __STM32L4xx_IT_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h" 
+#include "stm32f7xx_hal.h"
+#include "stm32746g_discovery.h"
+#include "stm32746g_discovery_lcd.h"
+
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
 
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void TIM4_IRQHandler(void);
-void EXTI3_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
+#define USE_DHCP       /* enable DHCP, if disabled static address is used*/
+ 
+/*Static IP ADDRESS*/
+#define IP_ADDR0   127
+#define IP_ADDR1   0
+#define IP_ADDR2   0
+#define IP_ADDR3   1
+   
+/*NETMASK*/
+#define NETMASK_ADDR0   255
+#define NETMASK_ADDR1   255
+#define NETMASK_ADDR2   255
+#define NETMASK_ADDR3   0
+
+/*Gateway Address*/
+#define GW_ADDR0   192
+#define GW_ADDR1   168
+#define GW_ADDR2   0
+#define GW_ADDR3   1 
+
+#define SERVER
+//#define CLIENT
+
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */  
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __STM32L4xx_IT_H */
+#endif /* __MAIN_H */
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

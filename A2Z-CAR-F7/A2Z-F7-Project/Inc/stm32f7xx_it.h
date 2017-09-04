@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    FreeRTOS\FreeRTOS_LowPower_LPTIM\Src\stm32l4xx_hal_msp.c
+  * @file    LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/stm32f7xx_it.h 
   * @author  MCD Application Team
-  * @version V1.8.0
-  * @date    21-April-2017
-  * @brief   HAL MSP module.    
+  * @version V1.2.0
+  * @date    30-December-2016
+  * @brief   This file contains the headers of the interrupt handlers.    
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -32,60 +32,40 @@
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
-  ******************************************************************************  
-  */ 
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __STM32F7xx_IT_H
+#define __STM32F7xx_IT_H
+
+#ifdef __cplusplus
+ extern "C" {
+#endif 
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include "stm32f7xx.h"
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
 
-/** @defgroup HAL_MSP_Private_Functions
-  * @{
-  */
-/**
-* @brief  LPTIM MSP Init
-* @param  hlptim : LPTIM handle
-* @retval None
-*/
-void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef *hlptim)
-{
-  /* ## - 1 - Enable LPTIM clock ############################################ */
-  __HAL_RCC_LPTIM1_CLK_ENABLE();
-  
-  /* ## - 2 - Force & Release the LPTIM Periheral Clock Reset ############### */  
-  /* Force the LPTIM Periheral Clock Reset */
-  __HAL_RCC_LPTIM1_FORCE_RESET();
-  
-  /* Release the LPTIM Periheral Clock Reset */  
-  __HAL_RCC_LPTIM1_RELEASE_RESET();
+void NMI_Handler(void);
+void HardFault_Handler(void);
+void MemManage_Handler(void);
+void BusFault_Handler(void);
+void UsageFault_Handler(void);
+void SVC_Handler(void);
+void DebugMon_Handler(void);
+void PendSV_Handler(void);
+void SysTick_Handler(void);
+void ETH_IRQHandler(void);
+void TIM6_DAC_IRQHandler(void);
+#ifdef __cplusplus
 }
+#endif
 
-void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
-{
-	//enable interrupt mode TIM4_CH3
-	__HAL_RCC_TIM4_CLK_ENABLE();
-	HAL_NVIC_SetPriority(TIM4_IRQn, 3, 0);
-	HAL_NVIC_EnableIRQ(TIM4_IRQn);
-}
-
-
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
+#endif /* __STM32F7xx_IT_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

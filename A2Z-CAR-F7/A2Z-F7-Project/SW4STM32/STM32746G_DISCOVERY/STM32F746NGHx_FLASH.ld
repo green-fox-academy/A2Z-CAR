@@ -4,8 +4,8 @@
 
 **  File        : LinkerScript.ld
 **
-**  Abstract    : Linker script for STM32L475VGTx Device with
-**                1024KByte FLASH, 96KByte RAM
+**  Abstract    : Linker script for STM32F746NGHx Device with
+**                1024KByte FLASH, 320KByte RAM
 **
 **                Set heap size, stack size and stack location according
 **                to application requirements.
@@ -33,17 +33,20 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = 0x20018000;    /* end of RAM */
+_estack = 0x20050000;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0x7000;      /* required amount of heap, default 0x10000*/
-_Min_Stack_Size = 0x7000; 		/* required amount of stack, default 0x7000*/
+_Min_Heap_Size = 0x200;      /* required amount of heap  */
+_Min_Stack_Size = 0x460; /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 96K
-RAM2 (xrw)      : ORIGIN = 0x10000000, LENGTH = 32K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 1024K
+FLASH (rx)       : ORIGIN = 0x08000000, LENGTH = 1024K
+RAM (xrw)        : ORIGIN = 0x20000000, LENGTH = 307K
+Memory_B1(xrw)   : ORIGIN = 0x20010000, LENGTH = 0x80
+Memory_B2(xrw)   : ORIGIN = 0x20010080, LENGTH = 0x80
+Memory_B3(xrw)   : ORIGIN = 0x2004C000, LENGTH = 0x17d0 
+Memory_B4(xrw)   : ORIGIN = 0x2004D7D0, LENGTH = 0x17d0
 }
 
 /* Define output sections */
@@ -52,15 +55,15 @@ SECTIONS
   /* The startup code goes first into FLASH */
   .isr_vector :
   {
-    . = ALIGN(8);
+    . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
-    . = ALIGN(8);
+    . = ALIGN(4);
   } >FLASH
 
   /* The program code and other data goes into FLASH */
   .text :
   {
-    . = ALIGN(8);
+    . = ALIGN(4);
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
@@ -70,59 +73,45 @@ SECTIONS
     KEEP (*(.init))
     KEEP (*(.fini))
 
-    . = ALIGN(8);
+    . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
   } >FLASH
 
   /* Constant data goes into FLASH */
   .rodata :
   {
-    . = ALIGN(8);
+    . = ALIGN(4);
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
-    . = ALIGN(8);
+    . = ALIGN(4);
   } >FLASH
 
-  .ARM.extab   : 
-  { 
-  . = ALIGN(8);
-  *(.ARM.extab* .gnu.linkonce.armextab.*)
-  . = ALIGN(8);
-  } >FLASH
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
   .ARM : {
-	. = ALIGN(8);
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
-	. = ALIGN(8);
   } >FLASH
 
   .preinit_array     :
   {
-	. = ALIGN(8);
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-	. = ALIGN(8);
   } >FLASH
-  
   .init_array :
   {
-	. = ALIGN(8);
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
-	. = ALIGN(8);
   } >FLASH
   .fini_array :
   {
-	. = ALIGN(8);
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT(.fini_array.*)))
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
-	. = ALIGN(8);
   } >FLASH
 
   /* used by the startup to initialize data */
@@ -131,12 +120,12 @@ SECTIONS
   /* Initialized data sections goes into RAM, load LMA copy after code */
   .data : 
   {
-    . = ALIGN(8);
+    . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
 
-    . = ALIGN(8);
+    . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
   } >RAM AT> FLASH
 
@@ -177,8 +166,11 @@ SECTIONS
     libm.a ( * )
     libgcc.a ( * )
   }
-
-  .ARM.attributes 0 : { *(.ARM.attributes) }
+/*
+   .ARM.attributes 0 : { *(.ARM.attributes) }
+  .RxDecripSection : { *(.RxDescripSection) } >Memory_B1
+  .TxDescripSection : { *(.TxDescripSection) } >Memory_B2
+  .RxarraySection : { *(.RxBUF) } >Memory_B3
+  .TxarraySection : { *(.TxBUF) } >Memory_B4 */
 }
-
 

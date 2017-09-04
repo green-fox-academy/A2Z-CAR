@@ -1,16 +1,16 @@
 /**
   ******************************************************************************
-  * @file    FreeRTOS\FreeRTOS_LowPower_LPTIM\Src\stm32l4xx_it.c 
+  * @file    LwIP/LwIP_HTTP_Server_Netconn_RTOS/Src/stm32f7xx_it.c 
   * @author  MCD Application Team
-  * @version V1.8.0
-  * @date    21-April-2017
+  * @version V1.2.0
+  * @date    30-December-2016
   * @brief   Main Interrupt Service Routines.
   *          This file provides template for all exceptions handler and 
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -38,19 +38,21 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f7xx_it.h"
 #include "main.h"
-#include "stm32l4xx_it.h"
+#include "cmsis_os.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern TIM_HandleTypeDef    proxim_timer_handle;
+extern ETH_HandleTypeDef EthHandle;
+extern TIM_HandleTypeDef TimHandle;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
 /******************************************************************************/
-/*            Cortex-M4 Processor Exceptions Handlers                         */
+/*            Cortex-M7 Processor Exceptions Handlers                         */
 /******************************************************************************/
 
 /**
@@ -72,7 +74,6 @@ void HardFault_Handler(void)
   /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
   {
-
   }
 }
 
@@ -131,15 +132,50 @@ void DebugMon_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	HAL_IncTick();
+  osSystickHandler();
 }
 
 /******************************************************************************/
-/*                 STM32F4xx Peripherals Interrupt Handlers                   */
+/*                 STM32F7xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
 /*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32f4xx.s).                                               */
+/*  file (startup_stm32f7xx.s).                                               */
 /******************************************************************************/
+
+/**
+  * @brief  This function handles Ethernet interrupt request.
+  * @param  None
+  * @retval None
+  */
+void ETH_IRQHandler(void)
+{
+  HAL_ETH_IRQHandler(&EthHandle);
+}
+
+
+/**
+  * @brief  This function handles TIM interrupt request.
+  * @param  None
+  * @retval None
+  */
+void TIM6_DAC_IRQHandler(void)
+{
+  HAL_TIM_IRQHandler(&TimHandle);
+}
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim == &TimHandle)
+		HAL_IncTick();
+}
 
 /**
   * @brief  This function handles PPP interrupt request.
@@ -149,16 +185,5 @@ void SysTick_Handler(void)
 /*void PPP_IRQHandler(void)
 {
 }*/
-
-
-void EXTI3_IRQHandler(void)
-{
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
-}
-
-void TIM4_IRQHandler(void)
-{
-  	HAL_TIM_IRQHandler(&proxim_timer_handle);
-}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -90,15 +90,18 @@
 #endif
 
 
-#define configUSE_PREEMPTION		1
+#define configUSE_PREEMPTION			1
 #define configUSE_IDLE_HOOK			0
 #define configUSE_TICK_HOOK			0
-#define configUSE_TICKLESS_IDLE		0
 #define configCPU_CLOCK_HZ			( SystemCoreClock )
 #define configTICK_RATE_HZ			( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES			(  7 )
 #define configMINIMAL_STACK_SIZE		( ( uint16_t ) 128 )
-#define configTOTAL_HEAP_SIZE                   ( ( size_t ) ( 8 * 1024 ) )          /* 8 Kbytes */
+#if defined(__GNUC__)
+ #define configTOTAL_HEAP_SIZE			( ( size_t ) ( 25 * 1024 ) )
+#else
+ #define configTOTAL_HEAP_SIZE			( ( size_t ) ( 20 * 1024 ) )
+#endif
 #define configMAX_TASK_NAME_LEN			( 16 )
 #define configUSE_TRACE_FACILITY		1
 #define configUSE_16_BIT_TICKS			0
@@ -111,7 +114,8 @@
 #define configUSE_APPLICATION_TASK_TAG	        0
 #define configUSE_COUNTING_SEMAPHORES	        1
 #define configGENERATE_RUN_TIME_STATS	        0
-#define configOVERRIDE_DEFAULT_TICK_CONFIGURATION 1
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 		        0
 #define configMAX_CO_ROUTINE_PRIORITIES        ( 2 )
@@ -128,7 +132,7 @@ to exclude the API function. */
 #define INCLUDE_uxTaskPriorityGet		1
 #define INCLUDE_vTaskDelete			1
 #define INCLUDE_vTaskCleanUpResources	        0
-#define INCLUDE_vTaskSuspend			1
+#define INCLUDE_vTaskSuspend			0
 #define INCLUDE_vTaskDelayUntil			0
 #define INCLUDE_vTaskDelay			1
 #define INCLUDE_xTaskGetSchedulerState          1
@@ -160,23 +164,8 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
 	
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
-#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
-
-/* Demo specific macros that allow the application writer to insert code to be
-executed immediately before the MCU's STOP low power mode is entered and exited
-respectively.  These macros are in addition to the standard
-configPRE_SLEEP_PROCESSING() and configPOST_SLEEP_PROCESSING() macros, which are
-called pre and post the low power SLEEP mode being entered and exited.  These
-macros can be used to turn turn off and on IO, clocks, the Flash etc. to obtain
-the lowest power possible while the tick is off. */
-#if defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__)
-void vMainPreStopProcessing(void);
-void vMainPostStopProcessing(void);
-#endif /* defined(__ICCARM__) || defined(__CC_ARM) || defined(__GNUC__) */
-
-#define configPRE_STOP_PROCESSING       vMainPreStopProcessing
-#define configPOST_STOP_PROCESSING	    vMainPostStopProcessing
-
+#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }	
+	
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
 standard names. */
 #define vPortSVCHandler SVC_Handler
