@@ -122,8 +122,39 @@ void draw_buttons() {
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 	BSP_LCD_DrawRect(313, 0, 80, 51); //Decelerate button coordinates (314, 0, 80, 50)
 	BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
-	BSP_LCD_DisplayStringAt(110, 18, (uint8_t *)"UP", LEFT_MODE);
-	BSP_LCD_DisplayStringAt(332, 18, (uint8_t *)"DOWN", LEFT_MODE);
+
+	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	//Draw 'UP' sign
+	//BSP_LCD_DisplayStringAt(110, 18, (uint8_t *)"up", LEFT_MODE);
+	BSP_LCD_DrawLine(90, 40, 123, 11);
+	BSP_LCD_DrawLine(91, 40, 124, 11);
+	BSP_LCD_DrawLine(92, 40, 125, 11);
+	BSP_LCD_DrawLine(93, 40, 126, 11);
+	BSP_LCD_DrawLine(127, 11, 159, 40);
+	BSP_LCD_DrawLine(128, 11, 160, 40);
+	BSP_LCD_DrawLine(129, 11, 161, 40);
+	BSP_LCD_DrawLine(130, 11, 162, 40);
+	BSP_LCD_DrawLine(90, 40, 162, 40);
+	BSP_LCD_DrawLine(90, 41, 162, 41);
+	BSP_LCD_DrawLine(90, 42, 162, 42);
+	BSP_LCD_DrawLine(90, 43, 162, 43);
+	//Draw 'Down' sign
+	//BSP_LCD_DisplayStringAt(332, 18, (uint8_t *)"DOWN", LEFT_MODE);
+
+	BSP_LCD_DrawLine(350, 40, 317, 11);
+	BSP_LCD_DrawLine(351, 40, 318, 11);
+	BSP_LCD_DrawLine(352, 40, 319, 11);
+	BSP_LCD_DrawLine(353, 40, 320, 11);
+
+	BSP_LCD_DrawLine(354, 40, 386, 11);
+	BSP_LCD_DrawLine(355, 40, 387, 11);
+	BSP_LCD_DrawLine(356, 40, 388, 11);
+	BSP_LCD_DrawLine(357, 40, 389, 11);
+	BSP_LCD_DrawLine(317, 11, 389, 11);
+	BSP_LCD_DrawLine(317, 10, 389, 10);
+	BSP_LCD_DrawLine(317, 9, 389, 9);
+	BSP_LCD_DrawLine(317, 8, 389, 8);
+
 	BSP_LCD_SetFont(&Font12);
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 	BSP_LCD_DrawRect(15, 102, 450, 51); //object distance feedback coordinates (16, 103, 449, 50)
