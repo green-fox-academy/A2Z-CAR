@@ -7,8 +7,8 @@
 
 #define SSID     "A66 Guest"
 #define PASSWORD "Hello123"
-#define WIFI_WRITE_TIMEOUT 1000
-#define WIFI_READ_TIMEOUT  1000
+#define WIFI_WRITE_TIMEOUT 0
+#define WIFI_READ_TIMEOUT  1
 
 uint8_t remote_ip[] = {10, 27, 99, 131};
 uint16_t remote_port = 8002;
@@ -94,7 +94,7 @@ void wifi_comm_thread(void const * argument)
 						started = 0;
 					}
 				} else {
-//					printf("Data sent\n");
+					printf("Data sent\n");
 
 					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 						if (data_len > 0) {
