@@ -192,7 +192,7 @@ void detect_start_stop_thread(void const * argument)
 		if (ts_state.touchDetected) {
 			if (ts_state.touchY[0] < 56) {
 				if (ts_state.touchX[0] < 86) {
-					//START Button coordinates (5, 5, 80, 50)
+					//START Button coordinates (5, 0, 80, 50)
 					if (prev == 0) {
 						move = 1;
 						prev = move;
@@ -203,8 +203,8 @@ void detect_start_stop_thread(void const * argument)
 					osDelay(50);
 					draw_buttons();
 
-				} else if (ts_state.touchX[0] < 166) {
-					//Accelerate button coordinates (87, 5, 80, 50)
+				} else if (ts_state.touchX[0] < 168) {
+					//Accelerate button coordinates (87, 0, 80, 50)
 					if (prev != 0) {
 						move = 3;
 						prev = move;
@@ -223,7 +223,7 @@ void detect_start_stop_thread(void const * argument)
 					osDelay(50);
 					draw_buttons();
 
-				} else if (ts_state.touchX[0] > 314) {
+				} else if (ts_state.touchX[0] > 313) {
 					//Decelerate button coordinates (314, 5, 80, 50)
 					if (prev != 0) {
 						move = 2;
