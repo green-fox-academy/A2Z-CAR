@@ -107,6 +107,7 @@ void draw_buttons() {
 	BSP_LCD_FillRect(5, 0, 80, 50); //START Button coordinates (5, 0, 80, 50)
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 	BSP_LCD_DrawRect(5, 0, 80, 51); //START Button coordinates (5, 0, 80, 50)
+	BSP_LCD_SetTextColor(LCD_COLOR_GRAY);
 	BSP_LCD_DisplayStringAt(20, 18, (uint8_t *)"START", LEFT_MODE);
 	//Draw 'Stop' button
 	BSP_LCD_SetTextColor(LCD_COLOR_RED);
