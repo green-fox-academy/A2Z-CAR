@@ -17,7 +17,7 @@
 //#define     YWINDOW_MIN         9
 
 int8_t move;
-uint8_t touch;
+int8_t prev;
 
 void draw_background();
 void draw_buttons();

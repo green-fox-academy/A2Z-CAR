@@ -92,6 +92,7 @@ void socket_server_thread(void const *argument)
 				// Check for error
 				if (elapsed_time >= 2000) {
 					LCD_ErrLog("Socket server - can't receive\n");
+					move = 0;
 					break;
 				}
 
@@ -121,6 +122,7 @@ void socket_server_thread(void const *argument)
 					}
 					if (sent_bytes < 1) {
 						LCD_ErrLog("Socket server - can't send\n");
+						move = 0;
 						break;
 					}
 				}

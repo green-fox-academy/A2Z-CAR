@@ -124,13 +124,17 @@ void draw_buttons() {
 void detect_start_stop_thread(void const * argument)
 {
 	move = 0;
+	prev = 0;
 	while (1) {
 		BSP_TS_GetState(&ts_state);
 		if (ts_state.touchDetected) {
 			if (ts_state.touchY[0] < 56) {
 				if (ts_state.touchX[0] < 86) {
 					//START Button coordinates (5, 5, 80, 50)
-					move = 1;
+					if (prev == 0) {
+						move = 1;
+						prev = move;
+					}
 					LCD_UsrLog ((char *)"Go command detected\n");
 					BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 					BSP_LCD_FillRect(5, 5, 80, 50);
@@ -138,7 +142,10 @@ void detect_start_stop_thread(void const * argument)
 					draw_buttons();
 
 				} else if (ts_state.touchX[0] < 166) {
-					move = 3;
+					if (prev != 0) {
+						move = 3;
+						prev = move;
+					}
 					LCD_UsrLog ((char *)"Accelerate command detected\n");
 
 				} else if (ts_state.touchX[0] > 394) {
@@ -146,6 +153,7 @@ void detect_start_stop_thread(void const * argument)
 	//				move = -1;
 	//				LCD_UsrLog ((char *)"Disable command detected\n");
 					move = 0;
+					prev = move;
 					LCD_UsrLog ((char *)"Stop command detected\n");
 					BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 					BSP_LCD_FillRect(395, 5, 80, 50);
@@ -153,7 +161,10 @@ void detect_start_stop_thread(void const * argument)
 					draw_buttons();
 
 				} else if (ts_state.touchX[0] > 314) {
-					move = 2;
+					if (prev != 0) {
+						move = 2;
+						prev = move;
+					}
 					LCD_UsrLog ((char *)"Decelerate command detected\n");
 				}
 			}
