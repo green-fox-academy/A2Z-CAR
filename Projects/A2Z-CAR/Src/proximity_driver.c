@@ -264,13 +264,13 @@ uint8_t process_proximity(uint32_t distance)
 		} else if ((distance < 150)  && (distance > 50)) {
 			decelerate();
 #ifdef DEBUG_MODE
-			printf("Stop signal sent.\n");
+			printf("Decelerate signal sent.\n");
 #endif
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 
 		} else {
-			go();
+			//go();
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 		}

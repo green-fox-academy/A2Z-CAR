@@ -2,6 +2,7 @@
 #include "socket_server.h"
 
 TS_StateTypeDef ts_state;
+void draw_triangle(uint8_t line, Point point1, Point point2, Point point3);
 
 void draw_background()
 {
@@ -100,6 +101,25 @@ void draw_proximity_sensor_data(uint32_t distance)
 	BSP_LCD_SetFont(&Font12);
 }
 
+/*void draw_triangle(uint8_t line_nr, Point point1, Point point2, Point point3)
+{
+	uint8_t line = line_nr;
+	for (int i = 0; i < line + 1; i++){
+		BSP_LCD_DrawLine(point1.X + line, point1.Y + line, point2.X + line, point2.Y + line);
+		line--;
+	}
+	line = line_nr;
+	for (int i = 0; i < line + 1; i++){
+		BSP_LCD_DrawLine(point2.X + line, point2.Y + line, point3.X + line, point3.Y + line);
+		line--;
+	}
+	line = line_nr;
+	for (int i = 0; i < line + 1; i++){
+		BSP_LCD_DrawLine(point3.X + line, point3.Y + line, point1.X + line, point1.Y + line);
+		line--;
+	}
+}*/
+
 void draw_buttons() {
 	BSP_LCD_SetFont(&Font16);
 	//Draw 'Start' button
@@ -149,14 +169,28 @@ void draw_buttons() {
 	BSP_LCD_DrawLine(351, 40, 318, 11);
 	BSP_LCD_DrawLine(352, 40, 319, 11);
 	BSP_LCD_DrawLine(353, 40, 320, 11);
+
 	BSP_LCD_DrawLine(354, 40, 386, 11);
 	BSP_LCD_DrawLine(355, 40, 387, 11);
 	BSP_LCD_DrawLine(356, 40, 388, 11);
 	BSP_LCD_DrawLine(357, 40, 389, 11);
+
 	BSP_LCD_DrawLine(317, 11, 389, 11);
 	BSP_LCD_DrawLine(317, 10, 389, 10);
 	BSP_LCD_DrawLine(317, 9, 389, 9);
 	BSP_LCD_DrawLine(317, 8, 389, 8);
+	/*Point point_1;
+	Point point_2;
+	Point point_3;
+	point_1.X = 350;
+	point_1.Y = 40;
+	point_2.X = 386;
+	point_2.Y = 10;
+	point_3.X = 317;
+	point_3.Y = 10;
+
+	draw_triangle(5, point_1, point_2, point_3);*/
+
 	//Draw Object distance feedback field
 	BSP_LCD_SetFont(&Font12);
 	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
@@ -165,6 +199,8 @@ void draw_buttons() {
 	BSP_LCD_FillRect(16, 103, 449, 50); //object distance feedback coordinates (16, 103, 449, 50)
 
 }
+
+
 
 void detect_start_stop_thread(void const * argument)
 {

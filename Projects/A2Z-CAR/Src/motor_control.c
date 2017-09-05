@@ -129,3 +129,14 @@ void motor_control_thread(void const * argument)
 
 	terminate_thread();
 }
+
+void process_all_data()
+{
+	//if no connection, or stop button pressed, or object in dangerous proximity --> STOP
+
+	//if connection ok and decelerate button pressed, or object is in mid range, or servo angle is big, or there is no line --> decelerate
+
+	//if connection ok and accelerate button is pressed, or object is out of mid range, or servo angle is small, or there is line --> accelerate
+
+	//if connection ok and  start button is pressed and no object in range, and servo angle is 0, and there is a line --> go
+}

@@ -14962,71 +14962,71 @@ OUTPUT(STM32746G_DISCOVERY_led_matrix.elf elf32-littlearm)
  .comment       0x0000006e       0x6f Middlewares/LwIP/Netif/ethernet.o
  .comment       0x0000006e       0x6f Middlewares/LwIP/Netif/sys_arch.o
 
-.debug_line     0x00000000    0x2dbf7
+.debug_line     0x00000000    0x2dbf9
  .debug_line    0x00000000       0xb5 Application/SW4STM32/startup_stm32f746xx.o
  .debug_line    0x000000b5      0x620 Application/SW4STM32/syscalls.o
  .debug_line    0x000006d5      0xf20 Application/User/app_ethernet.o
  .debug_line    0x000015f5      0xf9a Application/User/ethernetif.o
- .debug_line    0x0000258f      0xe13 Application/User/lcd_user_interface.o
- .debug_line    0x000033a2     0x103c Application/User/main.o
- .debug_line    0x000043de      0xfd6 Application/User/socket_server.o
- .debug_line    0x000053b4      0x8e9 Application/User/stm32f7xx_hal_timebase_tim.o
- .debug_line    0x00005c9d      0xc65 Application/User/stm32f7xx_it.o
- .debug_line    0x00006902      0xb7e Application/Utilities/lcd_log.o
- .debug_line    0x00007480      0x4a4 Drivers/BSP/Components/ft5336/ft5336.o
- .debug_line    0x00007924      0xba9 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery.o
- .debug_line    0x000084cd     0x11e6 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery_lcd.o
- .debug_line    0x000096b3      0xa31 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery_sdram.o
- .debug_line    0x0000a0e4      0xac9 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery_ts.o
- .debug_line    0x0000abad      0x8c1 Drivers/CMSIS/system_stm32f7xx.o
- .debug_line    0x0000b46e      0xa3a Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal.o
- .debug_line    0x0000bea8      0xad9 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_cortex.o
- .debug_line    0x0000c981      0xbb7 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_dma.o
- .debug_line    0x0000d538      0xf2f Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_dma2d.o
- .debug_line    0x0000e467      0xf87 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_eth.o
- .debug_line    0x0000f3ee      0xa96 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_gpio.o
- .debug_line    0x0000fe84     0x1ab9 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_i2c.o
- .debug_line    0x0001193d     0x130a Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_ltdc.o
- .debug_line    0x00012c47      0xa05 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_pwr_ex.o
- .debug_line    0x0001364c      0xc58 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_rcc.o
- .debug_line    0x000142a4      0xccd Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_rcc_ex.o
- .debug_line    0x00014f71      0xbae Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_sdram.o
- .debug_line    0x00015b1f     0x17e0 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_tim.o
- .debug_line    0x000172ff      0xea6 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_tim_ex.o
- .debug_line    0x000181a5      0xb11 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_ll_fmc.o
- .debug_line    0x00018cb6      0x5a2 Middlewares/FreeRTOS/list.o
- .debug_line    0x00019258      0xb26 Middlewares/FreeRTOS/queue.o
- .debug_line    0x00019d7e      0xec9 Middlewares/FreeRTOS/tasks.o
- .debug_line    0x0001ac47      0xb85 Middlewares/FreeRTOS/portable/cmsis_os.o
- .debug_line    0x0001b7cc      0x660 Middlewares/FreeRTOS/portable/heap_4.o
- .debug_line    0x0001be2c      0x5bc Middlewares/FreeRTOS/portable/port.o
- .debug_line    0x0001c3e8      0xc32 Middlewares/LwIP/Api/api_lib.o
- .debug_line    0x0001d01a     0x1006 Middlewares/LwIP/Api/api_msg.o
- .debug_line    0x0001e020      0x78d Middlewares/LwIP/Api/err.o
- .debug_line    0x0001e7ad      0x73c Middlewares/LwIP/Api/netbuf.o
- .debug_line    0x0001eee9     0x11bb Middlewares/LwIP/Api/sockets.o
- .debug_line    0x000200a4      0xad1 Middlewares/LwIP/Api/tcpip.o
- .debug_line    0x00020b75      0xdce Middlewares/LwIP/Core/IPv4/dhcp.o
- .debug_line    0x00021943      0xa61 Middlewares/LwIP/Core/IPv4/etharp.o
- .debug_line    0x000223a4      0x7ba Middlewares/LwIP/Core/IPv4/icmp.o
- .debug_line    0x00022b5e      0x8e8 Middlewares/LwIP/Core/IPv4/ip4.o
- .debug_line    0x00023446      0x76d Middlewares/LwIP/Core/IPv4/ip4_addr.o
- .debug_line    0x00023bb3      0x946 Middlewares/LwIP/Core/IPv4/ip4_frag.o
- .debug_line    0x000244f9      0x646 Middlewares/LwIP/Core/def.o
- .debug_line    0x00024b3f      0x6fa Middlewares/LwIP/Core/inet_chksum.o
- .debug_line    0x00025239      0xa4a Middlewares/LwIP/Core/init.o
- .debug_line    0x00025c83      0x6c1 Middlewares/LwIP/Core/ip.o
- .debug_line    0x00026344      0x97a Middlewares/LwIP/Core/mem.o
- .debug_line    0x00026cbe      0xb7f Middlewares/LwIP/Core/memp.o
- .debug_line    0x0002783d      0xc04 Middlewares/LwIP/Core/netif.o
- .debug_line    0x00028441      0xc45 Middlewares/LwIP/Core/pbuf.o
- .debug_line    0x00029086      0xe24 Middlewares/LwIP/Core/tcp.o
- .debug_line    0x00029eaa      0xade Middlewares/LwIP/Core/tcp_in.o
- .debug_line    0x0002a988      0xb68 Middlewares/LwIP/Core/tcp_out.o
- .debug_line    0x0002b4f0      0xb04 Middlewares/LwIP/Core/timeouts.o
- .debug_line    0x0002bff4      0x9f2 Middlewares/LwIP/Core/udp.o
- .debug_line    0x0002c9e6      0x858 Middlewares/LwIP/Netif/ethernet.o
- .debug_line    0x0002d23e      0x9b9 Middlewares/LwIP/Netif/sys_arch.o
+ .debug_line    0x0000258f      0xe15 Application/User/lcd_user_interface.o
+ .debug_line    0x000033a4     0x103c Application/User/main.o
+ .debug_line    0x000043e0      0xfd6 Application/User/socket_server.o
+ .debug_line    0x000053b6      0x8e9 Application/User/stm32f7xx_hal_timebase_tim.o
+ .debug_line    0x00005c9f      0xc65 Application/User/stm32f7xx_it.o
+ .debug_line    0x00006904      0xb7e Application/Utilities/lcd_log.o
+ .debug_line    0x00007482      0x4a4 Drivers/BSP/Components/ft5336/ft5336.o
+ .debug_line    0x00007926      0xba9 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery.o
+ .debug_line    0x000084cf     0x11e6 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery_lcd.o
+ .debug_line    0x000096b5      0xa31 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery_sdram.o
+ .debug_line    0x0000a0e6      0xac9 Drivers/BSP/STM32746G_Discovery/stm32746g_discovery_ts.o
+ .debug_line    0x0000abaf      0x8c1 Drivers/CMSIS/system_stm32f7xx.o
+ .debug_line    0x0000b470      0xa3a Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal.o
+ .debug_line    0x0000beaa      0xad9 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_cortex.o
+ .debug_line    0x0000c983      0xbb7 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_dma.o
+ .debug_line    0x0000d53a      0xf2f Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_dma2d.o
+ .debug_line    0x0000e469      0xf87 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_eth.o
+ .debug_line    0x0000f3f0      0xa96 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_gpio.o
+ .debug_line    0x0000fe86     0x1ab9 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_i2c.o
+ .debug_line    0x0001193f     0x130a Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_ltdc.o
+ .debug_line    0x00012c49      0xa05 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_pwr_ex.o
+ .debug_line    0x0001364e      0xc58 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_rcc.o
+ .debug_line    0x000142a6      0xccd Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_rcc_ex.o
+ .debug_line    0x00014f73      0xbae Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_sdram.o
+ .debug_line    0x00015b21     0x17e0 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_tim.o
+ .debug_line    0x00017301      0xea6 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_hal_tim_ex.o
+ .debug_line    0x000181a7      0xb11 Drivers/STM32F7xx_HAL_Driver/stm32f7xx_ll_fmc.o
+ .debug_line    0x00018cb8      0x5a2 Middlewares/FreeRTOS/list.o
+ .debug_line    0x0001925a      0xb26 Middlewares/FreeRTOS/queue.o
+ .debug_line    0x00019d80      0xec9 Middlewares/FreeRTOS/tasks.o
+ .debug_line    0x0001ac49      0xb85 Middlewares/FreeRTOS/portable/cmsis_os.o
+ .debug_line    0x0001b7ce      0x660 Middlewares/FreeRTOS/portable/heap_4.o
+ .debug_line    0x0001be2e      0x5bc Middlewares/FreeRTOS/portable/port.o
+ .debug_line    0x0001c3ea      0xc32 Middlewares/LwIP/Api/api_lib.o
+ .debug_line    0x0001d01c     0x1006 Middlewares/LwIP/Api/api_msg.o
+ .debug_line    0x0001e022      0x78d Middlewares/LwIP/Api/err.o
+ .debug_line    0x0001e7af      0x73c Middlewares/LwIP/Api/netbuf.o
+ .debug_line    0x0001eeeb     0x11bb Middlewares/LwIP/Api/sockets.o
+ .debug_line    0x000200a6      0xad1 Middlewares/LwIP/Api/tcpip.o
+ .debug_line    0x00020b77      0xdce Middlewares/LwIP/Core/IPv4/dhcp.o
+ .debug_line    0x00021945      0xa61 Middlewares/LwIP/Core/IPv4/etharp.o
+ .debug_line    0x000223a6      0x7ba Middlewares/LwIP/Core/IPv4/icmp.o
+ .debug_line    0x00022b60      0x8e8 Middlewares/LwIP/Core/IPv4/ip4.o
+ .debug_line    0x00023448      0x76d Middlewares/LwIP/Core/IPv4/ip4_addr.o
+ .debug_line    0x00023bb5      0x946 Middlewares/LwIP/Core/IPv4/ip4_frag.o
+ .debug_line    0x000244fb      0x646 Middlewares/LwIP/Core/def.o
+ .debug_line    0x00024b41      0x6fa Middlewares/LwIP/Core/inet_chksum.o
+ .debug_line    0x0002523b      0xa4a Middlewares/LwIP/Core/init.o
+ .debug_line    0x00025c85      0x6c1 Middlewares/LwIP/Core/ip.o
+ .debug_line    0x00026346      0x97a Middlewares/LwIP/Core/mem.o
+ .debug_line    0x00026cc0      0xb7f Middlewares/LwIP/Core/memp.o
+ .debug_line    0x0002783f      0xc04 Middlewares/LwIP/Core/netif.o
+ .debug_line    0x00028443      0xc45 Middlewares/LwIP/Core/pbuf.o
+ .debug_line    0x00029088      0xe24 Middlewares/LwIP/Core/tcp.o
+ .debug_line    0x00029eac      0xade Middlewares/LwIP/Core/tcp_in.o
+ .debug_line    0x0002a98a      0xb68 Middlewares/LwIP/Core/tcp_out.o
+ .debug_line    0x0002b4f2      0xb04 Middlewares/LwIP/Core/timeouts.o
+ .debug_line    0x0002bff6      0x9f2 Middlewares/LwIP/Core/udp.o
+ .debug_line    0x0002c9e8      0x858 Middlewares/LwIP/Netif/ethernet.o
+ .debug_line    0x0002d240      0x9b9 Middlewares/LwIP/Netif/sys_arch.o
 
 .debug_info     0x00000000    0x41859
  .debug_info    0x00000000       0xd6 Application/SW4STM32/startup_stm32f746xx.o
