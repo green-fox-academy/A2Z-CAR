@@ -120,7 +120,7 @@ void wifi_comm_thread(void const * argument)
 							}
 
 						} else {
-							printf("No signal\n");
+//							printf("No signal\n");
 							if (started == 1) {
 								printf("Stopping car\n");
 								stop_drive();
