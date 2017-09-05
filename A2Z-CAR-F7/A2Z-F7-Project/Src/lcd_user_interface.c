@@ -213,8 +213,6 @@ void detect_start_stop_thread(void const * argument)
 
 				} else if (ts_state.touchX[0] > 394) {
 					//STOP Button coordinates (395, 5, 80, 50)
-	//				move = -1;
-	//				LCD_UsrLog ((char *)"Disable command detected\n");
 					move = 0;
 					prev = move;
 					LCD_UsrLog ((char *)"Stop command detected\n");

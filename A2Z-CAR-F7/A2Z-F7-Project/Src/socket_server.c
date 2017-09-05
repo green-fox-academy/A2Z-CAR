@@ -68,6 +68,7 @@ void socket_server_thread(void const *argument)
 	int client_socket;
 
 	while (1) {
+
 		// Accept incoming connections
 		client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_addr_len);
 		LCD_UsrLog("Socket server - connection accepted\n");
@@ -88,7 +89,7 @@ void socket_server_thread(void const *argument)
 				do {
 					received_bytes = recv(client_socket, &buff, sizeof(buff), MSG_DONTWAIT);
 					elapsed_time = HAL_GetTick() - start_time;
-				} while ((elapsed_time < 2000) && (received_bytes < 1));
+				} while ((elapsed_time < 2000) && (received_bytes < 14));
 				// Check for error
 				if (elapsed_time >= 2000) {
 					LCD_ErrLog("Socket server - can't receive\n");

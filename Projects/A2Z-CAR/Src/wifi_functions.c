@@ -5,17 +5,18 @@
 #include "main.h"
 #include "proximity_driver.h"
 
-#define SSID     "A66 Guest"
+#define AP_SSID     "A66 Guest"
 #define PASSWORD "Hello123"
 #define WIFI_WRITE_TIMEOUT 100
 #define WIFI_READ_TIMEOUT  100
 
-uint8_t remote_ip[] = {10, 27, 99, 131};
+uint8_t remote_ip[] = {10, 27, 99, 194};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
 uint8_t  ip_addr[4];
 uint16_t data_len;
+WIFI_APs_t *aps;
 
 int8_t wifi_init()
 {
@@ -34,8 +35,15 @@ int8_t wifi_init()
 	    	printf("> ERROR : CANNOT get MAC address\n");
 	        BSP_LED_On(LED2);
 	    }
+
+//	    while (1) {
+//	    	WIFI_ListAccessPoints(aps, 1);
+//	    	printf("AP: %s     RSSI: %d\n", (char *)aps->ap[0].SSID, aps->ap[0].RSSI);
+//	    	HAL_Delay(500);
+//	    }
+
 	    // connect to the network
-	    if( WIFI_Connect(SSID, PASSWORD, WIFI_ECN_WPA2_PSK) == WIFI_STATUS_OK) {
+	    if( WIFI_Connect(AP_SSID, PASSWORD, WIFI_ECN_WPA2_PSK) == WIFI_STATUS_OK) {
 	    	printf("> es-wifi module connected \n");
 	    	if(WIFI_GetIP_Address(ip_addr) == WIFI_STATUS_OK) {
 	    		printf("> es-wifi module got IP Address : %d.%d.%d.%d\n",
@@ -113,13 +121,9 @@ void wifi_comm_thread(void const * argument)
 								if (started == 1) {
 									decelerate();
 								}
-							} else if (rec_data == -1) {		// disable signal
-								printf("Disable signal received\n");
-								disable_drive();
-								terminate_thread();
 							}
 
-						} else {
+						} else {							// no signal = no power
 //							printf("No signal\n");
 							if (started == 1) {
 								printf("Stopping car\n");

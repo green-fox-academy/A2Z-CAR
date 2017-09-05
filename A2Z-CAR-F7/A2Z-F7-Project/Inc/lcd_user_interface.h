@@ -16,8 +16,8 @@
 
 //#define     YWINDOW_MIN         9
 
-int8_t move;
-int8_t prev;
+uint8_t move;		// movement orders to the car
+uint8_t prev;		// the previous order
 
 void draw_background();
 void draw_buttons();
