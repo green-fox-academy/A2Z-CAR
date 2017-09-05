@@ -294,18 +294,28 @@ int8_t get_bias()
 		bg_color = 1;
 	}
 	get_adc_values(adc_values);
-	//printf("adc:\n");
+#ifdef DEBUG_MODE
+	printf("adc:\n");
+#endif
 	for (int i = 0; i < 9; i++) {
-		//printf(" %4d",adc_values[i]);
+#ifdef DEBUG_MODE
+		printf(" %4d",adc_values[i]);
+#endif
 	}
-	//printf("\n ");
-	//uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
+#ifdef DEBUG_MODE
+	printf("\n ");
+	uint8_t adc_values[] = {10,100,10,100,10,100,10,100, 10}; //test
+#endif
 	uint8_t contrast[9];
 	for (int i = 0; i < 9; i++) {
 		contrast[i] = adc_values[i] > (max_bg[i] + 10);
-		//printf(" %4d",contrast[i]);
+#ifdef DEBUG_MODE
+		printf(" %4d",contrast[i]);
+#endif
 	}
-	//printf("\n");
+#ifdef DEBUG_MODE
+	printf("\n");
+#endif
 	uint8_t pos = 0;
 	int8_t center[4] = {-1, -1, -1, -1}, width = 0;
 	uint8_t is_line = 0;
@@ -336,7 +346,8 @@ int8_t get_bias()
 	if (center[linepos] == -1) {
 		bias = 100;
 	}
-	//printf("bias: %d\n", bias );
-
+#ifdef DEBUG_MODE
+	printf("bias: %d\n", bias );
+#endif
 	return  bias;
 }

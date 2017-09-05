@@ -31,9 +31,11 @@ int8_t angle (int8_t current_bias)
 	uint8_t p = 1, d = 0;
 	int8_t a = p * current_bias + d * ( current_bias - former_bias);
 	//int8_t a = current_bias;
-	//printf("d, a:***%3d ***%3d*** \n", d * ( current_bias - former_bias), current_bias);
-	//printf("angle: %4d \n",a);
-	//printf("d comp:  %4d \n",d * ( current_bias - former_bias));
+#ifdef DEBUG_MODE
+	printf("d, a:***%3d ***%3d*** \n", d * ( current_bias - former_bias), current_bias);
+	printf("angle: %4d \n",a);
+	printf("d comp:  %4d \n",d * ( current_bias - former_bias));
+#endif
 	return a;
 }
 
