@@ -91,7 +91,7 @@ void disable_drive()
 
 void go()
 {
-	for (uint8_t i = 25; i > 16; i--) {
+	for (uint8_t i = 20; i > 10; i--) {
 		duty = i;
 		motor_pwm_set_duty(duty);
 		osDelay(30);

@@ -81,8 +81,10 @@ void socket_server_thread(void const *argument)
 
 			// Receive data
 			while (1) {
+
 				uint32_t start_time = HAL_GetTick();
 				uint32_t elapsed_time;
+
 				do {
 					received_bytes = recv(client_socket, &buff, sizeof(buff), MSG_DONTWAIT);
 					elapsed_time = HAL_GetTick() - start_time;
@@ -90,6 +92,7 @@ void socket_server_thread(void const *argument)
 				// Check for error
 				if (elapsed_time >= 2000) {
 					LCD_ErrLog("Socket server - can't receive\n");
+					move = 0;
 					break;
 				}
 
@@ -111,18 +114,21 @@ void socket_server_thread(void const *argument)
 
 				}
 
-				if (touch == 1) {
+				if (move != 0) {
 					int sent_bytes = 0;
 					sent_bytes = send(client_socket, &move, sizeof(move), 0);
+					if (move == 2 || move == 3) {
+						move = 1;
+					}
 					if (sent_bytes < 1) {
 						LCD_ErrLog("Socket server - can't send\n");
+						move = 0;
 						break;
 					}
-					touch = 0;
 				}
 				//LCD_UsrLog("Socket server - data sent\n");
 
-				osDelay(20);
+				osDelay(10);
 			}
 		}
 		// If not connected, close the last socket, wait a little bit and then try to reconnect

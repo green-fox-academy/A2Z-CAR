@@ -101,25 +101,6 @@ void draw_proximity_sensor_data(uint32_t distance)
 	BSP_LCD_SetFont(&Font12);
 }
 
-/*void draw_triangle(uint8_t line_nr, Point point1, Point point2, Point point3)
-{
-	uint8_t line = line_nr;
-	for (int i = 0; i < line + 1; i++){
-		BSP_LCD_DrawLine(point1.X + line, point1.Y + line, point2.X + line, point2.Y + line);
-		line--;
-	}
-	line = line_nr;
-	for (int i = 0; i < line + 1; i++){
-		BSP_LCD_DrawLine(point2.X + line, point2.Y + line, point3.X + line, point3.Y + line);
-		line--;
-	}
-	line = line_nr;
-	for (int i = 0; i < line + 1; i++){
-		BSP_LCD_DrawLine(point3.X + line, point3.Y + line, point1.X + line, point1.Y + line);
-		line--;
-	}
-}*/
-
 void draw_buttons() {
 	BSP_LCD_SetFont(&Font16);
 	//Draw 'Start' button
@@ -205,25 +186,29 @@ void draw_buttons() {
 void detect_start_stop_thread(void const * argument)
 {
 	move = 0;
-	touch = 0;
+	prev = 0;
 	while (1) {
 		BSP_TS_GetState(&ts_state);
 		if (ts_state.touchDetected) {
 			if (ts_state.touchY[0] < 56) {
 				if (ts_state.touchX[0] < 86) {
-					//START Button coordinates (5, 5, 80, 50)
-					move = 1;
-					touch = 1;
+					//START Button coordinates (5, 0, 80, 50)
+					if (prev == 0) {
+						move = 1;
+						prev = move;
+					}
 					LCD_UsrLog ((char *)"Go command detected\n");
 					BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 					BSP_LCD_FillRect(5, 5, 80, 50);
 					osDelay(50);
 					draw_buttons();
 
-				} else if ((ts_state.touchX[0] < 166) && (ts_state.touchX[0] > 87)) {
-					//Accelerate button coordinates (87, 5, 80, 50)
-					move = 3;
-					touch = 1;
+				} else if (ts_state.touchX[0] < 168) {
+					//Accelerate button coordinates (87, 0, 80, 50)
+					if (prev != 0) {
+						move = 3;
+						prev = move;
+					}
 					LCD_UsrLog ((char *)"Accelerate command detected\n");
 
 				} else if (ts_state.touchX[0] > 394) {
@@ -231,17 +216,19 @@ void detect_start_stop_thread(void const * argument)
 	//				move = -1;
 	//				LCD_UsrLog ((char *)"Disable command detected\n");
 					move = 0;
-					touch = 1;
+					prev = move;
 					LCD_UsrLog ((char *)"Stop command detected\n");
 					BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
 					BSP_LCD_FillRect(395, 5, 80, 50);
 					osDelay(50);
 					draw_buttons();
 
-				} else if ((ts_state.touchX[0] > 314) && (ts_state.touchX[0] < 393)) {
+				} else if (ts_state.touchX[0] > 313) {
 					//Decelerate button coordinates (314, 5, 80, 50)
-					move = 2;
-					touch = 1;
+					if (prev != 0) {
+						move = 2;
+						prev = move;
+					}
 					LCD_UsrLog ((char *)"Decelerate command detected\n");
 				}
 			}
