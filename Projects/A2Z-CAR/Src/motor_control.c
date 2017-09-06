@@ -2,6 +2,9 @@
 #include "cmsis_os.h"
 #include "pwm_driver.h"
 #include "adc_driver.h"
+#include "proximity_driver.h"
+#include "servo_control.h"
+#include "wifi_functions.h"
 #include "main.h"
 
 float ctrler_out_min = 0;
@@ -117,11 +120,12 @@ void motor_control_thread(void const * argument)
 {
 	pin_init();			// initialize direction pins
 	set_direction(1);	// set forward
-	go();
+
 
 //	required_rpm = 2000;
 
 	while(1) {
+		process_all_data();
 //		measured_rpm = adc_rpm_measure();
 //		motor_pwm_set_duty(pi_control());
 		osDelay(10);
@@ -131,12 +135,27 @@ void motor_control_thread(void const * argument)
 }
 
 void process_all_data()
+
 {
+	//wifi_flag: 10 = data send ok, 20 = Failed to send data
+	//object_flag: 10 = go, 20 = decelerate, 40 = stop
+	//line_flag: 10 = line ok, 20 = no line
+	//user_command_flag: 10 = go, 20 = decelerate, 30 = accelerate, 40 = stop
+
 	//if no connection, or stop button pressed, or object in dangerous proximity --> STOP
+	if ((wifi_flag == 20) || (user_command_flag == 40) || (object_flag == 40)) {
+		stop_drive();
 
-	//if connection ok and decelerate button pressed, or object is in mid range, or servo angle is big, or there is no line --> decelerate
+	//if connection ok and decelerate button pressed, or object is in mid range, or there is no line --> decelerate
+	} else if ((wifi_flag == 10) || (user_command_flag == 20) || (object_flag == 20) || line_flag == 20){
+		decelerate();
 
-	//if connection ok and accelerate button is pressed, or object is out of mid range, or servo angle is small, or there is line --> accelerate
+	//if connection ok and accelerate button is pressed, or object is out of mid range, or there is line --> accelerate
+	} else if ((wifi_flag == 10) && (user_command_flag == 30) && (object_flag == 10) && line_flag == 10){
+		accelerate();
 
 	//if connection ok and  start button is pressed and no object in range, and servo angle is 0, and there is a line --> go
+	} else if ((wifi_flag == 10) && (user_command_flag == 10) && (object_flag == 10) && line_flag == 10){
+		go();
+	}
 }

@@ -41,6 +41,8 @@ int8_t angle (int8_t current_bias)
 
 void do_this_if_no_line()
 {
+	line_flag = 20;
+
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
 	//set_servo_angle(angle(former_bias));
@@ -48,6 +50,7 @@ void do_this_if_no_line()
 
 void set_servo()
 {
+	line_flag = 0;
 	uint8_t detail = 9;
 	int8_t bias = get_bias();
 	//bias = 0;
@@ -57,6 +60,7 @@ void set_servo()
 		cnt++;
 	}
 	if (bias <= (detail * 4) || cnt < cnt_limit) {
+		line_flag = 10;
 		if (bias > (detail * 4)) {
 			set_servo_angle(angle(former_bias));
 		} else {

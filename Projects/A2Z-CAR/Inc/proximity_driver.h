@@ -13,6 +13,8 @@
 #include "stdio.h"
 #include "motor_control.h"
 
+uint8_t object_flag;
+
 int8_t proximity_driver_init();
 int8_t proximity_control_thread();
 

@@ -4,13 +4,14 @@
 #include "adc_driver.h"
 #include "main.h"
 #include "proximity_driver.h"
+#include "servo_control.h"
 
 #define SSID     "A66 Guest"
 #define PASSWORD "Hello123"
 #define WIFI_WRITE_TIMEOUT 100
 #define WIFI_READ_TIMEOUT  100
 
-uint8_t remote_ip[] = {10, 27, 99, 131};
+uint8_t remote_ip[] = {10, 27, 99, 70};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
@@ -67,6 +68,8 @@ void wifi_comm_thread(void const * argument)
 	sensor_data buff;
 
 	while(1) {
+		user_command_flag = 0;
+		wifi_flag = 0;
 //		printf("Trying to connect to server: %d.%d.%d.%d:8002 ...\n",
 //			remote_ip[0],
 //			remote_ip[1],
@@ -81,17 +84,19 @@ void wifi_comm_thread(void const * argument)
 				}
 
 				buff.buff_distance = distance;
-				buff.line_feedback = 1;
+				buff.line_feedback = line_flag;
 
 				if (WIFI_SendData(socket, &buff, sizeof(buff), &data_len, WIFI_WRITE_TIMEOUT) != WIFI_STATUS_OK) {
 					printf("> ERROR : Failed to send data\n");
 					if (started == 1) {
 						printf("Stopping car\n");
-						stop_drive();
+						//stop_drive();
+						wifi_flag = 20;
 						started = 0;
 					}
 					break;
 				} else {
+					wifi_flag = 10;
 //					printf("Data sent\n");
 
 					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
@@ -100,30 +105,35 @@ void wifi_comm_thread(void const * argument)
 //								printf("Go signal received\n");
 								if (started == 0) {
 									printf("Starting car\n");
-									go();
+									user_command_flag = 10;
+									//go();
 									started = 1;
 								}
 							} else if (rec_data == 3) {			// accelerate signal
 								printf("Accelerate signal received\n");
 								if (started == 1) {
-									accelerate();
+									//accelerate();
+									user_command_flag = 30;
 								}
 							} else if (rec_data == 2) {			// decelerate signal
 								printf("Decelerate signal received\n");
 								if (started == 1) {
-									decelerate();
+									//decelerate();
+									user_command_flag = 20;
 								}
 							} else if (rec_data == -1) {		// disable signal
 								printf("Disable signal received\n");
-								disable_drive();
-								terminate_thread();
+								//disable_drive();
+								//terminate_thread();
+								user_command_flag = 40;
 							}
 
 						} else {
 //							printf("No signal\n");
 							if (started == 1) {
 								printf("Stopping car\n");
-								stop_drive();
+								//stop_drive();
+								user_command_flag = 40;
 								started = 0;
 							}
 						}

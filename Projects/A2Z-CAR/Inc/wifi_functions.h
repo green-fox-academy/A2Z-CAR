@@ -17,6 +17,9 @@ typedef struct
 
 } sensor_data;
 
+uint8_t user_command_flag;
+uint8_t wifi_flag;
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

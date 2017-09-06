@@ -17,6 +17,7 @@ void disable_drive();
 void go();
 void accelerate();
 void decelerate();
+void process_all_data();
 void motor_control_thread(void const * argument);
 
 /* Exported constants --------------------------------------------------------*/

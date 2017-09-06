@@ -245,8 +245,12 @@ uint32_t read_proximity_data()
 
 uint8_t process_proximity(uint32_t distance)
 {
+	object_flag = 0;
 	if (distance < 30) {
-			stop_drive();
+
+			//stop_drive();
+			object_flag = 40;
+
 #ifdef DEBUG_MODE
 			printf("Disable signal sent.\n");
 #endif
@@ -254,7 +258,8 @@ uint8_t process_proximity(uint32_t distance)
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
 
 		} else if ((distance < 50) && (distance > 30)) {
-			stop_drive();
+			//stop_drive();
+			object_flag = 40;
 #ifdef DEBUG_MODE
 			printf("Stop signal sent.\n");
 #endif
@@ -262,7 +267,8 @@ uint8_t process_proximity(uint32_t distance)
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
 
 		} else if ((distance < 150)  && (distance > 50)) {
-			decelerate();
+			//decelerate();
+			object_flag = 20;
 #ifdef DEBUG_MODE
 			printf("Decelerate signal sent.\n");
 #endif
@@ -270,6 +276,7 @@ uint8_t process_proximity(uint32_t distance)
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 
 		} else {
+			object_flag = 10;
 			//go();
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
@@ -281,6 +288,7 @@ uint8_t process_proximity(uint32_t distance)
 int8_t proximity_control_thread()
 {
 	while (1){
+
 		uint32_t measured_distance = read_proximity_data();
 		process_proximity(measured_distance);
 
