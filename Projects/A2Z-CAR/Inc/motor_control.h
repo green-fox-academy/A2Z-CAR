@@ -20,5 +20,6 @@ void decelerate();
 void motor_control_thread(void const * argument);
 
 /* Exported constants --------------------------------------------------------*/
+uint8_t started;
 
 #endif /* __MOTOR_CONTROL_H */

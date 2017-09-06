@@ -10,7 +10,7 @@
 #define WIFI_WRITE_TIMEOUT 100
 #define WIFI_READ_TIMEOUT  100
 
-uint8_t remote_ip[] = {10, 27, 99, 194};
+uint8_t remote_ip[] = {10, 27, 99, 70};
 uint16_t remote_port = 8002;
 int8_t rec_data;
 uint8_t  mac_addr[6];
@@ -71,7 +71,7 @@ int8_t wifi_init()
 void wifi_comm_thread(void const * argument)
 {
 	uint32_t socket = 0;
-	uint8_t started = 0;
+	started = 0;
 	sensor_data buff;
 
 	while(1) {
@@ -104,7 +104,7 @@ void wifi_comm_thread(void const * argument)
 
 					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 						if (data_len > 0) {
-							if (rec_data == 1) {				// go signal
+							if (rec_data == 1 && danger == 0) {				// go signal
 //								printf("Go signal received\n");
 								if (started == 0) {
 									printf("Starting car\n");

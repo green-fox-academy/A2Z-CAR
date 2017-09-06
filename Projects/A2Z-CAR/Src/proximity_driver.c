@@ -6,6 +6,7 @@
  */
 #include "proximity_driver.h"
 #include "cmsis_os.h"
+#include "motor_control.h"
 
 TIM_HandleTypeDef proxim_timer_handle;
 uint32_t proxim1_cntr = 0;
@@ -245,45 +246,45 @@ uint32_t read_proximity_data()
 
 uint8_t process_proximity(uint32_t distance)
 {
-	if (distance < 30) {
+	if (distance < 50) {
+		if (started == 1) {
 			stop_drive();
-#ifdef DEBUG_MODE
-			printf("Disable signal sent.\n");
-#endif
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
-
-		} else if ((distance < 50) && (distance > 30)) {
-			stop_drive();
-#ifdef DEBUG_MODE
-			printf("Stop signal sent.\n");
-#endif
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
-
-		} else if ((distance < 150)  && (distance > 50)) {
-			decelerate();
-#ifdef DEBUG_MODE
-			printf("Decelerate signal sent.\n");
-#endif
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
-
-		} else {
-			//go();
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
+			danger = 1;
+			started = 0;
 		}
+#ifdef DEBUG_MODE
+		printf("Stop signal sent.\n");
+#endif
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
+
+	} else if ((distance < 100)  && (distance > 49)) {
+		danger = 0;
+		if (started == 1) {
+			decelerate();
+		}
+#ifdef DEBUG_MODE
+		printf("Decelerate signal sent.\n");
+#endif
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
+
+	} else {
+		danger = 0;
+		//go();
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
+	}
 
 	return 0;
 }
 
 int8_t proximity_control_thread()
 {
+	danger = 0;
 	while (1){
 		uint32_t measured_distance = read_proximity_data();
 		process_proximity(measured_distance);
-
 	}
 
 	terminate_thread();
