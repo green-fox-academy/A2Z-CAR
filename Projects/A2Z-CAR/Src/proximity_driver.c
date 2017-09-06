@@ -247,40 +247,36 @@ uint8_t process_proximity(uint32_t distance)
 {
 	object_flag = 0;
 	if (distance < 30) {
+		//stop_drive();
+		object_flag = 40;
 
-			//stop_drive();
-			object_flag = 40;
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
 
+	} else if ((distance < 50) && (distance > 29)) {
+		//stop_drive();
+		object_flag = 40;
 #ifdef DEBUG_MODE
-			printf("Disable signal sent.\n");
+		printf("Stop signal sent.\n");
 #endif
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);		//red led
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
 
-		} else if ((distance < 50) && (distance > 30)) {
-			//stop_drive();
-			object_flag = 40;
+	} else if ((distance < 100)  && (distance > 49)) {
+		//decelerate();
+		object_flag = 20;
 #ifdef DEBUG_MODE
-			printf("Stop signal sent.\n");
+		printf("Decelerate signal sent.\n");
 #endif
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
 
-		} else if ((distance < 100)  && (distance > 50)) {
-			//decelerate();
-			object_flag = 20;
-#ifdef DEBUG_MODE
-			printf("Decelerate signal sent.\n");
-#endif
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7); 	//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
-
-		} else {
-			object_flag = 10;
-			//go();
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
-			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
-		}
+	} else {
+		object_flag = 10;
+		//go();
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);		//green led
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);	//red led
+	}
 
 	return 0;
 }

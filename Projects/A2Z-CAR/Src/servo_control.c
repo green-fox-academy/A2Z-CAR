@@ -50,7 +50,6 @@ void do_this_if_no_line()
 
 void set_servo()
 {
-	line_flag = 0;
 	uint8_t detail = 9;
 	int8_t bias = get_bias();
 	//bias = 0;
@@ -74,12 +73,11 @@ void set_servo()
 void servo_control_thread(void const * argument)
 {
 	calibrate();
+	line_flag = 0;
 	while(1) {
 		set_servo();
 		osDelay(10);
 	}
-	while (1) {
-		/* Delete the thread */
-		osThreadTerminate(NULL);
-	}
+
+	terminate_thread();
 }

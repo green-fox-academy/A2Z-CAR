@@ -79,7 +79,9 @@ float pi_control()
 
 void stop_drive()
 {
+	started = 0;
 	HAL_TIM_PWM_Stop(&motor_pwm_handle, TIM_CHANNEL_1);
+	printf("Stopping car\n");
 }
 
 
@@ -94,30 +96,39 @@ void disable_drive()
 
 void go()
 {
-	for (uint8_t i = 20; i > 10; i--) {
-		duty = i;
-		motor_pwm_set_duty(duty);
-		osDelay(30);
+	if (started == 0) {
+		printf("Starting car\n");
+		for (uint8_t i = 25; i > 15; i--) {
+			duty = i;
+			motor_pwm_set_duty(duty);
+			osDelay(30);
+		}
+		started = 1;
 	}
 }
 
 
 void accelerate()
 {
-	duty *= 1.2;
-	motor_pwm_set_duty(duty);
+	if (started == 1) {
+		duty *= 1.2;
+		motor_pwm_set_duty(duty);
+	}
 }
 
 
 void decelerate()
 {
-	duty *= 0.8;
-	motor_pwm_set_duty(duty);
+	if (started == 1) {
+		duty *= 0.8;
+		motor_pwm_set_duty(duty);
+	}
 }
 
 
 void motor_control_thread(void const * argument)
 {
+	started = 0;
 	pin_init();			// initialize direction pins
 	set_direction(1);	// set forward
 
@@ -137,10 +148,10 @@ void motor_control_thread(void const * argument)
 void process_all_data()
 
 {
-	//wifi_flag: 10 = data send ok, 20 = Failed to send data
-	//object_flag: 10 = go, 20 = decelerate, 40 = stop
-	//line_flag: 10 = line ok, 20 = no line
-	//user_command_flag: 10 = go, 20 = decelerate, 30 = accelerate, 40 = stop
+	//wifi_flag:			10 = data send ok,	20 = Failed to send data
+	//object_flag:			10 = go, 			20 = decelerate, 								40 = stop
+	//line_flag:			10 = line ok, 		20 = no line
+	//user_command_flag: 	10 = go, 			20 = decelerate, 			30 = accelerate,	40 = stop
 
 	//if no connection, or stop button pressed, or object in dangerous proximity --> STOP
 	if ((wifi_flag == 20) || (user_command_flag == 40) || (object_flag == 40)) {
@@ -158,4 +169,7 @@ void process_all_data()
 	} else if ((wifi_flag == 10) && (user_command_flag == 10) && (object_flag == 10)) {
 		go();
 	}
+//	printf("wifi: %2d      object: %2d      line: %2d      user: %2d\n", wifi_flag, object_flag, line_flag, user_command_flag);
+//	osDelay(200);
 }
+
