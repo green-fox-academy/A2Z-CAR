@@ -266,7 +266,7 @@ uint8_t process_proximity(uint32_t distance)
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET); 	//green led
 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);					//red led
 
-		} else if ((distance < 150)  && (distance > 50)) {
+		} else if ((distance < 100)  && (distance > 50)) {
 			//decelerate();
 			object_flag = 20;
 #ifdef DEBUG_MODE

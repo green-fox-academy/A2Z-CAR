@@ -133,8 +133,8 @@ int8_t system_init()
 		return -1;
 	}
 
-	pin_init();
-	set_direction(1);
+//	pin_init();
+//	set_direction(1);
 
 	return 0;
 }

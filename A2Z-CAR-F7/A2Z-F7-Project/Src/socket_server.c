@@ -88,7 +88,7 @@ void socket_server_thread(void const *argument)
 				do {
 					received_bytes = recv(client_socket, &buff, sizeof(buff), MSG_DONTWAIT);
 					elapsed_time = HAL_GetTick() - start_time;
-				} while ((elapsed_time < 2000) && (received_bytes < 1));
+				} while ((elapsed_time < 2000) && (received_bytes < 14));
 				// Check for error
 				if (elapsed_time >= 2000) {
 					LCD_ErrLog("Socket server - can't receive\n");
@@ -103,11 +103,11 @@ void socket_server_thread(void const *argument)
 					draw_line_sensor_data(i, buff.buff_adc_data[i], buff.line_feedback);
 				}
 				draw_proximity_sensor_data(buff.buff_distance);
-				if (buff.line_feedback == 1) {
+				if (buff.line_feedback == 10) {
 					LCD_UsrLog("Distance: %lu, line is ok.\n", buff.buff_distance);
 				}
 
-				if (buff.line_feedback == 0) {
+				if (buff.line_feedback == 20) {
 					BSP_LCD_SetTextColor(LCD_COLOR_RED);
 					LCD_UsrLog("Distance: %lu, NO LINE.\n", buff.buff_distance);
 					BSP_LCD_SetTextColor(LCD_COLOR_BLACK);

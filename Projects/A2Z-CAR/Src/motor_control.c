@@ -146,16 +146,16 @@ void process_all_data()
 	if ((wifi_flag == 20) || (user_command_flag == 40) || (object_flag == 40)) {
 		stop_drive();
 
-	//if connection ok and decelerate button pressed, or object is in mid range, or there is no line --> decelerate
-	} else if ((wifi_flag == 10) || (user_command_flag == 20) || (object_flag == 20) || line_flag == 20){
+	//if connection ok and decelerate button pressed, or object is in mid range --> decelerate
+	} else if ((wifi_flag == 10) && ((user_command_flag == 20) || (object_flag == 20))) {
 		decelerate();
 
-	//if connection ok and accelerate button is pressed, or object is out of mid range, or there is line --> accelerate
-	} else if ((wifi_flag == 10) && (user_command_flag == 30) && (object_flag == 10) && line_flag == 10){
+	//if connection ok and accelerate button is pressed, or object is out of mid range --> accelerate
+	} else if ((wifi_flag == 10) && (user_command_flag == 30) && (object_flag == 10)) {
 		accelerate();
 
-	//if connection ok and  start button is pressed and no object in range, and servo angle is 0, and there is a line --> go
-	} else if ((wifi_flag == 10) && (user_command_flag == 10) && (object_flag == 10) && line_flag == 10){
+	//if connection ok and  start button is pressed and no object in range --> go
+	} else if ((wifi_flag == 10) && (user_command_flag == 10) && (object_flag == 10)) {
 		go();
 	}
 }

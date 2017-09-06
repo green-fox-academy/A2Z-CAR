@@ -101,12 +101,11 @@ void wifi_comm_thread(void const * argument)
 
 					if (WIFI_ReceiveData(socket, &rec_data, sizeof(rec_data), &data_len, WIFI_READ_TIMEOUT) == WIFI_STATUS_OK) {
 						if (data_len > 0) {
+//							printf("Data received\n");
 							if (rec_data == 1) {				// go signal
 //								printf("Go signal received\n");
+								user_command_flag = 10;
 								if (started == 0) {
-									printf("Starting car\n");
-									user_command_flag = 10;
-									//go();
 									started = 1;
 								}
 							} else if (rec_data == 3) {			// accelerate signal
